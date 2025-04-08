@@ -3,7 +3,7 @@
     "target": "ES2020",
     "module": "ESNext",
     "moduleResolution": "Node",
-    "rootDir": ".",
+    "rootDir": "src",
     "outDir": "dist/lib",
     "declaration": true,
     "emitDeclarationOnly": false,
@@ -14,5 +14,5 @@
     "lib": ["ES2020", "DOM"],
     "types": ["node"]
   },
-  "include": ["src", "bin", "index.ts"]
+  "include": ["src" ]
 }

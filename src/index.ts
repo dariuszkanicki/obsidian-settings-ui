@@ -1,5 +1,5 @@
 // index.ts
-import { Renderer } from "./src/renderer";
+import { Renderer } from "./renderer";
 
 // Individual setting field
 export interface SettingElement<K extends keyof any> {

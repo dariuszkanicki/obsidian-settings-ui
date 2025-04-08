@@ -1,5 +1,5 @@
 import { Setting } from 'obsidian';
-import { SettingElement, SettingsElement, SettingsSectionConfig, StatusField } from '..';
+import { SettingElement, SettingsElement, SettingsSectionConfig, StatusField } from '.';
 
 export class Renderer<T extends Record<string, any>> {
   constructor(
@@ -28,7 +28,7 @@ export class Renderer<T extends Record<string, any>> {
         });
 
         el.items.forEach((item) => {
-          this._renderElement(groupEl, item);
+          this._renderElement(groupEl, item, true );
         });
       } else {
         this._renderElement(this.container, el);
@@ -73,30 +73,37 @@ export class Renderer<T extends Record<string, any>> {
 
   private _renderElement(
     container: HTMLElement,
-    el: SettingsElement<T>
+    el: SettingsElement<T>,
+    groupMember: boolean = false
   ) {
     if ("type" in el && el.type === "status") {
-      const setting = new Setting(container).setName(el.title);
-      this._renderStatusLine(setting, el.items);
+      this._renderStatusLine(container, el.title, el.items, groupMember );
     } else if (this._isSettingElement(el)) {
       const key = el.item as Extract<keyof T, string>;
-      this._renderSetting(container, { ...el, item: key });
+      this._renderSetting(container, { ...el, item: key }, groupMember);
     }
   }
   
-  private _renderStatusLine(setting: Setting, fields: StatusField[]) {
-    const wrapper = document.createElement("div");
-    wrapper.className = this._css("dkani-ui-status-wrapper");
-  
-    fields.forEach(({ text, color = "gray", textColor = "white" }) => {
-      const pill = document.createElement("div");
-      pill.className = this._css("dkani-ui-status-pill");
-      pill.style.backgroundColor = color;
-      pill.style.color = textColor;
-      pill.innerText = text;
-      wrapper.appendChild(pill);
-    });
-    setting.controlEl.appendChild(wrapper);
+  private _renderStatusLine(container: HTMLElement, title: string, fields: StatusField[], groupMember: boolean ) {
+
+      const setting = new Setting(container).setName(title);
+      const wrapper = document.createElement("div");
+      wrapper.className = this._css("dkani-ui-status-wrapper");
+    
+      fields.forEach(({ text, color = "gray", textColor = "white" }) => {
+        const pill = document.createElement("div");
+        pill.className = this._css("dkani-ui-status-pill");
+        pill.style.backgroundColor = color;
+        pill.style.color = textColor;
+        pill.innerText = text;
+        wrapper.appendChild(pill);
+      });
+      setting.controlEl.appendChild(wrapper);
+      if ( groupMember ) {
+        setting.settingEl.addClass(this._css('dkani-ui-group-item'));
+      } else {
+        setting.settingEl.addClass(this._css('dkani-ui-item'));
+      }
   }
 
   private _renderSetting<K extends Extract<keyof T, string>>(
@@ -107,9 +114,9 @@ export class Renderer<T extends Record<string, any>> {
     const setting = new Setting(container).setName(element.name);
   
     if (groupMember) {
-      setting.settingEl.addClass('dkani-ui-group-item');
+      setting.settingEl.addClass(this._css('dkani-ui-group-item'));
     } else {
-      setting.settingEl.addClass('dkani-ui-item');
+      setting.settingEl.addClass(this._css('dkani-ui-item'));
     }
   
     const key = element.item;
@@ -117,7 +124,7 @@ export class Renderer<T extends Record<string, any>> {
   
     if (typeof value === 'boolean') {
       setting.addToggle((toggle) => {
-        toggle.toggleEl.classList.add('dkani-ui-item');
+        toggle.toggleEl.classList.add(this._css('dkani-ui-item'));
         toggle.setValue(value).onChange(async (val) => {
           this.settings[key] = val as T[K];
           await this.saveData(this.settings);
@@ -129,7 +136,7 @@ export class Renderer<T extends Record<string, any>> {
       });
     } else {
       setting.addText((text) => {
-        text.inputEl.classList.add('dkani-ui-item');
+        text.inputEl.classList.add(this._css('dkani-ui-item'));
   
         text.setValue(String(value)).onChange(async (val) => {
           if (typeof value === 'number') {
