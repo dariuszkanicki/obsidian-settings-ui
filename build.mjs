@@ -5,8 +5,8 @@ import { resolve } from "path";
 
 // Paths
 const dist = resolve("dist");
-const cssSrc = resolve("styles", "styles.css");
-const cssDest = resolve(dist, "styles.css");
+// const cssSrc = resolve("styles", "styles.css");
+// const cssDest = resolve(dist, "styles.css");
 
 // Step 1: Clean dist/
 rmSync(dist, { recursive: true, force: true });
@@ -24,7 +24,7 @@ execSync("tsc", { stdio: "inherit" });
 // }
 
 // Step 3: Copy styles.css
-console.log("🎨 Copying styles.css...");
-copyFileSync(cssSrc, cssDest);
+// console.log("🎨 Copying styles.css...");
+// copyFileSync(cssSrc, cssDest);
 
 console.log("✅ Build complete.");

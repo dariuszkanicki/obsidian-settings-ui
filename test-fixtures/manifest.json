@@ -1,0 +1,10 @@
+{
+	"id": "myplugin-id",
+	"name": "Test",
+	"version": "1.0.0",
+	"minAppVersion": "1.0.0",
+	"description": "for testing of css merge and prefix",
+	"author": "Dariusz Kanicki",
+	"authorUrl": "https://",
+	"isDesktopOnly": true
+}

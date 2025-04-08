@@ -17,6 +17,8 @@ In your plugin project:
 
 ```bash
 pnpm install @dkani/obsidian-settings-ui
+pnpm install --save-dev postcss postcss-prefix-selector postcss-cli
+
 ```
 
 ## 🧱 Basic Usage

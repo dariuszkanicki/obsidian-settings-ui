@@ -6,14 +6,15 @@
   "main": "dist/lib/index.js",
   "types": "dist/lib/index.d.ts",
   "exports": {
-    ".": {
-      "import": "./dist/lib/index.js",
-      "types": "./dist/lib/index.d.ts"
-    },
-    "./styles.css": "./dist/styles.css"
+    "import": "./dist/lib/index.js",
+    "types": "./dist/lib/index.d.ts"
   },
   "scripts": {
+    "test:inject": "pnpm build && node dist/lib/bin/inject-prefixed-styles.js",
     "build": "node build.mjs"
+  },
+  "bin": {
+    "dkani-inject-styles": "./dist/lib/bin/inject-prefixed-styles.js"
   },
   "keywords": [
     "obsidian",
@@ -31,7 +32,13 @@
     "obsidian": "*"
   },
   "devDependencies": {
-    "typescript": "^5.0.0",
-    "cpx": "^1.5.0"
+    "@types/node": "^22.14.0",
+    "@types/postcss-prefix-selector": "^1.16.3",
+    "cpx": "^1.5.0",
+    "postcss": "^8.5.3",
+    "postcss-cli": "^11.0.1",
+    "postcss-prefix-selector": "^2.1.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.0.0"
   }
 }
