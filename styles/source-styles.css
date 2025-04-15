@@ -1,13 +1,12 @@
 .dkani-ui-howto, .dkani-ui-group { 
   padding: 1em;
   border: 1px solid var(--divider-color);
+  margin-top: 1em;
+  margin-bottom: 2em;
 }
 .dkani-ui-howto-title, .dkani-ui-group-title { 
   font-weight: bold;
-  margin-top: -1.7em;
-  margin-bottom: 0.5em;
-  margin-left: 1em;
-  padding: 0 0.5em;  
+  padding: 0 0.5em 0 0.5em;
   width: fit-content;
   background: white;
 }
@@ -22,18 +21,58 @@
   color: var(--text-muted);
   font-size: smaller;
 }
-.dkani-ui-group {
-  margin-top: 2em;
+
+
+.dkani-ui-group-header {
+  display: flex;
+  cursor: pointer;
+  margin-bottom: 0.3em;
+  margin-top: -26px;
 }
-.dkani-ui-group-title {
-  color: var(--text-muted);
+
+.dkani-ui-group-toggle {
+  width: 1em;
+  font-family: monospace;
+  font-size: 1em;
+  text-align: center;
+  user-select: none;
+  opacity: 0.8;
+  margin-top: 2px;
+  padding: 0 10px 0 10px;
+  background: white;
+}
+
+.dkani-ui-group-body {
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+  will-change: max-height;
+}
+
+.dkani-ui-group-body.collapsed {
+  max-height: 0;
+  opacity: 0.5;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+
+
+
+
+
+.setting-item.dkani-ui-item,
+.setting-item.dkani-ui-group-item {
+  align-items: flex-start;
+}
+.dkani-ui-info-toggle {
+  margin-top: 10px;
 }
 
 .setting-item.dkani-ui-item {
-  align-items: flex-start;
   padding: 0.75em 0 0 1em;
   border-top: unset;
 }
+
 .setting-item.dkani-ui-group-item {
   border-top: none !important;
   margin-top: 0 !important;
@@ -47,15 +86,30 @@
   flex: 0 0 200px; 
   margin-top: 5px;
 }
+.setting-item.dkani-ui-group-item > .setting-item-info.dkani-ui-info-toggle,
+.setting-item.dkani-ui-item > .setting-item-info.dkani-ui-info-toggle {
+  margin-top: 0px;
+}
+.setting-item.dkani-ui-group-item > .setting-item-info.dkani-ui-info-textarea,
+.setting-item.dkani-ui-item > .setting-item-info.dkani-ui-info-textarea {
+  margin-top: 3px;
+}
+
+.obsidian-git-dkani-ui-info-toggle {
+  margin-top: 0px!important;
+}
+
 .setting-item.dkani-ui-group-item > .setting-item-control,
 .setting-item.dkani-ui-item > .setting-item-control {
-  flex: 0 0 auto!important;
+  flex: 1 1 auto!important;
   flex-direction: column;
-  align-items: flex-start;  
+  align-items: flex-start; 
 }
 .setting-item.dkani-ui-group-item > .setting-item-control input,
+.setting-item.dkani-ui-item > .setting-item-control input,
+.setting-item.dkani-ui-group-item > .setting-item-control input,
 .setting-item.dkani-ui-item > .setting-item-control input {
-  max-width: 521px; 
+    max-width: none; 
 }
 
 .setting-item.dkani-ui-group-item > .setting-item-control small,
@@ -65,6 +119,17 @@
   color: var(--text-faint);
   font-size: var(--font-ui-smaller);
   line-height: var(--line-height-tight);
+}
+
+input.dkani-ui-item-short {
+  width: 4em!important;
+  text-align: right;
+}
+
+.dkani-ui-label-code {
+  font-weight: bold;
+  text-transform: uppercase;
+  color: blue;
 }
 
 
@@ -114,20 +179,61 @@
   display: block;
 }
 
+/* StatusLine */
 .dkani-ui-status-wrapper {
   display: flex;
   gap: 0.5em;
   align-items: center;
   flex-wrap: wrap;
 }
-
 .dkani-ui-status-pill {
-  padding: 2px 8px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  padding: 2px 12px 2px 2.5em; /* reserve space for thumb */
   border-radius: 6px;
   font-size: 0.8em;
   white-space: nowrap;
   font-family: var(--font-monospace);
-  background-color: var(--background-secondary-alt);
   color: var(--text-normal);
+  background-color: var(--background-modifier-border-hover);
+  height: calc(var(--toggle-thumb-height) + var(--toggle-border-width) * 2);
+  min-width: 75px;
+  text-align: left;
   user-select: text;
+  box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.07), inset 0 0 1px rgba(0, 0, 0, 0.21);
 }
+
+.dkani-ui-status-pill::before {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background-color: white;
+  background-size: 80% 80%;
+  background-repeat: no-repeat;
+  background-position: 2px 2px;
+}
+
+/* Status variants */
+.dkani-ui-status-pill.enabled {
+  background-color: #a3f7b5; /* light green */
+  color: #166534;
+}
+.dkani-ui-status-pill.enabled::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' stroke='%2315803d' stroke-width='2' viewBox='0 0 24 24'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
+}
+
+.dkani-ui-status-pill.disabled {
+  background-color: var(--background-modifier-border-hover);
+  color: var(--text-muted);
+}
+.dkani-ui-status-pill.disabled::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' stroke='%23ff0000' stroke-width='2' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cline x1='4.93' y1='4.93' x2='19.07' y2='19.07'/%3E%3C/svg%3E");
+}
+

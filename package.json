@@ -29,6 +29,8 @@
     "styles/source-styles.css"
   ],
   "dependencies": {
+    "lucide": "^0.487.0",
+    "lucide-static": "^0.487.0",
     "obsidian": "*"
   },
   "devDependencies": {
