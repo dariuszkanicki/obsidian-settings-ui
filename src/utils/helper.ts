@@ -73,7 +73,7 @@ export function css(pluginId: string, className: string | string[]): string {
   return className.startsWith(prefix) ? className : `${prefix}${className}`;
 }
 
-export function hint<T>(pluginId: string, setting: Setting, element: { path?: Path<T>; hint?: string }) {
+export function hint(pluginId: string, setting: Setting, element: { path?: string; hint?: string }) {
   const hintWrapper = document.createElement('span');
   hintWrapper.className = css(pluginId, 'dkani-ui-hint-wrapper');
 

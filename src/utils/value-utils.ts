@@ -1,5 +1,5 @@
-import { Context, SettingElement } from '..';
-import { getByPath, Path, setByPath } from './path';
+import { ConfigContext, PathSetting } from '../renderer/types';
+import { getByPath, setByPath } from './path';
 
 export function coerceValue<T>(original: T, input: any): T {
   if (typeof original === 'number') {
@@ -16,7 +16,7 @@ export function coerceValue<T>(original: T, input: any): T {
   return String(input).trim() as T;
 }
 
-export async function setValue<T>(context: Context<T>, element: SettingElement<T>, value: any) {
+export async function setValue<T>(context: ConfigContext<T>, element: PathSetting<T>, value: any) {
   if (element.handler) {
     element.handler.setValue(value);
     return;
@@ -36,7 +36,12 @@ export async function setValue<T>(context: Context<T>, element: SettingElement<T
   await context.saveData(context.settings);
 }
 
-export function getValue<T>(settings: T, element: { path?: Path<T>; handler?: any }) {
+// export function getValue<T>(settings: T, element: { path?: Path<T>; handler?: any }) {
+//   const value = element.handler ? element.handler.getValue() : getByPath(settings, element.path);
+//   return value;
+// }
+
+export function getValue<T>(settings: any, element: { path?: string; handler?: any }) {
   const value = element.handler ? element.handler.getValue() : getByPath(settings, element.path);
   return value;
 }

@@ -37,3 +37,14 @@ export function setByPath<T>(obj: T, path: string, value: any): void {
     target[lastKey] = value;
   }
 }
+
+export function getByPathAsString(obj: any, path: string): any {
+  return path.split('.').reduce((acc, key) => acc?.[key], obj);
+}
+
+export function setByPathAsString(obj: any, path: string, value: any): void {
+  const keys = path.split('.');
+  const lastKey = keys.pop();
+  const target = keys.reduce((acc, key) => (acc[key] ??= {}), obj);
+  if (lastKey) target[lastKey] = value;
+}

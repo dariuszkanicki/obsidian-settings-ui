@@ -1,5 +1,10 @@
 import { addCodeHighlightedText } from './helper';
 
+export enum Tag {
+  Open,
+  close,
+}
+
 export class Html {
   private containers: HTMLElement[] = [];
   private cssPrefix: string;
@@ -14,22 +19,28 @@ export class Html {
     return this.elementMap.get(className);
   }
 
-  createDIV(className: string, text?: string): Html {
+  createDIV(className: string, text?: string, tag: Tag = Tag.Open): Html {
     this.containers.push(this._last().createDiv({ cls: this._css(className) }));
     if (text) {
       addCodeHighlightedText(this._last(), this.pluginId, text);
     }
     this.elementMap.set(className, this._last());
+    if (tag === Tag.close) {
+      this.containers.pop();
+    }
     return this;
   }
-  createSPAN(className: string, textContent: string) {
+  createSPAN(className: string, textContent: string, tag: Tag = Tag.Open) {
     this.containers.push(this._last().createSpan({ cls: this._css(className) }));
     this._last().textContent = textContent;
     this.elementMap.set(className, this._last());
+    if (tag === Tag.close) {
+      this.containers.pop();
+    }
     return this;
   }
 
-  and() {
+  closeTag() {
     this.containers.pop();
     return this;
   }

@@ -1,41 +1,32 @@
 import { BaseComponent, Setting } from 'obsidian';
-import { Context, SettingElement } from '..';
-import { AbstractRenderer, IAbstractRendererResult } from './abstract-renderer';
+import { ConfigContext, PathSetting } from './types';
+import { createSetting } from './abstract-base-renderer';
 import { css, hint } from '../utils/helper';
 import { getValue, setValue } from '../utils/value-utils';
 
-export abstract class AbstractPathRenderer<T extends Record<string, any>> extends AbstractRenderer<T> {
-  // prettier-ignore
-  render(
-    context: Context<T>, 
-    container: HTMLElement, 
-    element: SettingElement<T>, 
-    groupMember: boolean
-  ): Setting {
-  
-    const setting = super.render(context, container, element, groupMember);
-    
-    this._renderCommonSettingElements(
-      context, 
-      setting, 
-      this.result.htmlElement, 
-      element,
-      this.result.baseComponent
-    );
+export type PathRendererResult = {
+  baseComponent: BaseComponent;
+  htmlElement: HTMLElement;
+};
+
+export abstract class AbstractPathRenderer<T extends Record<string, any>> {
+  constructor(private context: ConfigContext<T>, private element: PathSetting<T>) {}
+
+  render(container: HTMLElement, groupMember: boolean) {
+    const setting = createSetting(this.context.pluginId, this.element, container, groupMember);
+    const result = this.createElement(this.context.pluginId, setting, this.element);
+
+    this._renderCommonSettingElements(this.context, setting, result.htmlElement, this.element, result.baseComponent);
     return setting;
   }
 
-  protected abstract createElement(
-    pluginId: string,
-    setting: Setting,
-    element: SettingElement<T>
-  ): IAbstractRendererResult;
+  protected abstract createElement(pluginId: string, setting: Setting, element: PathSetting<T>): PathRendererResult;
 
   private async _renderCommonSettingElements(
-    context: Context<T>,
+    context: ConfigContext<T>,
     setting: Setting,
     htmlElement: HTMLElement,
-    element: SettingElement<T>,
+    element: PathSetting<T>,
     baseComponent: BaseComponent
   ) {
     htmlElement.classList.add(css(context.pluginId, 'dkani-ui-item'));
