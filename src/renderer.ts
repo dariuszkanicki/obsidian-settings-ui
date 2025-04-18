@@ -6,30 +6,26 @@ import {
   ToggleComponent,
   ValueComponent,
 } from 'obsidian';
-import {
-  Context,
-  Toggle,
-  Button,
-  Dropdown,
-  SettingObjectElement,
-  Textfield,
-  SettingsElement,
-  SettingsGroup,
-  SettingsSectionConfig,
-} from '.';
-import { Path } from './path';
-import { Helper } from './helper';
-import { ValueHandler } from './value-handler';
+import { Context, Toggle, Button, Dropdown, Textfield, SettingGroup, SettingsSectionConfig, SettingElement } from '.';
+import { Path } from './utils/path';
+import { Helper } from './utils/helper';
 import { StatusRenderer } from './renderer/status-renderer';
 import { TextfieldRenderer } from './renderer/textfield-renderer';
 import { ToggleRenderer } from './renderer/toggle-renderer';
 import { ButtonRenderer } from './renderer/button-renderer';
 import { DropdownRenderer } from './renderer/dropdown-renderer';
-import { Html } from './html';
+import { AbstractRenderer } from './renderer/abstract-renderer';
+import { Html } from './utils/html';
+
+const rendererRegistry: Record<string, new () => AbstractRenderer<any>> = {
+  Button: ButtonRenderer,
+  Dropdown: DropdownRenderer,
+  Status: StatusRenderer,
+  Textfield: TextfieldRenderer,
+  Toggle: ToggleRenderer,
+};
 
 export class Renderer<T extends Record<string, any>> {
-  private helper: Helper<T>;
-  private valueHandler: ValueHandler<T>;
   private context: Context<T>;
 
   constructor(
@@ -39,12 +35,9 @@ export class Renderer<T extends Record<string, any>> {
     private container: HTMLElement,
     private saveData: (settings: T) => Promise<void>
   ) {
-    this.helper = new Helper(pluginId);
-    this.valueHandler = new ValueHandler(settings, saveData);
     this.context = {
       pluginId: this.pluginId,
       settings: this.settings,
-      container: this.container,
       saveData: this.saveData,
     };
   }
@@ -57,7 +50,7 @@ export class Renderer<T extends Record<string, any>> {
     }
 
     for (const el of this.config.elements) {
-      if ('type' in el && el.type === 'SettingsGroup') {
+      if ('type' in el && el.type === 'SettingGroup') {
         const bodyEl = this._renderGroup(el);
         el.items.forEach((item) => this._renderElement(bodyEl, item, true));
       } else {
@@ -66,64 +59,50 @@ export class Renderer<T extends Record<string, any>> {
     }
   }
 
-  private _renderElement(container: HTMLElement, el: SettingsElement<T>, groupMember = false) {
+  private _renderElement(container: HTMLElement, el: SettingElement<T>, groupMember = false) {
     if (el.showIf === false) return;
 
-    this.context.container = container;
-    switch (el.type) {
-      case 'Status':
-        new StatusRenderer(this.context, groupMember, el).render();
-        break;
-      case 'Textfield':
-        new TextfieldRenderer(this.context, groupMember, el).render();
-        // this._renderTextSetting(container, el, groupMember);
-        break;
-      case 'Toggle':
-        // case 'SettingObjectElement':
-        new ToggleRenderer(this.context, groupMember, el).render();
-        break;
-      case 'Button':
-        new ButtonRenderer(this.context, groupMember, el).render();
-        // this._renderButton(container, el, groupMember);
-        break;
-      case 'Dropdown':
-        new DropdownRenderer(this.context, groupMember, el).render();
-        break;
-      default:
-        console.warn('Unknown settings element type', el);
-    }
+    const renderer = new rendererRegistry[el.type]();
+    // console.log('registry', rendererRegistry);
+    // console.log('type', el.type);
+    // console.log('renderer', renderer);
+    renderer.render(this.context, container, el, groupMember);
+    //   default:
+    //     console.warn('Unknown settings element type', el);
+    // }
   }
 
   private _renderHowToSection() {
     const { title, description, readmeURL, classes = {} } = this.config.howTo!;
 
-    const wrapper = this.container.createEl('div', {
-      cls: this.helper.css('dkani-ui-group'),
-    });
+    // const wrapper = this.container.createEl('div', {
+    //   cls: css('dkani-ui-group'),
+    // });
 
-    const header = wrapper.createEl('div', {
-      cls: this.helper.css('dkani-ui-group-header'),
-    });
+    // const header = wrapper.createEl('div', {
+    //   cls: css('dkani-ui-group-header'),
+    // });
 
-    const toggleIcon = header.createSpan({
-      cls: this.helper.css('dkani-ui-group-toggle'),
-    });
-    toggleIcon.textContent = '▼';
+    // const toggleIcon = header.createSpan({
+    //   cls: css('dkani-ui-group-toggle'),
+    // });
+    // toggleIcon.textContent = '▼';
 
-    const titleEl = header.createEl('div', {
-      cls: this.helper.css('dkani-ui-group-title'),
-    });
-    this.helper.setParsedName(titleEl, title ?? 'How to use this plugin');
+    // const titleEl = header.createEl('div', {
+    //   cls: css('dkani-ui-group-title'),
+    // });
+    // setParsedName(titleEl, title ?? 'How to use this plugin');
 
-    const body = wrapper.createDiv({
-      cls: this.helper.css('dkani-ui-group-body'),
-    });
+    // const body = wrapper.createDiv({
+    //   cls: css('dkani-ui-group-body'),
+    // });
 
-    const desc = body.createEl('small', {
-      text: description,
-      cls: classes.description ?? this.helper.css('dkani-ui-howto-text'),
-    });
+    // const desc = body.createEl('small', {
+    //   text: description,
+    //   cls: classes.description ?? css('dkani-ui-howto-text'),
+    // });
 
+    /*
     if (readmeURL) {
       desc.createEl('br');
       desc.createEl('br');
@@ -179,9 +158,10 @@ export class Renderer<T extends Record<string, any>> {
     });
 
     applyState();
+    */
   }
 
-  private _renderGroup(el: SettingsGroup<T>): HTMLElement {
+  private _renderGroup(el: SettingGroup<T>): HTMLElement {
     const html = new Html(this.pluginId, this.container, 'dkani-ui');
     // prettier-ignore
     html.createDIV('group')
@@ -193,13 +173,13 @@ export class Renderer<T extends Record<string, any>> {
         .and()
       .createDIV('group-body');
 
-    // const groupEl = this.container.createEl('div', { cls: this.helper.css('dkani-ui-group')});
-    // const headerEl = groupEl.createEl('div', {cls: this.helper.css('dkani-ui-group-header')});
-    // const toggleIcon = headerEl.createSpan({cls: this.helper.css('dkani-ui-group-toggle')});
+    // const groupEl = this.container.createEl('div', { cls: css('dkani-ui-group')});
+    // const headerEl = groupEl.createEl('div', {cls: css('dkani-ui-group-header')});
+    // const toggleIcon = headerEl.createSpan({cls: css('dkani-ui-group-toggle')});
     // toggleIcon.textContent = '▼';
-    // const titleEl = headerEl.createEl('div', {cls: this.helper.css('dkani-ui-group-title')});
-    // this.helper.setParsedName(titleEl, el.label);
-    // const bodyEl = groupEl.createDiv({cls: this.helper.css('dkani-ui-group-body')});
+    // const titleEl = headerEl.createEl('div', {cls: css('dkani-ui-group-title')});
+    // setParsedName(titleEl, el.label);
+    // const bodyEl = groupEl.createDiv({cls: css('dkani-ui-group-body')});
 
     const key = `dkani-ui-group:${el.label}`;
     let expanded = localStorage.getItem(key) !== 'false';

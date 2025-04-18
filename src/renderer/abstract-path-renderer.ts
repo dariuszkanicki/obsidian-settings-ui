@@ -1,49 +1,64 @@
-import { Context, Dropdown, Textfield, Toggle } from '..';
-import { ValueHandler } from '../value-handler';
-import { AbstractElement } from './abstract-renderer';
+import { BaseComponent, Setting } from 'obsidian';
+import { Context, SettingElement } from '..';
+import { AbstractRenderer, IAbstractRendererResult } from './abstract-renderer';
+import { css, hint } from '../utils/helper';
+import { getValue, setValue } from '../utils/value-utils';
 
-export interface IValueComponent {
-  setValue(val: any): this;
-  onChange(callback: (val: any) => void): this;
-}
+export abstract class AbstractPathRenderer<T extends Record<string, any>> extends AbstractRenderer<T> {
+  // prettier-ignore
+  render(
+    context: Context<T>, 
+    container: HTMLElement, 
+    element: SettingElement<T>, 
+    groupMember: boolean
+  ): Setting {
+  
+    const setting = super.render(context, container, element, groupMember);
+    
+    this._renderCommonSettingElements(
+      context, 
+      setting, 
+      this.result.htmlElement, 
+      element,
+      this.result.baseComponent
+    );
+    return setting;
+  }
 
-export abstract class AbstractPathRenderer<T extends Record<string, any>> extends AbstractElement<T> {
-  protected value: number | string | boolean;
-  protected valueHandler: ValueHandler<T>;
+  protected abstract createElement(
+    pluginId: string,
+    setting: Setting,
+    element: SettingElement<T>
+  ): IAbstractRendererResult;
 
-  constructor(
-    protected context: Context<T>,
-    groupMember: boolean,
-    protected element: Textfield<T> | Toggle<T> | Dropdown<T>
+  private async _renderCommonSettingElements(
+    context: Context<T>,
+    setting: Setting,
+    htmlElement: HTMLElement,
+    element: SettingElement<T>,
+    baseComponent: BaseComponent
   ) {
-    super(context, element.label, groupMember);
-    this.valueHandler = new ValueHandler(this.context.settings, this.context.saveData);
-  }
-  render(): void {
-    super.render();
-    this.value = this.valueHandler.getValue(this.element);
-    const { valueComponent, htmlElement } = this.createElement();
-    this._renderCommonSettingElements(htmlElement, valueComponent);
-  }
-
-  protected abstract createElement(): { valueComponent: IValueComponent; htmlElement: HTMLElement };
-
-  private _renderCommonSettingElements(htmlElement: HTMLElement, valueComponent: IValueComponent) {
-    htmlElement.classList.add(this.helper.css('dkani-ui-item'));
-    if ('setValue' in valueComponent && typeof valueComponent.setValue === 'function') {
-      (valueComponent as any).setValue(this.value).onChange((val: any) => {
-        this.valueHandler.setValue(this.element, val);
-        if (this.element.postSave) {
-          this.element.postSave();
+    htmlElement.classList.add(css(context.pluginId, 'dkani-ui-item'));
+    if ('setValue' in baseComponent && typeof baseComponent.setValue === 'function') {
+      const value = getValue(context.settings, element);
+      if (typeof value === 'number') {
+        (baseComponent as any).setValue(String(value));
+      } else {
+        (baseComponent as any).setValue(value);
+      }
+      (baseComponent as any).onChange(async (val: any) => {
+        await setValue(context, element, val);
+        if (element.postSave) {
+          element.postSave();
         }
       });
     }
 
-    if (this.element.hint) {
-      this.helper.hint(this.setting, this.element);
+    if (element.hint) {
+      hint(context.pluginId, setting, element);
     }
-    if (this.element.desc) {
-      this.setting.controlEl.createEl('small', { text: this.element.desc });
+    if (element.desc) {
+      setting.controlEl.createEl('small', { text: element.desc });
     }
   }
 }

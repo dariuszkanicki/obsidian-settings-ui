@@ -1,36 +1,36 @@
-import { Setting } from 'obsidian';
-import { Helper } from '../helper';
-import { Context } from '..';
+import { BaseComponent, Setting } from 'obsidian';
+import { addCodeHighlightedText, css } from '../utils/helper';
+import { Context, SettingElement } from '..';
 
-export abstract class AbstractElement<T extends Record<string, any>> {
-  protected helper: Helper<Record<string, any>>;
-  protected setting: Setting;
+export interface IAbstractRendererResult {
+  baseComponent: BaseComponent;
+  htmlElement: HTMLElement;
+}
 
-  constructor(
-    protected context: Context<T>,
-    private label: string,
-    private groupMember: boolean
-  ) {
-    this.helper = new Helper(this.context.pluginId);
-  }
+export abstract class AbstractRenderer<T extends Record<string, any>> {
+  protected result: IAbstractRendererResult;
 
-  render(): void {
-    this.setting = this._createSetting();
-    this.renderClassSpecific();
-  }
+  // prettier-ignore
+  render(
+    context: Context<T>, 
+    container: HTMLElement, 
+    element: SettingElement<T>, 
+    groupMember: boolean
+  ): Setting {
 
-  protected abstract renderClassSpecific(): void;
+    const setting = new Setting(container);
 
-  private _createSetting() {
-    const setting = new Setting(this.context.container);
-    if (this.label) {
-      this.helper.setParsedName(setting.nameEl, this.label);
+    if (element.label) {
+      addCodeHighlightedText(setting.nameEl, context.pluginId, element.label);
     }
-    setting.settingEl.addClass(
-      this.helper.css(
-        this.groupMember ? 'dkani-ui-group-item' : 'dkani-ui-item'
-      )
-    );
+    setting.settingEl.addClass(css(context.pluginId, groupMember ? 'dkani-ui-group-item' : 'dkani-ui-item'));
+    this.result = this.createElement(context.pluginId, setting, element);
     return setting;
   }
+
+  protected abstract createElement(
+    pluginId: string,
+    setting: Setting,
+    element: SettingElement<T>
+  ): IAbstractRendererResult;
 }

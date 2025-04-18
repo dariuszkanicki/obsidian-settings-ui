@@ -11,7 +11,8 @@
   },
   "scripts": {
     "test:inject": "pnpm build && node dist/lib/bin/inject-prefixed-styles.js",
-    "build": "node build.mjs"
+    "build": "node build.mjs",
+    "test": "vitest"
   },
   "bin": {
     "dkani-inject-styles": "./dist/lib/bin/inject-prefixed-styles.js"
@@ -41,6 +42,7 @@
     "postcss-cli": "^11.0.1",
     "postcss-prefix-selector": "^2.1.1",
     "ts-node": "^10.9.2",
-    "typescript": "^5.0.0"
+    "typescript": "^5.8.3",
+    "vitest": "^3.1.1"
   }
 }

@@ -1,29 +1,24 @@
-import { TextAreaComponent, TextComponent, ToggleComponent } from 'obsidian';
-import { Context, Textfield, Toggle } from '..';
-import { AbstractPathRenderer, IValueComponent } from './abstract-path-renderer';
+import { Setting, ToggleComponent } from 'obsidian';
+import { Toggle } from '..';
+import { AbstractPathRenderer } from './abstract-path-renderer';
+import { css } from '../utils/helper';
+import { IAbstractRendererResult } from './abstract-renderer';
 
 export class ToggleRenderer<T extends Record<string, any>> extends AbstractPathRenderer<T> {
-  constructor(
-    context: Context<T>,
-    groupMember: boolean,
-    protected element: Toggle<T>
-  ) {
-    super(context, groupMember, element);
-  }
+  // prettier-ignore
+  protected createElement(
+    pluginId: string, 
+    setting: Setting, 
+    element: Toggle<T>
+  ): IAbstractRendererResult {
 
-  protected createElement(): {
-    valueComponent: IValueComponent;
-    htmlElement: HTMLElement;
-  } {
-    let valueComponent!: ToggleComponent;
-    let htmlComponent!: HTMLElement;
+    let renderer: IAbstractRendererResult;
 
-    this.setting.infoEl.addClass(this.helper.css('dkani-ui-info-toggle'));
-    this.setting.addToggle((toggle) => {
-      valueComponent = toggle;
-      htmlComponent = toggle.toggleEl;
+    setting.infoEl.addClass(css(pluginId,'dkani-ui-info-toggle'));
+    setting.addToggle((toggle) => {
+      renderer = { baseComponent: toggle, htmlElement: toggle.toggleEl }
     });
-    return { valueComponent: valueComponent, htmlElement: htmlComponent };
+    return renderer;
   }
 
   renderClassSpecific(): void {

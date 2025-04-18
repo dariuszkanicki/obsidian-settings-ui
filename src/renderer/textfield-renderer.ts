@@ -1,36 +1,33 @@
-import { TextAreaComponent, TextComponent } from 'obsidian';
-import { Context, Textfield } from '..';
-import { AbstractPathRenderer, IValueComponent } from './abstract-path-renderer';
+import { Setting, TextAreaComponent, TextComponent } from 'obsidian';
+import { Textfield } from '..';
+import { AbstractPathRenderer } from './abstract-path-renderer';
+import { css } from '../utils/helper';
+import { IAbstractRendererResult } from './abstract-renderer';
 
 export class TextfieldRenderer<T extends Record<string, any>> extends AbstractPathRenderer<T> {
-  constructor(context: Context<T>, groupMember: boolean, protected element: Textfield<T>) {
-    super(context, groupMember, element);
-  }
+  // prettier-ignore
+  protected createElement(
+    pluginId: string, 
+    setting: Setting, 
+    element: Textfield<T>
+  ): IAbstractRendererResult {
 
-  protected createElement(): {
-    valueComponent: IValueComponent;
-    htmlElement: HTMLElement;
-  } {
-    let valueComponent!: TextComponent | TextAreaComponent;
-    let htmlComponent!: HTMLElement;
+    let renderer: IAbstractRendererResult;
 
-    if (this.element.asTextarea) {
-      this.setting.addTextArea((ta) => {
-        valueComponent = ta;
-        htmlComponent = ta.inputEl;
+    if (element.asTextarea) {
+      setting.addTextArea((ta) => {
+        renderer = { baseComponent: ta, htmlElement: ta.inputEl };
       });
-      this.setting.infoEl.addClass(this.helper.css('dkani-ui-info-textarea'));
+      setting.infoEl.addClass(css(pluginId,'dkani-ui-info-textarea'));
     } else {
-      this.setting.addText((txt) => {
-        if (typeof this.value === 'number') {
-          txt.inputEl.classList.add(this.helper.css('dkani-ui-item-short'));
-        }
-        valueComponent = txt;
-        htmlComponent = txt.inputEl;
+      setting.addText((txt) => {
+        txt.inputEl.type = 'number';
+        // if (typeof this.value === 'number') {
+        //   txt.inputEl.classList.add(css(pluginId,'dkani-ui-item-short'));
+        // }
+        renderer = { baseComponent: txt, htmlElement: txt.inputEl };
       });
     }
-    return { valueComponent: valueComponent, htmlElement: htmlComponent };
+    return renderer;
   }
-
-  renderClassSpecific(): void {}
 }

@@ -1,11 +1,11 @@
-import { addCodeHighlightedText, Helper } from './helper';
+import { addCodeHighlightedText } from './helper';
 
 export class Html {
   private containers: HTMLElement[] = [];
   private cssPrefix: string;
   private elementMap = new Map<string, HTMLElement>();
 
-  constructor(pluginId: string, htmlElement: HTMLElement, cssPrefix: string) {
+  constructor(private pluginId: string, htmlElement: HTMLElement, cssPrefix: string) {
     this.containers.push(htmlElement);
     this.cssPrefix = `${pluginId}-${cssPrefix}`;
   }
@@ -17,7 +17,7 @@ export class Html {
   createDIV(className: string, text?: string): Html {
     this.containers.push(this._last().createDiv({ cls: this._css(className) }));
     if (text) {
-      addCodeHighlightedText(this._last(), this._css('label-code'), text);
+      addCodeHighlightedText(this._last(), this.pluginId, text);
     }
     this.elementMap.set(className, this._last());
     return this;

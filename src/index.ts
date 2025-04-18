@@ -1,6 +1,6 @@
 // index.ts
 import { Renderer } from './renderer';
-import type { Path, ValueAtPath } from './path';
+import type { Path, ValueAtPath } from './utils/path';
 
 export type BaseSettingElement<T extends Record<string, any>> = {
   label?: string;
@@ -39,7 +39,6 @@ export type Toggle<T extends Record<string, any>> = BaseSettingElement<T> & {
 export type Context<T> = {
   pluginId: string;
   settings: T;
-  container: HTMLElement;
   saveData: (settings: T) => Promise<void>;
 };
 export type DropdownItem = {
