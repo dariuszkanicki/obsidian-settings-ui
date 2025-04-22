@@ -16,21 +16,21 @@ export function coerceValue<T>(original: T, input: any): T {
   return String(input).trim() as T;
 }
 
-export async function setValue<T>(context: ConfigContext<T>, element: PathSetting<T>, value: any) {
+export async function setValue<T extends Record<string, any>>(
+  context: ConfigContext<T>,
+  element: PathSetting<T>,
+  value: any
+) {
   if (element.handler) {
     element.handler.setValue(value);
     return;
   }
 
   const current = getByPath(context.settings, element.path);
-  if (element.preSave) {
-    console.log('current', current, typeof current, element.path);
-  }
   const coerced = coerceValue(current, value);
   setByPath(context.settings, element.path, coerced);
 
   if (element.preSave) {
-    console.log('presave', coerced, typeof coerced);
     element.preSave(coerced);
   }
   await context.saveData(context.settings);
@@ -41,7 +41,8 @@ export async function setValue<T>(context: ConfigContext<T>, element: PathSettin
 //   return value;
 // }
 
-export function getValue<T>(settings: any, element: { path?: string; handler?: any }) {
+// export function getValue<T>(settings: any, element: { path?: string; handler?: any }) {
+export function getValue<T extends Record<string, any>>(settings: any, element: PathSetting<T>) {
   const value = element.handler ? element.handler.getValue() : getByPath(settings, element.path);
   return value;
 }

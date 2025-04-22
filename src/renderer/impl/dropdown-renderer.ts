@@ -1,5 +1,5 @@
-import { DropdownComponent, Setting } from 'obsidian';
-import { AbstractPathRenderer, PathRendererResult } from '../abstract-path-renderer';
+import { Setting } from 'obsidian';
+import { AbstractPathRenderer, PathRendererResult } from './abstract-path-renderer';
 import { Dropdown } from '../types';
 
 export class DropdownRenderer<T extends Record<string, any>> extends AbstractPathRenderer<T> {
@@ -10,7 +10,7 @@ export class DropdownRenderer<T extends Record<string, any>> extends AbstractPat
     element: Dropdown<T>
   ): PathRendererResult {
 
-    let result: PathRendererResult;
+    let result!: PathRendererResult;
 
     setting.addDropdown((dropdown) => {
       element.items.forEach((item) => {

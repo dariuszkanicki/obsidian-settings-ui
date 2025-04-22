@@ -1,7 +1,18 @@
+import { App, Plugin } from 'obsidian';
+
+export interface LocalizedSetting {
+  id: string;
+  label?: string;
+  desc?: string;
+  hint?: string;
+  buttonText?: string;
+}
+
 // 🔹Base for all setting types
 export interface BaseSetting {
   type: string;
-  label: string;
+  id?: string;
+  label?: string;
   desc?: string;
   hint?: string;
   customItemClass?: string;
@@ -16,10 +27,17 @@ export interface PersistentSetting<T extends Record<string, any>> {
   postSave?: () => void;
 }
 
-export interface PathSetting<T> extends BaseSetting, PersistentSetting<T> {}
+export interface Conditional<T extends Record<string, any>> {
+  type: 'Conditional';
+  showIf: boolean;
+  items: SettingElement<T>[];
+}
+
+export interface PathSetting<T extends Record<string, any>> extends BaseSetting, PersistentSetting<T> {}
 
 export interface Button extends BaseSetting {
   type: 'Button';
+  buttonText: string;
   onClick: () => void;
 }
 export interface Status extends BaseSetting {
@@ -72,6 +90,7 @@ export type HowToSection = {
 export type SettingElement<T extends Record<string, any>> = 
     Button          | 
     Status          | 
+    Conditional<T>  |
     Dropdown<T>     | 
     Textfield<T>    | 
     Toggle<T>;
@@ -91,9 +110,13 @@ export type SettingsConfig<T extends Record<string, any>> = {
 
 // 🔹Context passed around to path renderers
 export type ConfigContext<T extends Record<string, any>> = {
+  app: App;
+  plugin: Plugin;
   pluginId: string;
   settings: T;
   saveData: (settings: T) => Promise<void>;
+  refreshSettings: () => Promise<void>;
+  settingsMap: Map<string, LocalizedSetting> | null;
 };
 
 // 🔹Shared setting handler interface

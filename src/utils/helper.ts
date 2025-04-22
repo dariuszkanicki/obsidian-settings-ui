@@ -65,6 +65,14 @@ export function addCodeHighlightedText(container: HTMLElement, pluginId: string,
     }
   }
 }
+export function prefixed(pluginId: string, className: string | string[]): string {
+  const prefix = `${pluginId}-dkani-ui-`;
+  if (Array.isArray(className)) {
+    return className.map((cls) => (cls.startsWith(prefix) ? cls : `${prefix}${cls}`)).join(' ');
+  }
+  return className.startsWith(prefix) ? className : `${prefix}${className}`;
+}
+
 export function css(pluginId: string, className: string | string[]): string {
   const prefix = `${pluginId}-`;
   if (Array.isArray(className)) {
@@ -73,7 +81,7 @@ export function css(pluginId: string, className: string | string[]): string {
   return className.startsWith(prefix) ? className : `${prefix}${className}`;
 }
 
-export function hint(pluginId: string, setting: Setting, element: { path?: string; hint?: string }) {
+export function hint(pluginId: string, setting: Setting, path: string, hint: string) {
   const hintWrapper = document.createElement('span');
   hintWrapper.className = css(pluginId, 'dkani-ui-hint-wrapper');
 
@@ -82,14 +90,14 @@ export function hint(pluginId: string, setting: Setting, element: { path?: strin
   hintIcon.tabIndex = 0;
   hintIcon.innerText = 'ℹ️';
 
-  const uid = `hint-${String(element.path)}`;
+  const uid = `hint-${path}`;
   hintIcon.setAttribute('aria-describedby', uid);
 
   const tooltip = document.createElement('div');
   tooltip.className = css(pluginId, 'dkani-ui-tooltip');
   tooltip.id = uid;
   tooltip.role = 'tooltip';
-  tooltip.innerText = element.hint ?? '';
+  tooltip.innerText = hint ?? '';
 
   hintWrapper.appendChild(hintIcon);
   hintWrapper.appendChild(tooltip);

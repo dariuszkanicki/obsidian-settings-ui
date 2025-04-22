@@ -1,4 +1,4 @@
-import { Html, Tag } from '../utils/html';
+import { Html, Tag } from '../../utils/html';
 
 export class GroupRenderer {
   constructor(private pluginId: string, private container: HTMLElement) {}
@@ -15,9 +15,9 @@ export class GroupRenderer {
 
     const key = `${this.pluginId}-dkani-ui-group:${label}`;
     let expanded = localStorage.getItem(key) !== 'false';
-    const bodyEl = html.getElement('group-body');
-    const toggleIcon = html.getElement('group-toggle');
-    const titleEl = html.getElement('group-title');
+    const bodyEl = html.getElement('group-body')!;
+    const toggleIcon = html.getElement('group-toggle')!;
+    const titleEl = html.getElement('group-title')!;
 
     const applyState = () => {
       if (expanded) {

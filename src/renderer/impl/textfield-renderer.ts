@@ -1,7 +1,8 @@
 import { Setting } from 'obsidian';
 import { css } from '../../utils/helper';
-import { AbstractPathRenderer, PathRendererResult } from '../abstract-path-renderer';
+import { AbstractPathRenderer, PathRendererResult } from './abstract-path-renderer';
 import { Textfield } from '../types';
+import { getValue } from '../../utils/value-utils';
 
 export class TextfieldRenderer<T extends Record<string, any>> extends AbstractPathRenderer<T> {
   // prettier-ignore
@@ -11,7 +12,7 @@ export class TextfieldRenderer<T extends Record<string, any>> extends AbstractPa
     element: Textfield<T>
   ): PathRendererResult {
 
-    let result: PathRendererResult;
+    let result!: PathRendererResult;
 
     if (element.asTextarea) {
       setting.addTextArea((ta) => {
@@ -20,10 +21,11 @@ export class TextfieldRenderer<T extends Record<string, any>> extends AbstractPa
       setting.infoEl.addClass(css(pluginId,'dkani-ui-info-textarea'));
     } else {
       setting.addText((txt) => {
-        txt.inputEl.type = 'number';
-        // if (typeof this.value === 'number') {
-        //   txt.inputEl.classList.add(css(pluginId,'dkani-ui-item-short'));
-        // }
+        const dataType = typeof getValue(this.context.settings, element);
+        if (dataType === 'number') {
+          txt.inputEl.type = 'number';
+          txt.inputEl.classList.add(css(pluginId,'dkani-ui-item-short'));
+        }
         result = { baseComponent: txt, htmlElement: txt.inputEl };
       });
     }

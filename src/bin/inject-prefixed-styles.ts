@@ -9,7 +9,7 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const match = __dirname.match(/^(.*obsidian-settings-ui)/i);
-const rootDir = match?.[1];
+const rootDir = match?.[1]!;
 
 // 1. Resolve target (consumer plugin) root
 // 🧪 Use test fixture paths if testing standalone
@@ -19,13 +19,12 @@ const pluginDir = isTest ? path.join(rootDir, 'test-fixtures') : cwd;
 
 // Paths
 const manifestPath = path.join(pluginDir, 'manifest.json');
-console.log("manifestPath",manifestPath);
+console.log('manifestPath', manifestPath);
 
 const targetCssPath = path.join(pluginDir, 'styles.css');
-const sourceCssPath = isTest ? 
-                path.join(rootDir, 'styles/source-styles.css') 
-                :
-                path.join(pluginDir, 'node_modules/@dkani/obsidian-settings-ui/styles/source-styles.css');
+const sourceCssPath = isTest
+  ? path.join(rootDir, 'styles/source-styles.css')
+  : path.join(pluginDir, 'node_modules/@dkani/obsidian-settings-ui/styles/source-styles.css');
 
 // 2. Read manifest for plugin ID
 if (!fs.existsSync(manifestPath)) {
@@ -62,17 +61,17 @@ postcss([
       return selector.replace(/\.(dkani-ui-[\w-]+)/g, (_, className) => {
         return `.${pluginId}-${className}`;
       });
-    }
-  })
+    },
+  }),
 ])
   .process(sourceCss, { from: undefined })
-  .then(result => {
+  .then((result) => {
     const prefixedBlock = `\n${startMarker}\n${result.css}\n${endMarker}\n`;
     const mergedCss = `${targetCss.trim()}\n\n${prefixedBlock}`;
     fs.writeFileSync(targetCssPath, mergedCss, 'utf8');
     console.log(`✅ Shared styles injected for '${pluginId}' into styles.css`);
   })
-  .catch(err => {
+  .catch((err) => {
     console.error('❌ Error during PostCSS processing:', err);
     process.exit(1);
   });

@@ -48,6 +48,6 @@ export class Html {
     return `${this.cssPrefix}-${className}`;
   }
   private _last(): HTMLElement {
-    return this.containers.at?.(-1);
+    return this.containers.at?.(-1)!;
   }
 }

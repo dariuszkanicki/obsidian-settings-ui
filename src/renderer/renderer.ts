@@ -1,42 +1,61 @@
 import { rendererRegistry } from './registry';
-import { AbstractBaseRenderer } from './abstract-base-renderer';
-import { AbstractPathRenderer } from './abstract-path-renderer';
-import { ConfigContext, SettingsConfig, SettingElement, BaseSetting, PathSetting } from './types';
-import { GroupRenderer } from './group-renderer';
-import { renderHowToSection } from './howto-renderer';
+import { AbstractBaseRenderer } from './impl/abstract-base-renderer';
+import { AbstractPathRenderer } from './impl/abstract-path-renderer';
+import { ConfigContext, SettingsConfig, SettingElement, BaseSetting, PathSetting, LocalizedSetting } from './types';
+import { GroupRenderer } from './impl/group-renderer';
+import { renderHowToSection } from './impl/howto-renderer';
+import { loadLocalizedSettings } from '../i18n/loader';
+import { App, Plugin } from 'obsidian';
+import { renderGear } from './gear';
 
 export class Renderer<T extends Record<string, any>> {
   private context: ConfigContext<T>;
-
   constructor(
-    private pluginId: string,
+    private app: App,
+    private plugin: Plugin,
     private config: SettingsConfig<T>,
     private settings: T,
     private container: HTMLElement,
-    private saveData: (settings: T) => Promise<void>
+    private saveData: (settings: T) => Promise<void>,
+    private refreshSettings: () => Promise<void>
   ) {
     this.context = {
-      pluginId: this.pluginId,
+      app: this.app,
+      plugin: this.plugin,
+      pluginId: this.plugin.manifest.id,
       settings: this.settings,
       saveData: this.saveData,
+      refreshSettings: this.refreshSettings,
+      settingsMap: null,
     };
   }
 
-  renderSettings() {
+  async renderSettings() {
+    this.context.settingsMap = await loadLocalizedSettings(this.plugin);
     this.container.empty();
 
-    const groupRenderer = new GroupRenderer(this.pluginId, this.container);
+    await renderGear(this.context, this.container);
+
+    const groupRenderer = new GroupRenderer(this.context.pluginId, this.container);
 
     if (this.config.howTo) {
       const label = this.config.howTo.label ?? 'How to use this plugin';
       const howtoEl = groupRenderer.render(label);
-      renderHowToSection(howtoEl, this.pluginId, this.config.howTo);
+      renderHowToSection(howtoEl, this.context.pluginId, this.config.howTo);
     }
 
     for (const el of this.config.elements) {
       if ('type' in el && el.type === 'SettingGroup') {
         const bodyEl = groupRenderer.render(el.label);
-        el.items.forEach((item) => this._renderElement(bodyEl, item, true));
+        el.items.forEach((item) => {
+          if ('type' in item && item.type === 'Conditional') {
+            if (item.showIf === true) {
+              item.items.forEach((conditionalItem) => this._renderElement(bodyEl, conditionalItem, true));
+            }
+          } else {
+            this._renderElement(bodyEl, item, true);
+          }
+        });
       } else {
         this._renderElement(this.container, el);
       }
@@ -58,19 +77,14 @@ export class Renderer<T extends Record<string, any>> {
       return;
     }
 
-    let renderer: AbstractBaseRenderer | AbstractPathRenderer<unknown>;
+    let renderer: AbstractBaseRenderer<T> | AbstractPathRenderer<T>;
 
     if (entry.type === 'base') {
-      // Base renderers expect (pluginId, element)
-      renderer = new entry.ctor(this.pluginId, el as BaseSetting);
+      renderer = new entry.ctor(this.context, el as BaseSetting);
     } else if (entry.type === 'path') {
-      // Path renderers expect (context, element)
-      const context: ConfigContext<T> = {
-        pluginId: this.pluginId,
-        settings: this.settings,
-        saveData: this.saveData,
-      };
-      renderer = new entry.ctor(context, el as PathSetting<T>);
+      renderer = new entry.ctor(this.context, el as PathSetting<T>);
+    } else {
+      throw Error(`unknown renderer type ${el.type}`);
     }
     renderer.render(container, groupMember);
   }

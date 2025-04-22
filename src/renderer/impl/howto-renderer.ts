@@ -1,5 +1,5 @@
-import { css } from '../utils/helper';
-import { HowToSection } from './types';
+import { css } from '../../utils/helper';
+import { HowToSection } from '../types';
 
 export function renderHowToSection(bodyEl: HTMLElement, pluginId: string, howTo: HowToSection) {
   const { description, readmeURL, classes = {} } = howTo!;
