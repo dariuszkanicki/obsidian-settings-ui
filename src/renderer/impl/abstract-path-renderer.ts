@@ -1,8 +1,8 @@
 import { BaseComponent, Setting } from 'obsidian';
 import { ConfigContext, PathSetting } from '../types';
-import { css, hint } from '../../utils/helper';
+import { addCodeHighlightedText, css, hint } from '../../utils/helper';
 import { getValue, setValue } from '../../utils/value-utils';
-import { createSetting, getTranslation } from './setting-helper';
+import { createSetting, getTranslation, replacePlaceholders } from './setting-helper';
 import { getLocalStorage } from '../../i18n/loader';
 
 export type PathRendererResult = {
@@ -17,10 +17,17 @@ export abstract class AbstractPathRenderer<T extends Record<string, any>> {
     const setting = createSetting(this.context, this.element, container, groupMember);
     const result = this.createElement(this.context.pluginId, setting, this.element);
     this._renderCommonSettingElements(this.context, setting, result.htmlElement, this.element, result.baseComponent);
-    return setting;
+    return result;
   }
 
   protected abstract createElement(pluginId: string, setting: Setting, element: PathSetting<T>): PathRendererResult;
+
+  protected async onChange(context: ConfigContext<T>, element: PathSetting<T>, value: any) {
+    await setValue(context, element, value);
+    if (element.postSave) {
+      element.postSave();
+    }
+  }
 
   private async _renderCommonSettingElements(
     context: ConfigContext<T>,
@@ -32,25 +39,34 @@ export abstract class AbstractPathRenderer<T extends Record<string, any>> {
     htmlElement.classList.add(css(context.pluginId, 'dkani-ui-item'));
     if ('setValue' in baseComponent && typeof baseComponent.setValue === 'function') {
       const value = getValue(context.settings, element);
-      if (typeof value === 'number') {
-        (baseComponent as any).setValue(String(value));
-      } else {
-        (baseComponent as any).setValue(value);
+      // if placeholder is set, don't set the value if it's equals placeholder, so the placeholder is displayed as such
+      if (element.placeholder === undefined || element.placeholder !== value) {
+        if (typeof value === 'number') {
+          (baseComponent as any).setValue(String(value));
+        } else {
+          (baseComponent as any).setValue(value);
+        }
       }
       (baseComponent as any).onChange(async (val: any) => {
-        await setValue(context, element, val);
-        if (element.postSave) {
-          element.postSave();
-        }
+        this.onChange(context, element, val);
+        // await setValue(context, element, val);
+        // if (element.postSave) {
+        //   element.postSave();
+        // }
       });
     }
 
     const translation = getTranslation(context, element);
+    let hintString = element.hint;
 
     if (translation && translation.hint) {
-      hint(context.pluginId, setting, element.path, translation.hint);
-    } else if (element.hint) {
-      hint(context.pluginId, setting, element.path, element.hint);
+      hintString = translation.hint;
+      if (element.hintParameters) {
+        hintString = replacePlaceholders(hintString, element.hintParameters);
+      }
+    }
+    if (hintString) {
+      hint(context.pluginId, setting, element.path, hintString);
     }
 
     let small: HTMLElement | undefined;

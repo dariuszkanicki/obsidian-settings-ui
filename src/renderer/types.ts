@@ -13,15 +13,29 @@ export interface BaseSetting {
   type: string;
   id?: string;
   label?: string;
+  labelParameters?: string[];
   desc?: string;
   hint?: string;
+  hintParameters?: string[];
   customItemClass?: string;
+  showIf?: boolean;
+  disabled?: boolean;
+}
+
+// 🔹Base for all setting types
+export interface GroupSetting<T extends Record<string, any>> {
+  type: string;
+  items: SettingElement<T>[];
+  id?: string;
+  label?: string;
+  labelParameters?: string[];
   showIf?: boolean;
 }
 
 // 🔹additionally for settings that store values (e.g., in your plugin's settings object)
 export interface PersistentSetting<T extends Record<string, any>> {
   path: string;
+  placeholder?: string | number;
   handler?: SettingHandler;
   preSave?: (value: any) => void;
   postSave?: () => void;
@@ -44,15 +58,22 @@ export interface Status extends BaseSetting {
   type: 'Status';
   items: StatusField[];
 }
+export interface RadioGroup<T extends Record<string, any>> extends GroupSetting<T> {
+  type: 'RadioGroup';
+  items: Toggle<T>[];
+  postSave?: () => void;
+  defaultIndex?: number;
+}
 
 export interface Textfield<T extends Record<string, any>> extends PathSetting<T> {
   type: 'Textfield';
   asTextarea?: boolean;
-  placeholder?: string;
+  placeholder?: string | number;
   customInputClass?: string;
 }
 export interface Toggle<T extends Record<string, any>> extends PathSetting<T> {
   type: 'Toggle';
+  radioCallback?: (path: string, value: boolean) => void;
 }
 export interface Dropdown<T extends Record<string, any>> extends PathSetting<T> {
   type: 'Dropdown';
@@ -90,6 +111,7 @@ export type HowToSection = {
 export type SettingElement<T extends Record<string, any>> = 
     Button          | 
     Status          | 
+    RadioGroup<T>   |
     Conditional<T>  |
     Dropdown<T>     | 
     Textfield<T>    | 

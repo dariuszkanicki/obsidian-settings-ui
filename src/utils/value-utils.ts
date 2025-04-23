@@ -3,6 +3,9 @@ import { getByPath, setByPath } from './path';
 
 export function coerceValue<T>(original: T, input: any): T {
   if (typeof original === 'number') {
+    if (input === '') {
+      return 0 as T;
+    }
     const parsed = parseFloat(input);
     return isNaN(parsed) ? original : (parsed as T);
   }
@@ -16,18 +19,19 @@ export function coerceValue<T>(original: T, input: any): T {
   return String(input).trim() as T;
 }
 
-export async function setValue<T extends Record<string, any>>(
-  context: ConfigContext<T>,
-  element: PathSetting<T>,
-  value: any
-) {
+export async function setValue<T extends Record<string, any>>(context: ConfigContext<T>, element: PathSetting<T>, value: any) {
   if (element.handler) {
     element.handler.setValue(value);
     return;
   }
 
+  console.log('context.settings', context.settings);
   const current = getByPath(context.settings, element.path);
+  console.log('current', current, typeof current);
+
   const coerced = coerceValue(current, value);
+  console.log('coerced', coerced, typeof coerced);
+
   setByPath(context.settings, element.path, coerced);
 
   if (element.preSave) {

@@ -1,12 +1,13 @@
 import { rendererRegistry } from './registry';
 import { AbstractBaseRenderer } from './impl/abstract-base-renderer';
 import { AbstractPathRenderer } from './impl/abstract-path-renderer';
-import { ConfigContext, SettingsConfig, SettingElement, BaseSetting, PathSetting, LocalizedSetting } from './types';
+import { ConfigContext, SettingsConfig, SettingElement, BaseSetting, PathSetting, LocalizedSetting, GroupSetting } from './types';
 import { GroupRenderer } from './impl/group-renderer';
 import { renderHowToSection } from './impl/howto-renderer';
 import { loadLocalizedSettings } from '../i18n/loader';
 import { App, Plugin } from 'obsidian';
 import { renderGear } from './gear';
+import { AbstractGroupRenderer } from './impl/abstract-group-renderer';
 
 export class Renderer<T extends Record<string, any>> {
   private context: ConfigContext<T>;
@@ -77,12 +78,14 @@ export class Renderer<T extends Record<string, any>> {
       return;
     }
 
-    let renderer: AbstractBaseRenderer<T> | AbstractPathRenderer<T>;
+    let renderer: AbstractBaseRenderer<T> | AbstractPathRenderer<T> | AbstractGroupRenderer<T>;
 
     if (entry.type === 'base') {
       renderer = new entry.ctor(this.context, el as BaseSetting);
     } else if (entry.type === 'path') {
       renderer = new entry.ctor(this.context, el as PathSetting<T>);
+    } else if (entry.type === 'group') {
+      renderer = new entry.ctor(this.context, el as GroupSetting<T>);
     } else {
       throw Error(`unknown renderer type ${el.type}`);
     }

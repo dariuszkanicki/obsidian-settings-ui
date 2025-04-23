@@ -71,7 +71,7 @@ class GearRenderer {
   private _createCloseIcon() {
     const closeButton = this.settingsPanel.createEl('div');
     setIcon(closeButton, 'circle-x');
-    closeButton.classList.add(prefixed(this.pluginId, 'gear-close-button');
+    closeButton.classList.add(prefixed(this.pluginId, 'gear-close-button'));
     closeButton.addEventListener('click', () => {
       this.settingsPanel.classList.remove('visible');
       setLocalStorage(this.plugin, 'slideout', 'closed');

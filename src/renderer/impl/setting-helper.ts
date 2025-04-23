@@ -1,6 +1,6 @@
 import { Setting } from 'obsidian';
 import { addCodeHighlightedText, css } from '../../utils/helper';
-import { ConfigContext, BaseSetting, PathSetting } from '../types';
+import { ConfigContext, BaseSetting, PathSetting, SettingElement } from '../types';
 import { getLocalStorage, saveMap } from '../../i18n/loader';
 
 // prettier-ignore
@@ -12,7 +12,7 @@ export function createSetting<T extends Record<string, any>>(
 ): Setting {
 
   const setting = new Setting(container);
-  _setLabel();
+  setLabel(context,element,setting.nameEl);
   _setLabelWith();
   _setLabelFontSize();
 
@@ -33,24 +33,6 @@ export function createSetting<T extends Record<string, any>>(
     }
   }
 
-
-
-
-  function _setLabel<T>() {
-    const translation = getTranslation(context, element);
-    let label: string | undefined;
-    if (translation) {
-      label = translation.label;
-    } else {
-      label = element.label;
-    }
-    if (label !== undefined) {
-      addCodeHighlightedText(setting.nameEl, context.pluginId, label);
-    } else {
-      console.warn('label not specified', element);
-      _updateTranslation();
-    }
-  }
   function _updateTranslation<T extends Record<string, any>>() {
     const key = 'path' in element ? element.path : (element.id ?? undefined);
     if (key) {
@@ -69,4 +51,49 @@ export function getTranslation<T extends Record<string, any>>(context: ConfigCon
     return context.settingsMap!.get(key);
   }
   return undefined;
+}
+
+export function replacePlaceholders(template: string, replacements: string[]): string {
+  return template.replace(/\$\{(\d+)\}/g, (_, index) => {
+    const i = parseInt(index, 10) - 1;
+    return replacements[i] ?? '';
+  });
+}
+
+export function setLabel<T extends Record<string, any>>(context: ConfigContext<T>, element: BaseSetting, htmlElement: HTMLElement) {
+  const translation = getTranslation(context, element);
+  let labelString = element.label;
+
+  if (translation && translation.label) {
+    labelString = translation.label;
+    if (element.labelParameters) {
+      labelString = replacePlaceholders(labelString, element.labelParameters);
+    }
+  }
+
+  if (labelString !== undefined) {
+    addCodeHighlightedText(htmlElement, context.pluginId, labelString);
+  } else {
+    console.warn('label not specified', element);
+    // _updateTranslation();
+  }
+}
+
+export function getLabel<T extends Record<string, any>>(context: ConfigContext<T>, element: BaseSetting) {
+  const translation = getTranslation(context, element);
+  let labelString = element.label;
+
+  if (translation && translation.label) {
+    labelString = translation.label;
+    if (element.labelParameters) {
+      labelString = replacePlaceholders(labelString, element.labelParameters);
+    }
+  }
+
+  if (labelString !== undefined) {
+    return labelString;
+  } else {
+    console.warn('label not specified', element);
+    return labelString;
+  }
 }

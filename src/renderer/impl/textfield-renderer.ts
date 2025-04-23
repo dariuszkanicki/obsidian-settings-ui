@@ -1,4 +1,4 @@
-import { Setting } from 'obsidian';
+import { Setting, TextAreaComponent, TextComponent } from 'obsidian';
 import { css } from '../../utils/helper';
 import { AbstractPathRenderer, PathRendererResult } from './abstract-path-renderer';
 import { Textfield } from '../types';
@@ -28,6 +28,9 @@ export class TextfieldRenderer<T extends Record<string, any>> extends AbstractPa
         }
         result = { baseComponent: txt, htmlElement: txt.inputEl };
       });
+    }
+    if (element.placeholder !== undefined) {
+      (result.baseComponent as (TextComponent | TextAreaComponent)).setPlaceholder(String(element.placeholder));
     }
     return result;
   }

@@ -130,11 +130,11 @@
 /* On wider screens, set a max width for text inputs & textarea */
 @media (min-width: 640px) {
   .setting-item-control input[class*='-dkani-ui-item']:not([type='checkbox']) {
-    max-width: 400px;
+    max-width: 472px;
   }
 
   .setting-item-control textarea[class*='-dkani-ui-item'] {
-    max-width: 400px;
+    max-width: 472px;
     height: 5em;
   }
 }
@@ -296,4 +296,7 @@ input.dkani-ui-item-short {
   border: none;
   font-size: 1.5em;
   cursor: pointer;
+}
+.dkani-ui-group.radio {
+  max-width: 708px;
 }
