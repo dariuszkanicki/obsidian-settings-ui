@@ -1,4 +1,4 @@
-import { addCodeHighlightedText } from './helper';
+import { addCodeHighlightedText, css } from './helper';
 
 export enum Tag {
   Open,
@@ -7,12 +7,10 @@ export enum Tag {
 
 export class Html {
   private containers: HTMLElement[] = [];
-  private cssPrefix: string;
   private elementMap = new Map<string, HTMLElement>();
 
-  constructor(private pluginId: string, htmlElement: HTMLElement, cssPrefix: string) {
+  constructor(htmlElement: HTMLElement) {
     this.containers.push(htmlElement);
-    this.cssPrefix = `${pluginId}-${cssPrefix}`;
   }
 
   getElement(className: string) {
@@ -20,9 +18,9 @@ export class Html {
   }
 
   createDIV(className: string, text?: string, tag: Tag = Tag.Open): Html {
-    this.containers.push(this._last().createDiv({ cls: this._css(className) }));
+    this.containers.push(this._last().createDiv({ cls: css(className) }));
     if (text) {
-      addCodeHighlightedText(this._last(), this.pluginId, text);
+      addCodeHighlightedText(this._last(), text);
     }
     this.elementMap.set(className, this._last());
     if (tag === Tag.close) {
@@ -31,7 +29,7 @@ export class Html {
     return this;
   }
   createSPAN(className: string, textContent: string, tag: Tag = Tag.Open) {
-    this.containers.push(this._last().createSpan({ cls: this._css(className) }));
+    this.containers.push(this._last().createSpan({ cls: css(className) }));
     this._last().textContent = textContent;
     this.elementMap.set(className, this._last());
     if (tag === Tag.close) {
@@ -43,9 +41,6 @@ export class Html {
   closeTag() {
     this.containers.pop();
     return this;
-  }
-  private _css(className: string) {
-    return `${this.cssPrefix}-${className}`;
   }
   private _last(): HTMLElement {
     return this.containers.at?.(-1)!;

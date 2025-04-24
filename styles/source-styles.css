@@ -111,6 +111,22 @@
   height: 90%;
 }
 
+.dkani-ui-group-item > .setting-item-control input[type='number'] + label,
+.dkani-ui-item > .setting-item-control input[type='number'] + label,
+.dkani-ui-group-item > .setting-item-control input[type='number'] + label,
+.dkani-ui-item > .setting-item-control input[type='number'] + label {
+  white-space: nowrap;
+}
+
+.dkani-ui-group-item > .setting-item-control.number,
+.dkani-ui-item > .setting-item-control.number {
+  display: inline-flex;
+  align-items: center !important;
+  gap: 6px;
+  flex: none !important;
+  flex-direction: unset;
+}
+
 .setting-item.dkani-ui-group-item > .setting-item-control small,
 .setting-item.dkani-ui-item > .setting-item-control small {
   margin-top: -0.5em;
@@ -150,12 +166,12 @@ input.dkani-ui-item-short {
   color: blue;
 }
 
-.dkani-ui-hint-wrapper {
+.dkani-ui-tooltip-wrapper {
   position: relative;
   display: inline-block;
 }
 
-.dkani-ui-hint-icon {
+.dkani-ui-tooltip-icon {
   font-size: 0.7em; /* Smaller text */
   vertical-align: super; /* Superscript position */
   opacity: 0.7;
@@ -166,8 +182,8 @@ input.dkani-ui-item-short {
   display: inline-block;
 }
 
-.dkani-ui-hint-icon:hover,
-.dkani-ui-hint-icon:focus {
+.dkani-ui-tooltip-icon:hover,
+.dkani-ui-tooltip-icon:focus {
   opacity: 1;
 }
 
@@ -191,8 +207,8 @@ input.dkani-ui-item-short {
 }
 
 /* Show on hover or focus */
-.dkani-ui-hint-icon:hover + .dkani-ui-tooltip,
-.dkani-ui-hint-icon:focus + .dkani-ui-tooltip {
+.dkani-ui-tooltip-icon:hover + .dkani-ui-tooltip,
+.dkani-ui-tooltip-icon:focus + .dkani-ui-tooltip {
   display: block;
 }
 

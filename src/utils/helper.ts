@@ -1,105 +1,94 @@
 import { Setting } from 'obsidian';
-import { Path } from './path';
+import { BaseSetting, LocalizedSetting, PathSetting } from '../renderer/types';
+import { ContextService } from './context-service';
+import { replacePlaceholders } from '../renderer/impl/setting-helper';
 
-export class Helper<T extends Record<string, any>> {
-  constructor(private pluginId: string) {}
-
-  hint(setting: Setting, element: { path?: Path<T>; hint?: string }) {
-    const hintWrapper = document.createElement('span');
-    hintWrapper.className = this.css('dkani-ui-hint-wrapper');
-
-    const hintIcon = document.createElement('span');
-    hintIcon.className = this.css('dkani-ui-hint-icon');
-    hintIcon.tabIndex = 0;
-    hintIcon.innerText = 'ℹ️';
-
-    const uid = `hint-${String(element.path)}`;
-    hintIcon.setAttribute('aria-describedby', uid);
-
-    const tooltip = document.createElement('div');
-    tooltip.className = this.css('dkani-ui-tooltip');
-    tooltip.id = uid;
-    tooltip.role = 'tooltip';
-    tooltip.innerText = element.hint ?? '';
-
-    hintWrapper.appendChild(hintIcon);
-    hintWrapper.appendChild(tooltip);
-    setting.nameEl.appendChild(hintWrapper);
-  }
-
-  setParsedName(container: HTMLElement, label: string) {
-    container.empty();
-    const parts = label.split(/(`[^`]+`)/);
-    for (const part of parts) {
-      if (part.startsWith('`') && part.endsWith('`')) {
-        container.createEl('code', {
-          text: part.slice(1, -1),
-          cls: this.css('dkani-ui-label-code'),
-        });
-      } else {
-        container.createEl('span', { text: part });
-      }
-    }
-  }
-
-  css(className: string | string[]): string {
-    const prefix = `${this.pluginId}-`;
-    if (Array.isArray(className)) {
-      return className.map((cls) => (cls.startsWith(prefix) ? cls : `${prefix}${cls}`)).join(' ');
-    }
-    return className.startsWith(prefix) ? className : `${prefix}${className}`;
-  }
-}
-
-export function addCodeHighlightedText(container: HTMLElement, pluginId: string, label: string) {
+export function addCodeHighlightedText(container: HTMLElement, label: string) {
   container.empty();
   const parts = label.split(/(`[^`]+`)/);
   for (const part of parts) {
     if (part.startsWith('`') && part.endsWith('`')) {
       container.createEl('code', {
         text: part.slice(1, -1),
-        cls: `${pluginId}-dkani-ui-label-code`,
+        cls: css('label-code'),
       });
     } else {
       container.createEl('span', { text: part });
     }
   }
 }
-export function prefixed(pluginId: string, className: string | string[]): string {
-  const prefix = `${pluginId}-dkani-ui-`;
+
+export function css(className: string | string[]): string {
+  const prefix = `${ContextService.pluginId()}-dkani-ui-`;
   if (Array.isArray(className)) {
     return className.map((cls) => (cls.startsWith(prefix) ? cls : `${prefix}${cls}`)).join(' ');
   }
   return className.startsWith(prefix) ? className : `${prefix}${className}`;
 }
 
-export function css(pluginId: string, className: string | string[]): string {
-  const prefix = `${pluginId}-`;
-  if (Array.isArray(className)) {
-    return className.map((cls) => (cls.startsWith(prefix) ? cls : `${prefix}${cls}`)).join(' ');
+export function tooltip<T>(setting: Setting, element: BaseSetting | PathSetting<T>) {
+  const result = translation(element, 'tooltip', element.tooltip, element.tooltipParameters);
+  if (result) {
+    const wrapper = document.createElement('span');
+    wrapper.className = css('tooltip-wrapper');
+
+    const tooltipIcon = document.createElement('span');
+    tooltipIcon.className = css('tooltip-icon');
+    tooltipIcon.tabIndex = 0;
+    tooltipIcon.innerText = 'ℹ️';
+    const id = 'path' in element ? element.path : element.id;
+    const uid = `tooltip-${id}`;
+    tooltipIcon.setAttribute('aria-describedby', uid);
+
+    const tooltipDiv = document.createElement('div');
+    tooltipDiv.className = css('tooltip');
+    tooltipDiv.id = uid;
+    tooltipDiv.role = 'tooltip';
+    tooltipDiv.innerText = result;
+
+    wrapper.appendChild(tooltipIcon);
+    wrapper.appendChild(tooltipDiv);
+    setting.nameEl.appendChild(wrapper);
   }
-  return className.startsWith(prefix) ? className : `${prefix}${className}`;
 }
 
-export function hint(pluginId: string, setting: Setting, path: string, hint: string) {
-  const hintWrapper = document.createElement('span');
-  hintWrapper.className = css(pluginId, 'dkani-ui-hint-wrapper');
+export function hint<T>(noHint: boolean | undefined, setting: Setting, element: BaseSetting | PathSetting<T>) {
+  let small: HTMLElement | undefined;
 
-  const hintIcon = document.createElement('span');
-  hintIcon.className = css(pluginId, 'dkani-ui-hint-icon');
-  hintIcon.tabIndex = 0;
-  hintIcon.innerText = 'ℹ️';
+  if (noHint === undefined || !noHint) {
+    const descString = translation(element, 'hint', element.hint);
+    if (descString) {
+      small = setting.controlEl.createEl('small', { text: descString });
+    }
+  }
+  return small;
+}
 
-  const uid = `hint-${path}`;
-  hintIcon.setAttribute('aria-describedby', uid);
+export function getLocalStorage(key: string) {
+  return ContextService.app().loadLocalStorage(css(key));
+}
+export function setLocalStorage(key: string, value: string) {
+  return ContextService.app().saveLocalStorage(css(key), value);
+}
 
-  const tooltip = document.createElement('div');
-  tooltip.className = css(pluginId, 'dkani-ui-tooltip');
-  tooltip.id = uid;
-  tooltip.role = 'tooltip';
-  tooltip.innerText = hint ?? '';
+export function getTranslation<T>(element: BaseSetting | PathSetting<T>) {
+  const key = 'path' in element ? element.path : element.id ?? '';
+  if (key) {
+    return ContextService.settingsMap().get(key); // LocalizedSetting
+  }
+  return undefined;
+}
 
-  hintWrapper.appendChild(hintIcon);
-  hintWrapper.appendChild(tooltip);
-  setting.nameEl.appendChild(hintWrapper);
+export function translation<T>(element: BaseSetting | PathSetting<T>, item: string, elementString?: string, replacements?: string[]) {
+  const translation = getTranslation(element);
+  let result = elementString;
+  let translated = translation ? translation[item as keyof LocalizedSetting] : undefined;
+  if (translated) {
+    if (replacements) {
+      result = replacePlaceholders(translated, replacements);
+    } else {
+      result = translated;
+    }
+  }
+  return result;
 }

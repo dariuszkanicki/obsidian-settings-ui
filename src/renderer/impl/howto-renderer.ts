@@ -5,7 +5,7 @@ export function renderHowToSection(bodyEl: HTMLElement, pluginId: string, howTo:
   const { description, readmeURL, classes = {} } = howTo!;
   const desc = bodyEl.createEl('small', {
     text: description,
-    cls: classes.description ?? css(pluginId, 'dkani-ui-howto-text'),
+    cls: classes.description ?? css('howto-text'),
   });
 
   if (readmeURL) {

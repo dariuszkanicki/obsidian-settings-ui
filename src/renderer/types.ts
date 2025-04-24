@@ -1,10 +1,26 @@
 import { App, Plugin } from 'obsidian';
 
+// Limit recursion depth to 3
+type PrevDepth = [never, 0, 1, 2]; // used to decrement depth
+
+// export type Path<T, D extends number = 3> = [D] extends [never]
+//   ? never
+//   : {
+//       [K in keyof T & string]: T[K] extends object ? K | `${K}.${Path<T[K], PrevDepth[D]>}` : K;
+//     }[keyof T & string];
+
+// If settings contain arrays, filter them out or explicitly ignore them
+export type Path<T, D extends number = 3> = [D] extends [never]
+  ? never
+  : {
+      [K in keyof T & string]: T[K] extends object ? (T[K] extends any[] ? never : K | `${K}.${Path<T[K], PrevDepth[D]>}`) : K;
+    }[keyof T & string];
+
 export interface LocalizedSetting {
   id: string;
   label?: string;
-  desc?: string;
   hint?: string;
+  tooltip?: string;
   buttonText?: string;
 }
 
@@ -14,16 +30,27 @@ export interface BaseSetting {
   id?: string;
   label?: string;
   labelParameters?: string[];
-  desc?: string;
   hint?: string;
   hintParameters?: string[];
+  tooltip?: string;
+  tooltipParameters?: string[];
   customItemClass?: string;
   showIf?: boolean;
   disabled?: boolean;
 }
 
+// 🔹additionally for settings that store values (e.g., in your plugin's settings object)
+export interface PathSetting<T> extends BaseSetting {
+  path: Path<T>;
+  placeholder?: string | number;
+  customInputClass?: string;
+  handler?: SettingHandler;
+  preSave?: (value: any) => void;
+  postSave?: () => void;
+}
+
 // 🔹Base for all setting types
-export interface GroupSetting<T extends Record<string, any>> {
+export interface GroupSetting<T> {
   type: string;
   items: SettingElement<T>[];
   id?: string;
@@ -32,22 +59,13 @@ export interface GroupSetting<T extends Record<string, any>> {
   showIf?: boolean;
 }
 
-// 🔹additionally for settings that store values (e.g., in your plugin's settings object)
-export interface PersistentSetting<T extends Record<string, any>> {
-  path: string;
-  placeholder?: string | number;
-  handler?: SettingHandler;
-  preSave?: (value: any) => void;
-  postSave?: () => void;
-}
-
-export interface Conditional<T extends Record<string, any>> {
+export interface Conditional<T> {
   type: 'Conditional';
   showIf: boolean;
   items: SettingElement<T>[];
 }
 
-export interface PathSetting<T extends Record<string, any>> extends BaseSetting, PersistentSetting<T> {}
+// export interface PathSetting<T> extends BaseSetting, PersistentSetting<T> {}
 
 export interface Button extends BaseSetting {
   type: 'Button';
@@ -58,27 +76,32 @@ export interface Status extends BaseSetting {
   type: 'Status';
   items: StatusField[];
 }
-export interface RadioGroup<T extends Record<string, any>> extends GroupSetting<T> {
+export interface RadioGroup<T> extends GroupSetting<T> {
   type: 'RadioGroup';
   items: Toggle<T>[];
   postSave?: () => void;
   defaultIndex?: number;
 }
 
-export interface Textfield<T extends Record<string, any>> extends PathSetting<T> {
+export interface Textfield<T> extends PathSetting<T> {
   type: 'Textfield';
-  asTextarea?: boolean;
-  placeholder?: string | number;
-  customInputClass?: string;
 }
-export interface Toggle<T extends Record<string, any>> extends PathSetting<T> {
+export interface Numberfield<T> extends PathSetting<T> {
+  type: 'Numberfield';
+  unit?: string;
+  min?: number;
+  max?: number;
+}
+export interface Textarea<T> extends PathSetting<T> {
+  type: 'Textarea';
+}
+export interface Toggle<T> extends PathSetting<T> {
   type: 'Toggle';
   radioCallback?: (path: string, value: boolean) => void;
 }
-export interface Dropdown<T extends Record<string, any>> extends PathSetting<T> {
+export interface Dropdown<T> extends PathSetting<T> {
   type: 'Dropdown';
   items: DropdownItem[];
-  customInputClass?: string;
 }
 
 // 🔸 Shared status object for read-only status badges
@@ -108,30 +131,32 @@ export type HowToSection = {
 
 // 🔹 Top-level or group-level setting items (generic)
 // prettier-ignore
-export type SettingElement<T extends Record<string, any>> = 
+export type SettingElement<T> = 
     Button          | 
     Status          | 
     RadioGroup<T>   |
     Conditional<T>  |
     Dropdown<T>     | 
     Textfield<T>    | 
+    Numberfield<T>  |
+    Textarea<T>     | 
     Toggle<T>;
 
 // 🔹 Groups of settings
-export type SettingGroup<T extends Record<string, any>> = {
+export type SettingGroup<T> = {
   type: 'SettingGroup';
   label: string;
   items: SettingElement<T>[];
 };
 
 // 🔹Section definition
-export type SettingsConfig<T extends Record<string, any>> = {
+export type SettingsConfig<T> = {
   howTo?: HowToSection;
   elements: Array<SettingElement<T> | SettingGroup<T>>;
 };
 
 // 🔹Context passed around to path renderers
-export type ConfigContext<T extends Record<string, any>> = {
+export type ConfigContext<T> = {
   app: App;
   plugin: Plugin;
   pluginId: string;

@@ -1,9 +1,9 @@
 import { App, Plugin } from 'obsidian';
 import { Renderer } from './renderer/renderer';
-import { SettingsConfig } from './renderer/types';
+import { Path, SettingsConfig } from './renderer/types';
 
 // 🔹 Entrypoint
-export async function renderSettings<T extends Record<string, any>>(
+export async function renderSettings<T>(
   app: App,
   plugin: Plugin,
   config: SettingsConfig<T>,

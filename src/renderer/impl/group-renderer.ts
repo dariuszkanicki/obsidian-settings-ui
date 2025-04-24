@@ -1,10 +1,11 @@
+import { ContextService } from '../../utils/context-service';
 import { Html, Tag } from '../../utils/html';
 
 export class GroupRenderer {
-  constructor(private pluginId: string, private container: HTMLElement) {}
+  constructor(private container: HTMLElement) {}
 
   render(label: string): HTMLElement {
-    const html = new Html(this.pluginId, this.container, 'dkani-ui');
+    const html = new Html(this.container);
     // prettier-ignore
     html.createDIV('group')
       .createDIV('group-header')
@@ -13,7 +14,7 @@ export class GroupRenderer {
       .closeTag()
       .createDIV('group-body');
 
-    const key = `${this.pluginId}-dkani-ui-group:${label}`;
+    const key = `${ContextService.pluginId()}-dkani-ui-group:${label}`;
     let expanded = localStorage.getItem(key) !== 'false';
     const bodyEl = html.getElement('group-body')!;
     const toggleIcon = html.getElement('group-toggle')!;

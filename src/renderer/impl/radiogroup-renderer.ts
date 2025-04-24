@@ -1,28 +1,21 @@
-import { Setting, ToggleComponent } from 'obsidian';
-import { ConfigContext, RadioGroup, Status, Toggle } from '../types';
-import { css } from '../../utils/helper';
-import { AbstractBaseRenderer } from './abstract-base-renderer';
-import { getLocalStorage } from '../../i18n/loader';
+import { ToggleComponent } from 'obsidian';
+import { RadioGroup, Toggle } from '../types';
 import { ToggleRenderer } from './toggle-renderer';
 import { AbstractGroupRenderer } from './abstract-group-renderer';
 import { Html, Tag } from '../../utils/html';
-import { getLabel, setLabel } from './setting-helper';
+import { getLabel } from './setting-helper';
 
-export class RadioGroupRenderer<T extends Record<string, any>> extends AbstractGroupRenderer<T> {
+export class RadioGroupRenderer<T> extends AbstractGroupRenderer<T> {
   private itemsMap = new Map<string, { toggle: Toggle<T>; toggleComponent: ToggleComponent }>();
   private defaultToggleComponent?: ToggleComponent;
-  // prettier-ignore
-  protected createElement(
-    context: ConfigContext<T>, 
-    container: HTMLElement, 
-    element: RadioGroup<T>
-  ) {
-    const html = new Html(context.pluginId, container, 'dkani-ui');
+
+  protected createElement(container: HTMLElement, element: RadioGroup<T>) {
+    const html = new Html(container);
     // prettier-ignore
     html.createDIV('group')
       .createDIV('group-header')
         // .createSPAN('group-toggle', '▼', Tag.close)
-        .createDIV('group-title', getLabel(context,element), Tag.close)
+        .createDIV('group-title', getLabel(element), Tag.close)
       .closeTag()
       .createDIV('group-body');
 
@@ -33,7 +26,7 @@ export class RadioGroupRenderer<T extends Record<string, any>> extends AbstractG
 
     element.items.forEach((item, index) => {
       item.radioCallback = (path: string, value: boolean) => {
-        console.log(path,value);
+        console.log('callback from toggle', path, value, typeof value);
         if (value === false) {
           let valueSet = false;
           this.itemsMap.forEach((mapped) => {
@@ -41,7 +34,7 @@ export class RadioGroupRenderer<T extends Record<string, any>> extends AbstractG
           });
           if (!valueSet && this.defaultToggleComponent) {
             this.defaultToggleComponent.setValue(true);
-            console.log('defaultToggleComponent',this.defaultToggleComponent.getValue());
+            console.log('defaultToggleComponent', this.defaultToggleComponent.getValue());
           }
         } else {
           this.itemsMap.forEach((mapped) => {
@@ -50,23 +43,23 @@ export class RadioGroupRenderer<T extends Record<string, any>> extends AbstractG
             }
           });
         }
-      } 
-      const renderer = new ToggleRenderer(this.context, item);
+      };
+      const renderer = new ToggleRenderer(item);
       const toggleComponent = renderer.render(bodyEl, true).baseComponent as ToggleComponent;
-      console.log('===',element.defaultIndex,index,toggleComponent.getValue());
+      console.log('===', element.defaultIndex, index, toggleComponent.getValue());
 
       if (element.defaultIndex !== undefined && index === element.defaultIndex) {
         this.defaultToggleComponent = toggleComponent;
-        console.log('defaultToggleComponent',toggleComponent);
+        console.log('defaultToggleComponent', toggleComponent);
       }
       if (toggleComponent.getValue() === true) {
         valueSet = true;
       }
-      this.itemsMap.set(item.path,{ toggle: item, toggleComponent: toggleComponent });
+      this.itemsMap.set(item.path, { toggle: item, toggleComponent: toggleComponent });
     });
     if (!valueSet && this.defaultToggleComponent) {
       this.defaultToggleComponent.setValue(true);
-      console.log('defaultToggleComponent',this.defaultToggleComponent.getValue());
+      console.log('defaultToggleComponent', this.defaultToggleComponent.getValue());
     }
   }
 }

@@ -1,96 +1,67 @@
 import { BaseComponent, Setting } from 'obsidian';
-import { ConfigContext, PathSetting } from '../types';
-import { addCodeHighlightedText, css, hint } from '../../utils/helper';
-import { getValue, setValue } from '../../utils/value-utils';
-import { createSetting, getTranslation, replacePlaceholders } from './setting-helper';
-import { getLocalStorage } from '../../i18n/loader';
+import { PathSetting } from '../types';
+import { css, getLocalStorage, hint, tooltip } from '../../utils/helper';
+import { getValue } from '../../utils/value-utils';
+import { createSetting } from './setting-helper';
 
 export type PathRendererResult = {
   baseComponent: BaseComponent;
   htmlElement: HTMLElement;
+  noHint?: boolean;
 };
 
-export abstract class AbstractPathRenderer<T extends Record<string, any>> {
-  constructor(protected context: ConfigContext<T>, private element: PathSetting<T>) {}
+export abstract class AbstractPathRenderer<T> {
+  constructor(private element: PathSetting<T>) {}
 
   render(container: HTMLElement, groupMember: boolean) {
-    const setting = createSetting(this.context, this.element, container, groupMember);
-    const result = this.createElement(this.context.pluginId, setting, this.element);
-    this._renderCommonSettingElements(this.context, setting, result.htmlElement, this.element, result.baseComponent);
-    return result;
+    const setting = createSetting(this.element, container, groupMember);
+    const created = this.createElement(setting, this.element);
+
+    created.htmlElement.classList.add(css('item'));
+    this._initValue(created.baseComponent);
+    tooltip(setting, this.element);
+    const hintElement = hint(created.noHint, setting, this.element);
+    this._scaleFont(created.htmlElement, hintElement);
+
+    return created;
   }
 
-  protected abstract createElement(pluginId: string, setting: Setting, element: PathSetting<T>): PathRendererResult;
+  protected abstract createElement(setting: Setting, element: PathSetting<T>): PathRendererResult;
 
-  protected async onChange(context: ConfigContext<T>, element: PathSetting<T>, value: any) {
-    await setValue(context, element, value);
-    if (element.postSave) {
-      element.postSave();
-    }
-  }
-
-  private async _renderCommonSettingElements(
-    context: ConfigContext<T>,
-    setting: Setting,
-    htmlElement: HTMLElement,
-    element: PathSetting<T>,
-    baseComponent: BaseComponent
-  ) {
-    htmlElement.classList.add(css(context.pluginId, 'dkani-ui-item'));
+  private _initValue(baseComponent: BaseComponent) {
     if ('setValue' in baseComponent && typeof baseComponent.setValue === 'function') {
-      const value = getValue(context.settings, element);
+      const value = getValue(this.element);
       // if placeholder is set, don't set the value if it's equals placeholder, so the placeholder is displayed as such
-      if (element.placeholder === undefined || element.placeholder !== value) {
+      if (this.element.placeholder === undefined || this.element.placeholder !== value) {
+        let _value: any;
         if (typeof value === 'number') {
-          (baseComponent as any).setValue(String(value));
+          _value = String(value);
+        } else if (this.element.type === 'Toggle') {
+          _value = value === undefined ? false : value;
         } else {
-          (baseComponent as any).setValue(value);
+          _value = value;
         }
-      }
-      (baseComponent as any).onChange(async (val: any) => {
-        this.onChange(context, element, val);
-        // await setValue(context, element, val);
-        // if (element.postSave) {
-        //   element.postSave();
-        // }
-      });
-    }
-
-    const translation = getTranslation(context, element);
-    let hintString = element.hint;
-
-    if (translation && translation.hint) {
-      hintString = translation.hint;
-      if (element.hintParameters) {
-        hintString = replacePlaceholders(hintString, element.hintParameters);
+        (baseComponent as any).setValue(_value);
       }
     }
-    if (hintString) {
-      hint(context.pluginId, setting, element.path, hintString);
-    }
+  }
 
-    let small: HTMLElement | undefined;
-    if (translation && translation.desc) {
-      small = setting.controlEl.createEl('small', { text: translation.desc });
-    } else if (element.desc) {
-      small = setting.controlEl.createEl('small', { text: element.desc });
-    }
-
-    const fontSize = getLocalStorage(this.context.plugin, 'settings-font-size');
+  private _scaleFont(htmlElement: HTMLElement, hintElement?: HTMLElement) {
+    const fontSize = getLocalStorage('settings-font-size');
     if (fontSize) {
       const scale = fontSize / 14;
-      if (element.type === 'Toggle') {
+      if (this.element.type === 'Toggle') {
         const margin = (1 - scale) * -20;
         htmlElement.setAttr('style', `transform: scale(${scale}); margin-left: ${margin}px`);
       } else {
         htmlElement.setAttr('style', `font-size: ${fontSize}px`);
       }
-      if (small) {
+      if (hintElement) {
         let smallSize = 0.9 * fontSize;
         if (smallSize < 8) {
           smallSize = 8;
         }
-        small.setAttr('style', `font-size: ${smallSize}px`);
+        hintElement.setAttr('style', `font-size: ${smallSize}px`);
       }
     }
   }
