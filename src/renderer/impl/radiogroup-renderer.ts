@@ -26,7 +26,6 @@ export class RadioGroupRenderer<T> extends AbstractGroupRenderer<T> {
 
     element.items.forEach((item, index) => {
       item.radioCallback = (path: string, value: boolean) => {
-        console.log('callback from toggle', path, value, typeof value);
         if (value === false) {
           let valueSet = false;
           this.itemsMap.forEach((mapped) => {
@@ -34,7 +33,6 @@ export class RadioGroupRenderer<T> extends AbstractGroupRenderer<T> {
           });
           if (!valueSet && this.defaultToggleComponent) {
             this.defaultToggleComponent.setValue(true);
-            console.log('defaultToggleComponent', this.defaultToggleComponent.getValue());
           }
         } else {
           this.itemsMap.forEach((mapped) => {
@@ -46,11 +44,9 @@ export class RadioGroupRenderer<T> extends AbstractGroupRenderer<T> {
       };
       const renderer = new ToggleRenderer(item);
       const toggleComponent = renderer.render(bodyEl, true).baseComponent as ToggleComponent;
-      console.log('===', element.defaultIndex, index, toggleComponent.getValue());
 
       if (element.defaultIndex !== undefined && index === element.defaultIndex) {
         this.defaultToggleComponent = toggleComponent;
-        console.log('defaultToggleComponent', toggleComponent);
       }
       if (toggleComponent.getValue() === true) {
         valueSet = true;
@@ -59,7 +55,6 @@ export class RadioGroupRenderer<T> extends AbstractGroupRenderer<T> {
     });
     if (!valueSet && this.defaultToggleComponent) {
       this.defaultToggleComponent.setValue(true);
-      console.log('defaultToggleComponent', this.defaultToggleComponent.getValue());
     }
   }
 }

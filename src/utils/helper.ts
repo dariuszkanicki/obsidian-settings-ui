@@ -64,13 +64,6 @@ export function hint<T>(noHint: boolean | undefined, setting: Setting, element: 
   return small;
 }
 
-export function getLocalStorage(key: string) {
-  return ContextService.app().loadLocalStorage(css(key));
-}
-export function setLocalStorage(key: string, value: string) {
-  return ContextService.app().saveLocalStorage(css(key), value);
-}
-
 export function getTranslation<T>(element: BaseSetting | PathSetting<T>) {
   const key = 'path' in element ? element.path : element.id ?? '';
   if (key) {

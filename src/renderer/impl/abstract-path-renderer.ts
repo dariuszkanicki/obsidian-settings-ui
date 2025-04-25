@@ -1,8 +1,9 @@
 import { BaseComponent, Setting } from 'obsidian';
 import { PathSetting } from '../types';
-import { css, getLocalStorage, hint, tooltip } from '../../utils/helper';
+import { css, hint, tooltip } from '../../utils/helper';
 import { getValue } from '../../utils/value-utils';
 import { createSetting } from './setting-helper';
+import { getSettingFontSize } from '../../utils/storage';
 
 export type PathRendererResult = {
   baseComponent: BaseComponent;
@@ -47,7 +48,7 @@ export abstract class AbstractPathRenderer<T> {
   }
 
   private _scaleFont(htmlElement: HTMLElement, hintElement?: HTMLElement) {
-    const fontSize = getLocalStorage('settings-font-size');
+    const fontSize = getSettingFontSize();
     if (fontSize) {
       const scale = fontSize / 14;
       if (this.element.type === 'Toggle') {

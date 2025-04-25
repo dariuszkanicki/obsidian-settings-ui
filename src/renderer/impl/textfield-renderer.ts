@@ -42,7 +42,6 @@ export class InputfieldRenderer<T> extends AbstractPathRenderer<T> {
     const _handleInputChange = () => {
       if (element.type === 'Numberfield') {
         let val = Number(inputEl.value);
-        console.log("#2", val, typeof val);
         if (!isNaN(val)) {
           if (element.min !== undefined && val < element.min) {
             val = element.min;

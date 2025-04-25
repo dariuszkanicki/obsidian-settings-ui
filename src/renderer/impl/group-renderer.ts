@@ -1,5 +1,6 @@
 import { ContextService } from '../../utils/context-service';
 import { Html, Tag } from '../../utils/html';
+import { isSettingGroupExpanded, setSettingGroupExpanded } from '../../utils/storage';
 
 export class GroupRenderer {
   constructor(private container: HTMLElement) {}
@@ -14,8 +15,8 @@ export class GroupRenderer {
       .closeTag()
       .createDIV('group-body');
 
-    const key = `${ContextService.pluginId()}-dkani-ui-group:${label}`;
-    let expanded = localStorage.getItem(key) !== 'false';
+    let expanded = isSettingGroupExpanded(label);
+    console.log('expanded', expanded, typeof expanded);
     const bodyEl = html.getElement('group-body')!;
     const toggleIcon = html.getElement('group-toggle')!;
     const titleEl = html.getElement('group-title')!;
@@ -34,7 +35,7 @@ export class GroupRenderer {
 
     const toggle = () => {
       expanded = !expanded;
-      localStorage.setItem(key, String(expanded));
+      setSettingGroupExpanded(label, expanded);
       if (expanded) {
         bodyEl.classList.remove('collapsed');
         bodyEl.style.maxHeight = bodyEl.scrollHeight + 'px';

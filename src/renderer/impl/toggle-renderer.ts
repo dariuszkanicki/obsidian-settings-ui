@@ -13,7 +13,6 @@ export class ToggleRenderer<T> extends AbstractPathRenderer<T> {
     setting.addToggle((toggle) => {
       this.toggleComponent = toggle;
       toggle.onChange(async (value: any) => {
-        console.log('toggle.onChange', element.path, value, typeof value);
         await setValue(element, value);
         const radioCb = element.radioCallback;
         if (radioCb !== undefined) {

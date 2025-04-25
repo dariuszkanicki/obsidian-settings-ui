@@ -1,11 +1,22 @@
 import { setIcon } from 'obsidian';
-import { css, getLocalStorage, setLocalStorage } from '../utils/helper';
+import { css } from '../utils/helper';
 import path from 'path';
 import { ContextService } from '../utils/context-service';
+import {
+  getCurrentLanguage,
+  getGearSlideout,
+  getSettingFontSize,
+  getSettingLabelWidth,
+  setCurrentLanguage,
+  setDefaultSettingFontSize,
+  setGearSlideout,
+  setSettingFontSize,
+  setSettingLabelWidth,
+} from '../utils/storage';
 
 export async function renderGear<T>(bodyEl: HTMLElement) {
   const settingsPanel = bodyEl.createEl('div', { cls: css('settings-slideout') });
-  const status = getLocalStorage('slideout') ?? 'closed';
+  const status = getGearSlideout();
   if (status === 'opened') {
     settingsPanel.classList.add('visible');
   }
@@ -13,11 +24,11 @@ export async function renderGear<T>(bodyEl: HTMLElement) {
   _createGearIcon(bodyEl, settingsPanel);
   _createCloseIcon(settingsPanel);
   _createLabelWidthControl(100, 500, settingsPanel);
-  setLocalStorage('settings-font-size', '14');
+  setDefaultSettingFontSize();
   // this._createFontSizeControl(8, 20);
 }
 async function _createLanguageChoice(settingsPanel: HTMLElement) {
-  const currentLang = getLocalStorage('#lang') ?? 'en';
+  const currentLang = getCurrentLanguage();
 
   const { divEl, id, labelEl } = _createLabel(settingsPanel, 'Languages');
   const langs = await _getAvailableLanguages();
@@ -33,7 +44,7 @@ async function _createLanguageChoice(settingsPanel: HTMLElement) {
     btn.onclick = (ev) => {
       const target = ev.currentTarget as HTMLElement;
       const selectedLang = target.dataset.lang!;
-      setLocalStorage('#lang', selectedLang);
+      setCurrentLanguage(selectedLang);
       ContextService.refreshSettings();
     };
   });
@@ -55,7 +66,7 @@ function _createGearIcon(bodyEl: HTMLElement, settingsPanel: HTMLElement) {
   gearIcon.innerHTML = '⚙️'; // Or insert an `<img>` or SVG
   gearIcon.onclick = () => {
     settingsPanel.classList.add('visible');
-    setLocalStorage('slideout', 'opened');
+    setGearSlideout('opened');
   };
 }
 
@@ -65,29 +76,28 @@ function _createCloseIcon(settingsPanel: HTMLElement) {
   closeButton.classList.add(css('gear-close-button'));
   closeButton.addEventListener('click', () => {
     settingsPanel.classList.remove('visible');
-    setLocalStorage('slideout', 'closed');
+    setGearSlideout('closed');
   });
 }
 
 function _createLabelWidthControl(min: number, max: number, settingsPanel: HTMLElement) {
-  const width = getLocalStorage('settings-label-width') ?? 200;
+  const width = getSettingLabelWidth() ?? 200;
   // prettier-ignore
-  _createInput(settingsPanel, 'Label Width', 'number', min, max, width, async (val: string) => {
-    setLocalStorage('settings-label-width', val);
+  _createInput(settingsPanel, 'Label Width', 'number', min, max, width, async (val: number) => {
+    setSettingLabelWidth(val);
     ContextService.refreshSettings();
   });
 }
 
+// not used at the moment
 function _createFontSizeControl(min: number, max: number, settingsPanel: HTMLElement) {
-  const fontSize = getLocalStorage('settings-font-size') ?? 14;
+  const fontSize = getSettingFontSize() ?? 14;
   // prettier-ignore
-  _createInput(settingsPanel, 'Font Size', 'number', min, max, fontSize, async (val: string) => {
-    // document.body.style.setProperty('--font-ui-medium', `${val}px`);
-    setLocalStorage('settings-font-size', val);
+  _createInput(settingsPanel, 'Font Size', 'number', min, max, fontSize, async (val: number) => {
+    setSettingFontSize(val);
     ContextService.refreshSettings();
   });
-  // document.body.style.setProperty('--font-ui-medium', `${fontSize}px`);
-  setLocalStorage('settings-font-size', fontSize);
+  setSettingFontSize(fontSize);
 }
 
 function _createLabel(parent: HTMLElement, label: string) {
@@ -107,7 +117,7 @@ function _createInput(
   min:    number,
   max:    number,
   init:   number,
-  update: (value: string) => Promise<void>
+  update: (value: number) => Promise<void>
 ) {
   const { divEl, id, labelEl} = _createLabel(parent, label);
   // const divEl = parent.createDiv({ cls: 'gear-setting' });
@@ -131,7 +141,7 @@ function _createInput(
         const clamped = Math.max(min, Math.min(max, val));
         const value = clamped.toString();
         inputEl.value = value;
-        update(value);
+        update(clamped);
       }
     }
   });

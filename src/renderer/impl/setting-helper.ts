@@ -1,8 +1,9 @@
 import { Setting } from 'obsidian';
-import { addCodeHighlightedText, css, getLocalStorage, getTranslation } from '../../utils/helper';
+import { addCodeHighlightedText, css, getTranslation } from '../../utils/helper';
 import { BaseSetting, PathSetting } from '../types';
 import { saveMap } from '../../i18n/loader';
 import { ContextService } from '../../utils/context-service';
+import { getSettingFontSize, getSettingLabelWidth } from '../../utils/storage';
 
 // prettier-ignore
 export function createSetting<T>(
@@ -20,14 +21,14 @@ export function createSetting<T>(
   return setting;
 
   function _setLabelWith<T>() {
-    const width = getLocalStorage('settings-label-width');
+    const width = getSettingLabelWidth();
     if (width) {
       setting.infoEl.style.cssText = `flex-basis: ${width}px!important`;
     }
   }
 
   function _setLabelFontSize<T>() {
-    const fontSize = getLocalStorage('settings-font-size');
+    const fontSize = getSettingFontSize();
     if (fontSize) {
       setting.nameEl.style.cssText = `font-size: ${fontSize}px`;
     }

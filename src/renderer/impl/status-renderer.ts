@@ -1,7 +1,8 @@
 import { Setting } from 'obsidian';
 import { Status } from '../types';
-import { css, getLocalStorage } from '../../utils/helper';
+import { css } from '../../utils/helper';
 import { AbstractBaseRenderer } from './abstract-base-renderer';
+import { getSettingFontSize } from '../../utils/storage';
 
 export class StatusRenderer<T> extends AbstractBaseRenderer<T> {
   protected createElement(setting: Setting, element: Status) {
@@ -18,7 +19,7 @@ export class StatusRenderer<T> extends AbstractBaseRenderer<T> {
       wrapper.appendChild(pill);
     }
 
-    const fontSize = getLocalStorage('settings-font-size');
+    const fontSize = getSettingFontSize();
     if (fontSize) {
       wrapper.style.cssText = `font-size: ${fontSize}px`;
     }
