@@ -1,7 +1,7 @@
-import { setIcon } from 'obsidian';
-import { css } from '../utils/helper';
-import path from 'path';
-import { ContextService } from '../utils/context-service';
+import { setIcon } from "obsidian";
+import { css } from "../utils/helper";
+import path from "path";
+import { ContextService } from "../utils/context-service";
 import {
   getCurrentLanguage,
   getGearSlideout,
@@ -12,13 +12,15 @@ import {
   setGearSlideout,
   setSettingFontSize,
   setSettingLabelWidth,
-} from '../utils/storage';
+} from "../utils/storage";
 
 export async function renderGear<T>(bodyEl: HTMLElement) {
-  const settingsPanel = bodyEl.createEl('div', { cls: css('settings-slideout') });
+  const settingsPanel = bodyEl.createEl("div", {
+    cls: css("settings-slideout"),
+  });
   const status = getGearSlideout();
-  if (status === 'opened') {
-    settingsPanel.classList.add('visible');
+  if (status === "opened") {
+    settingsPanel.classList.add("visible");
   }
   await _createLanguageChoice(settingsPanel);
   _createGearIcon(bodyEl, settingsPanel);
@@ -30,15 +32,15 @@ export async function renderGear<T>(bodyEl: HTMLElement) {
 async function _createLanguageChoice(settingsPanel: HTMLElement) {
   const currentLang = getCurrentLanguage();
 
-  const { divEl, id, labelEl } = _createLabel(settingsPanel, 'Languages');
+  const { divEl, id, labelEl } = _createLabel(settingsPanel, "Languages");
   const langs = await _getAvailableLanguages();
   langs.forEach((lang) => {
-    const btn = divEl.createEl('button', {
+    const btn = divEl.createEl("button", {
       text: lang.toUpperCase(),
-      cls: css('lang-btn'),
+      cls: css("lang-btn"),
     });
     if (lang === currentLang) {
-      btn.addClass('current');
+      btn.addClass("current");
     }
     btn.dataset.lang = lang;
     btn.onclick = (ev) => {
@@ -55,32 +57,39 @@ async function _getAvailableLanguages(): Promise<string[]> {
   const settingsFiles = entries
     .map((fullPath: string) => path.basename(fullPath))
     .filter((fileName: string) => /^settings-[\w-]+\.json$/.test(fileName));
-  const languageSuffixes = settingsFiles.map((file: { match: (arg0: RegExp) => any[] }) => file.match(/^settings-(.+)\.json$/)?.[1]!);
+  const languageSuffixes = settingsFiles.map(
+    (file: { match: (arg0: RegExp) => any[] }) =>
+      file.match(/^settings-(.+)\.json$/)?.[1]!,
+  );
   return languageSuffixes;
 }
 
 function _createGearIcon(bodyEl: HTMLElement, settingsPanel: HTMLElement) {
-  const gearIcon = bodyEl.createEl('div', {
-    cls: css('gear-icon'),
+  const gearIcon = bodyEl.createEl("div", {
+    cls: css("gear-icon"),
   });
-  gearIcon.innerHTML = '⚙️'; // Or insert an `<img>` or SVG
+  gearIcon.innerHTML = "⚙️"; // Or insert an `<img>` or SVG
   gearIcon.onclick = () => {
-    settingsPanel.classList.add('visible');
-    setGearSlideout('opened');
+    settingsPanel.classList.add("visible");
+    setGearSlideout("opened");
   };
 }
 
 function _createCloseIcon(settingsPanel: HTMLElement) {
-  const closeButton = settingsPanel.createEl('div');
-  setIcon(closeButton, 'circle-x');
-  closeButton.classList.add(css('gear-close-button'));
-  closeButton.addEventListener('click', () => {
-    settingsPanel.classList.remove('visible');
-    setGearSlideout('closed');
+  const closeButton = settingsPanel.createEl("div");
+  setIcon(closeButton, "circle-x");
+  closeButton.classList.add(css("gear-close-button"));
+  closeButton.addEventListener("click", () => {
+    settingsPanel.classList.remove("visible");
+    setGearSlideout("closed");
   });
 }
 
-function _createLabelWidthControl(min: number, max: number, settingsPanel: HTMLElement) {
+function _createLabelWidthControl(
+  min: number,
+  max: number,
+  settingsPanel: HTMLElement,
+) {
   const width = getSettingLabelWidth() ?? 200;
   // prettier-ignore
   _createInput(settingsPanel, 'Label Width', 'number', min, max, width, async (val: number) => {
@@ -90,7 +99,11 @@ function _createLabelWidthControl(min: number, max: number, settingsPanel: HTMLE
 }
 
 // not used at the moment
-function _createFontSizeControl(min: number, max: number, settingsPanel: HTMLElement) {
+function _createFontSizeControl(
+  min: number,
+  max: number,
+  settingsPanel: HTMLElement,
+) {
   const fontSize = getSettingFontSize() ?? 14;
   // prettier-ignore
   _createInput(settingsPanel, 'Font Size', 'number', min, max, fontSize, async (val: number) => {
@@ -101,10 +114,13 @@ function _createFontSizeControl(min: number, max: number, settingsPanel: HTMLEle
 }
 
 function _createLabel(parent: HTMLElement, label: string) {
-  const divEl = parent.createDiv({ cls: 'gear-setting' });
-  const id = label.toLowerCase().replace(/\s+/g, '-') + '-setting';
-  const labelEl = divEl.createEl('label', { text: label });
-  labelEl.setAttr('style', `width:100px; margin-right:8px; display:inline-block`);
+  const divEl = parent.createDiv({ cls: "gear-setting" });
+  const id = label.toLowerCase().replace(/\s+/g, "-") + "-setting";
+  const labelEl = divEl.createEl("label", { text: label });
+  labelEl.setAttr(
+    "style",
+    "`width:100px; margin-right:8px; display:inline-block`",
+  );
 
   return { divEl: divEl, id: id, labelEl: labelEl };
 }

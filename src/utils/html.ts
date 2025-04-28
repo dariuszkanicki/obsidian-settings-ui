@@ -1,4 +1,4 @@
-import { addCodeHighlightedText, css } from './helper';
+import { addCodeHighlightedText, css } from "./helper";
 
 export enum Tag {
   Open,

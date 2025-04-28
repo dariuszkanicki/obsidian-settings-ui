@@ -1,52 +1,48 @@
-import { describe, expect, it } from 'vitest';
-import { coerceValue } from './value-utils';
+import { describe, expect, it } from "vitest";
+import { coerceValue } from "./value-utils";
+import { PathSetting } from "../renderer/types";
 
-function testCoerceValue() {
-  // Number coercion
-  // describe('coerceValue(number)', () => {
-  //   it('coerces number as string to number', () => {
-  //     expect(coerceValue<number>(10, '20')).toBe(20);
-  //   });
-  //   it('returns original number if NaN', () => {
-  //     expect(coerceValue<number>(10, 'abc')).toBe(10);
-  //   });
-  //   it('returns original number if null', () => {
-  //     expect(coerceValue<number>(10, null)).toBe(10);
-  //   });
-  //   it('returns 0 if empty', () => {
-  //     expect(coerceValue<number>(10, '')).toBe(0);
-  //   });
-  // });
-  // // Boolean coercion
-  // describe('coerceValue(boolean)', () => {
-  //   it('coerces string "false" → false', () => {
-  //     expect(coerceValue<boolean>(true, 'false')).toBe(false);
-  //   });
-  //   it('coerces string "true" → true', () => {
-  //     expect(coerceValue<boolean>(false, 'true')).toBe(true);
-  //   });
-  //   it('returns original if NaN', () => {
-  //     expect(coerceValue<boolean>(false, 'maybe')).toBe(false);
-  //   });
-  //   it('returns original if null', () => {
-  //     expect(coerceValue<boolean>(true, null)).toBe(true);
-  //   });
-  // });
-  // //   // String coercion
-  // describe('coerceValue(string)', () => {
-  //   it('coerces string "abc" → false', () => {
-  //     expect(coerceValue<string>('abc', ' new ')).toBe('new'); // trim
-  //   });
-  //   it('coerces string "true" → true', () => {
-  //     expect(coerceValue<string>('abc', 123)).toBe('123'); // number to string
-  //   });
-  //   it('returns original if NaN', () => {
-  //     expect(coerceValue<string>('abc', true)).toBe('true');
-  //   });
-  //   it('returns original if null', () => {
-  //     expect(coerceValue<string>('abc', null)).toBe('null');
-  //   });
-  // });
-}
+// export interface TestStructure {
+//   testNumber: number,
+//   testToggle: boolean,
+//   testString: string,
+// }
 
-testCoerceValue();
+// function testCoerceValue() {
+//   describe('coerceValue(number)', () => {
+//     const element: PathSetting<number> = {
+//       type: 'Numberfield',
+//       path: "toString"
+//     };
+  
+//     it('coerces number as string to number', () => { expect(coerceValue<number>(element, '20')).toBe(20); });
+//     it('throws error if input is NaN',       () => { expect(() => coerceValue<number>(element, 'abc')).toThrowError('wrong input abc'); });
+//     it('throws error if input is null',      () => { expect(() => coerceValue<number>(element, null)).toThrowError('wrong input null'); });
+//     it('returns 0 if empty string',          () => { expect(coerceValue<number>(element, '')).toBe(0); });
+//   });
+//   // Boolean coercion
+//   describe('coerceValue(boolean)', () => {
+//     const element: PathSetting<boolean> = {
+//       type: 'Toggle',
+//       path: "valueOf"
+//     };
+
+//     it('coerces string "false" → false',     () => { expect(coerceValue<boolean>(element, 'false')).toBe(false); });
+//     it('coerces string "true" → true',       () => { expect(coerceValue<boolean>(element, 'true')).toBe(true); });
+//     it('coerces string "maybe" → false',     () => { expect(coerceValue<boolean>(element, 'maybe')).toBe(false); });
+//     it('coerces string null → false',        () => { expect(coerceValue<boolean>(element, null)).toBe(false); });
+//   });
+//   //   // String coercion
+//   describe('coerceValue(string)', () => {
+//     const element: PathSetting<string> = {
+//       type: 'Textfield',
+//       path: "toString"
+//     };
+//     it('trim string " new " → "new"',     () => { expect(coerceValue<string>(element, ' new ')).toBe('new'); });
+//     it('coerces number 123 → "123"',       () => { expect(coerceValue<string>(element, 123)).toBe('123'); });
+//     it('coerces true → "true"',            () => { expect(coerceValue<string>(element, true)).toBe('true'); });
+//     it('coerces null → "null"',           () => { expect(coerceValue<string>(element, null)).toBe('null'); });
+//   });
+// }
+
+// testCoerceValue();

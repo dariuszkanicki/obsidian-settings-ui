@@ -1,6 +1,6 @@
-import { Setting } from 'obsidian';
-import { BaseSetting } from '../types';
-import { createSetting } from './setting-helper';
+import type { Setting } from "obsidian";
+import type { BaseSetting } from "../types";
+import { createSetting } from "./setting-helper";
 
 export abstract class AbstractBaseRenderer<T> {
   constructor(private element: BaseSetting) {}
@@ -10,5 +10,8 @@ export abstract class AbstractBaseRenderer<T> {
     this.createElement(setting, this.element);
   }
 
-  protected abstract createElement(setting: Setting, element: BaseSetting): void;
+  protected abstract createElement(
+    setting: Setting,
+    element: BaseSetting,
+  ): void;
 }

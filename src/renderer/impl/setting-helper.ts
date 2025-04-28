@@ -1,9 +1,13 @@
-import { Setting } from 'obsidian';
-import { addCodeHighlightedText, css, getTranslation } from '../../utils/helper';
-import { BaseSetting, PathSetting } from '../types';
-import { saveMap } from '../../i18n/loader';
-import { ContextService } from '../../utils/context-service';
-import { getSettingFontSize, getSettingLabelWidth } from '../../utils/storage';
+import { Setting } from "obsidian";
+import {
+  addCodeHighlightedText,
+  css,
+  getTranslation,
+} from "../../utils/helper";
+import type { BaseSetting, PathSetting } from "../types";
+import { saveMap } from "../../i18n/loader";
+import { ContextService } from "../../utils/context-service";
+import { getSettingFontSize, getSettingLabelWidth } from "../../utils/storage";
 
 // prettier-ignore
 export function createSetting<T>(
@@ -46,10 +50,13 @@ export function createSetting<T>(
   }
 }
 
-export function replacePlaceholders(template: string, replacements: string[]): string {
+export function replacePlaceholders(
+  template: string,
+  replacements: string[],
+): string {
   return template.replace(/\$\{(\d+)\}/g, (_, index) => {
     const i = parseInt(index, 10) - 1;
-    return replacements[i] ?? '';
+    return replacements[i] ?? "";
   });
 }
 
@@ -67,7 +74,7 @@ export function setLabel<T>(element: BaseSetting, htmlElement: HTMLElement) {
   if (labelString !== undefined) {
     addCodeHighlightedText(htmlElement, labelString);
   } else {
-    console.warn('label not specified', element);
+    console.warn("label not specified", element);
     // _updateTranslation();
   }
 }
@@ -86,7 +93,7 @@ export function getLabel<T>(element: BaseSetting) {
   if (labelString !== undefined) {
     return labelString;
   } else {
-    console.warn('label not specified', element);
+    console.warn("label not specified", element);
     return labelString;
   }
 }

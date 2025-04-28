@@ -1,5 +1,5 @@
-import { loadLocalizedSettings } from '../i18n/loader';
-import { ConfigContext } from '../renderer/types';
+import { loadLocalizedSettings } from "../i18n/loader";
+import type { ConfigContext } from "../renderer/types";
 
 export class ContextService<T> {
   private static instance: any;
@@ -20,7 +20,7 @@ export class ContextService<T> {
   static settingsMap() {
     return this.instance.context.settingsMap;
   }
-  static settings() {
+  static settings<T>(): T {
     return this.instance.context.settings;
   }
   static async saveData<T>(settings: T) {

@@ -1,12 +1,15 @@
-import { ToggleComponent } from 'obsidian';
-import { RadioGroup, Toggle } from '../types';
-import { ToggleRenderer } from './toggle-renderer';
-import { AbstractGroupRenderer } from './abstract-group-renderer';
-import { Html, Tag } from '../../utils/html';
-import { getLabel } from './setting-helper';
+import type { ToggleComponent } from "obsidian";
+import type { RadioGroup, Toggle } from "../types";
+import { ToggleRenderer } from "./toggle-renderer";
+import { AbstractGroupRenderer } from "./abstract-group-renderer";
+import { Html, Tag } from "../../utils/html";
+import { getLabel } from "./setting-helper";
 
 export class RadioGroupRenderer<T> extends AbstractGroupRenderer<T> {
-  private itemsMap = new Map<string, { toggle: Toggle<T>; toggleComponent: ToggleComponent }>();
+  private itemsMap = new Map<
+    string,
+    { toggle: Toggle<T>; toggleComponent: ToggleComponent }
+  >();
   private defaultToggleComponent?: ToggleComponent;
 
   protected createElement(container: HTMLElement, element: RadioGroup<T>) {
@@ -19,8 +22,8 @@ export class RadioGroupRenderer<T> extends AbstractGroupRenderer<T> {
       .closeTag()
       .createDIV('group-body');
 
-    html.getElement('group')?.addClass('radio');
-    const bodyEl = html.getElement('group-body')!;
+    html.getElement("group")?.addClass("radio");
+    const bodyEl = html.getElement("group-body")!;
 
     let valueSet = false;
 
@@ -43,15 +46,22 @@ export class RadioGroupRenderer<T> extends AbstractGroupRenderer<T> {
         }
       };
       const renderer = new ToggleRenderer(item);
-      const toggleComponent = renderer.render(bodyEl, true).baseComponent as ToggleComponent;
+      const toggleComponent = renderer.render(bodyEl, true)
+        .baseComponent as ToggleComponent;
 
-      if (element.defaultIndex !== undefined && index === element.defaultIndex) {
+      if (
+        element.defaultIndex !== undefined &&
+        index === element.defaultIndex
+      ) {
         this.defaultToggleComponent = toggleComponent;
       }
       if (toggleComponent.getValue() === true) {
         valueSet = true;
       }
-      this.itemsMap.set(item.path, { toggle: item, toggleComponent: toggleComponent });
+      this.itemsMap.set(item.path, {
+        toggle: item,
+        toggleComponent: toggleComponent,
+      });
     });
     if (!valueSet && this.defaultToggleComponent) {
       this.defaultToggleComponent.setValue(true);

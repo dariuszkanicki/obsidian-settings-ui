@@ -1,37 +1,45 @@
 #!/usr/bin/env node
 
-import path from 'path';
-import fs from 'fs';
-import postcss from 'postcss';
-import prefixSelector from 'postcss-prefix-selector';
-import { fileURLToPath } from 'url';
+import path from "path";
+import fs from "fs";
+import postcss from "postcss";
+import prefixSelector from "postcss-prefix-selector";
+import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const match = __dirname.match(/^(.*obsidian-settings-ui)/i);
-const rootDir = match?.[1]!;
+if (!match || !match[1]) {
+  throw new Error(`Could not determine rootDir from __dirname: ${__dirname}`);
+}
+const rootDir = match[1];
 
 // 1. Resolve target (consumer plugin) root
 // 🧪 Use test fixture paths if testing standalone
 const cwd = process.cwd();
-const isTest = cwd.includes('obsidian-settings-ui');
-const pluginDir = isTest ? path.join(rootDir, 'test-fixtures') : cwd;
+const isTest = cwd.includes("obsidian-settings-ui");
+const pluginDir = isTest ? path.join(rootDir, "test-fixtures") : cwd;
 
 // Paths
-const manifestPath = path.join(pluginDir, 'manifest.json');
-console.log('manifestPath', manifestPath);
+const manifestPath = path.join(pluginDir, "manifest.json");
+console.log("manifestPath", manifestPath);
 
-const targetCssPath = path.join(pluginDir, 'styles.css');
+const targetCssPath = path.join(pluginDir, "styles.css");
 const sourceCssPath = isTest
-  ? path.join(rootDir, 'styles/source-styles.css')
-  : path.join(pluginDir, 'node_modules/@dkani/obsidian-settings-ui/styles/source-styles.css');
+  ? path.join(rootDir, "styles/source-styles.css")
+  : path.join(
+      pluginDir,
+      "node_modules/@dkani/obsidian-settings-ui/styles/source-styles.css",
+    );
 
 // 2. Read manifest for plugin ID
 if (!fs.existsSync(manifestPath)) {
-  console.error('❌ Could not find manifest.json in the plugin directory.');
+  console.error("❌ Could not find manifest.json in the plugin directory.");
   process.exit(1);
 }
-const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8")) as {
+  id: string;
+};
 const pluginId = manifest.id;
 
 // 3. Marker block
@@ -44,10 +52,12 @@ if (!fs.existsSync(sourceCssPath)) {
   console.error(`❌ Could not find source styles at: ${sourceCssPath}`);
   process.exit(1);
 }
-const sourceCss = fs.readFileSync(sourceCssPath, 'utf8');
+const sourceCss = fs.readFileSync(sourceCssPath, "utf8");
 
 // 5. Skip if already injected
-const targetCss = fs.existsSync(targetCssPath) ? fs.readFileSync(targetCssPath, 'utf8') : '';
+const targetCss = fs.existsSync(targetCssPath)
+  ? fs.readFileSync(targetCssPath, "utf8")
+  : "";
 if (targetCss.includes(startMarker)) {
   console.log(`✅ Shared styles already injected for '${pluginId}', skipping.`);
   process.exit(0);
@@ -68,10 +78,10 @@ postcss([
   .then((result) => {
     const prefixedBlock = `\n${startMarker}\n${result.css}\n${endMarker}\n`;
     const mergedCss = `${targetCss.trim()}\n\n${prefixedBlock}`;
-    fs.writeFileSync(targetCssPath, mergedCss, 'utf8');
+    fs.writeFileSync(targetCssPath, mergedCss, "utf8");
     console.log(`✅ Shared styles injected for '${pluginId}' into styles.css`);
   })
   .catch((err) => {
-    console.error('❌ Error during PostCSS processing:', err);
+    console.error("❌ Error during PostCSS processing:", err);
     process.exit(1);
   });

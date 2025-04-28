@@ -1,8 +1,10 @@
-import { LocalizedSetting } from '../renderer/types'; // adjust path accordingly
-import { ContextService } from '../utils/context-service';
-import { getCurrentLanguage } from '../utils/storage';
+import type { LocalizedSetting } from "../renderer/types"; // adjust path accordingly
+import { ContextService } from "../utils/context-service";
+import { getCurrentLanguage } from "../utils/storage";
 
-export async function loadLocalizedSettings(): Promise<Map<string, LocalizedSetting>> {
+export async function loadLocalizedSettings(): Promise<
+  Map<string, LocalizedSetting>
+> {
   const lang = getCurrentLanguage();
   const path = `.obsidian/plugins/${ContextService.pluginId()}/settings-${lang}.json`;
   const raw = await ContextService.app().vault.adapter.read(path);

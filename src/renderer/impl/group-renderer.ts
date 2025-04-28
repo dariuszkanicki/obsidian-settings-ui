@@ -16,7 +16,7 @@ export class GroupRenderer {
       .createDIV('group-body');
 
     let expanded = isSettingGroupExpanded(label);
-    console.log('expanded', expanded, typeof expanded);
+    // console.log("expanded", expanded, typeof expanded);
     const bodyEl = html.getElement('group-body')!;
     const toggleIcon = html.getElement('group-toggle')!;
     const titleEl = html.getElement('group-title')!;

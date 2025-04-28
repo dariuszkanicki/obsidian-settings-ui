@@ -1,7 +1,8 @@
-import { Setting, TextAreaComponent, TextComponent } from 'obsidian';
+import type { Setting, TextAreaComponent, TextComponent } from 'obsidian';
 import { css } from '../../utils/helper';
-import { AbstractPathRenderer, PathRendererResult } from './abstract-path-renderer';
-import { Numberfield, Textarea, Textfield } from '../types';
+import type { PathRendererResult } from './abstract-path-renderer';
+import { AbstractPathRenderer } from './abstract-path-renderer';
+import type { Numberfield, Textarea, Textfield } from '../types';
 import { setValue } from '../../utils/value-utils';
 
 export class InputfieldRenderer<T> extends AbstractPathRenderer<T> {
@@ -23,17 +24,18 @@ export class InputfieldRenderer<T> extends AbstractPathRenderer<T> {
         if (element.type === 'Numberfield') {
           txt.inputEl.type = 'number';
           txt.inputEl.classList.add(css('item-short'));
-          const numberfield = element as Numberfield<T>;
+          const numberfield = element;
           if (numberfield.unit) {
             setting.controlEl.addClass('number');
             setting.controlEl.createEl('label', { text: `${numberfield.unit}` });
-            noHint = true;
+            noHint = true;  
           }
         }
         result = { baseComponent: txt, htmlElement: txt.inputEl, noHint: noHint };
       });
     }
     if (element.placeholder !== undefined) {
+      // console.log("placeholder",element.placeholder);
       (result.baseComponent as (TextComponent | TextAreaComponent)).setPlaceholder(String(element.placeholder));
     }
 
@@ -50,12 +52,16 @@ export class InputfieldRenderer<T> extends AbstractPathRenderer<T> {
             val = element.max;
           }
           inputEl.value = String(val);
-          setValue(element, val);
+          setValue(element, val as number);
         }
       } else {
-        setValue(element, inputEl.value);
+        let value = inputEl.value;
+        if (element.placeholder && (value === '')) {
+          value = element.placeholder as string;
+        }
+        setValue(element, value as string);
       }
-    }
+    };
 
     inputEl.onkeydown = (ev: KeyboardEvent) => {
       if (ev.key === 'Enter' || ev.key === 'Tab') {

@@ -1,15 +1,19 @@
-import { Setting, ToggleComponent } from 'obsidian';
-import { css } from '../../utils/helper';
-import { AbstractPathRenderer, PathRendererResult } from './abstract-path-renderer';
-import { Toggle } from '../types';
-import { setValue } from '../../utils/value-utils';
+import type { Setting, ToggleComponent } from "obsidian";
+import { css } from "../../utils/helper";
+import type { PathRendererResult } from "./abstract-path-renderer";
+import { AbstractPathRenderer } from "./abstract-path-renderer";
+import type { Toggle } from "../types";
+import { setValue } from "../../utils/value-utils";
 
 export class ToggleRenderer<T> extends AbstractPathRenderer<T> {
   private toggleComponent?: ToggleComponent;
 
-  protected createElement(setting: Setting, element: Toggle<T>): PathRendererResult {
+  protected createElement(
+    setting: Setting,
+    element: Toggle<T>,
+  ): PathRendererResult {
     let result!: PathRendererResult;
-    setting.infoEl.addClass(css('info-toggle'));
+    setting.infoEl.addClass(css("info-toggle"));
     setting.addToggle((toggle) => {
       this.toggleComponent = toggle;
       toggle.onChange(async (value: any) => {

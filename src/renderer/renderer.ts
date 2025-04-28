@@ -1,13 +1,14 @@
 import { rendererRegistry } from './registry';
-import { AbstractBaseRenderer } from './impl/abstract-base-renderer';
-import { AbstractPathRenderer } from './impl/abstract-path-renderer';
-import { ConfigContext, SettingsConfig, SettingElement, BaseSetting, PathSetting, LocalizedSetting, GroupSetting, Path } from './types';
+import type { AbstractBaseRenderer } from './impl/abstract-base-renderer';
+import type { AbstractPathRenderer } from './impl/abstract-path-renderer';
+import type { ConfigContext, SettingsConfig, SettingElement, BaseSetting, PathSetting, GroupSetting } from './types';
+import { LocalizedSetting, Path } from './types';
 import { GroupRenderer } from './impl/group-renderer';
 import { renderHowToSection } from './impl/howto-renderer';
 import { loadLocalizedSettings } from '../i18n/loader';
-import { App, Plugin } from 'obsidian';
+import type { App, Plugin } from 'obsidian';
 import { renderGear } from './gear';
-import { AbstractGroupRenderer } from './impl/abstract-group-renderer';
+import type { AbstractGroupRenderer } from './impl/abstract-group-renderer';
 import { ContextService } from '../utils/context-service';
 
 export class Renderer<T> {
@@ -19,7 +20,7 @@ export class Renderer<T> {
     private settings: T,
     private container: HTMLElement,
     private saveData: (settings: T) => Promise<void>,
-    private refreshSettings: () => Promise<void>
+    private refreshSettings: () => Promise<void>,
   ) {
     this.context = {
       app: this.app,
@@ -33,9 +34,14 @@ export class Renderer<T> {
   }
 
   async renderSettings() {
+    console.log('config1', this.config);
     ContextService.initialize(this.context);
     this.context.settingsMap = await loadLocalizedSettings();
+    console.log('settingsMap', this.context.settingsMap);
+    console.log('config2', this.config);
+    console.log('this.container1', this.container);
     this.container.empty();
+    console.log('this.container2', this.container);
 
     await renderGear(this.container);
 

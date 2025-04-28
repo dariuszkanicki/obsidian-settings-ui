@@ -1,57 +1,38 @@
-import { PathSetting } from '../renderer/types';
-import { ContextService } from './context-service';
-import { getByPath, setByPath } from './path';
+import type { PathSetting } from "../renderer/types";
+import { ContextService } from "./context-service";
+import { getByPath, setByPath } from "./path";
 
-export function coerceValue<T>(original: T, input: any): T {
-  if (typeof original === 'number') {
-    if (input === '') {
+export function coerceValue<T>(
+  element: PathSetting<T>,
+  input: number | boolean | string | null,
+): T {
+  if (element.type === "Numberfield") {
+    if (input === "") {
       return 0 as T;
     }
-    const parsed = parseFloat(input);
-    return isNaN(parsed) ? original : (parsed as T);
-  }
-
-  if (typeof original === 'boolean') {
-    if (input === 'true' || input === true) return true as T;
-    if (input === 'false' || input === false) return false as T;
-    return original;
-  }
-
-  return String(input).trim() as T;
-}
-
-function _coerceValue<T>(element: PathSetting<T>, input: any): T {
-  if (element.type === 'Numberfield') {
-    if (input === '') {
-      return 0 as T;
-    }
-    const parsed = parseFloat(input);
+    const parsed = parseFloat(String(input));
     if (!isNaN(parsed)) {
       return parsed as T;
     } else {
-      throw Error('wrong input ' + input);
+      throw Error("wrong input " + input);
     }
   }
-  if (element.type === 'Toggle') {
-    if (input === 'true' || input === true) return true as T;
-    if (input === 'false' || input === false) return false as T;
+  if (element.type === "Toggle") {
+    if (input === "true" || input === true) return true as T;
+    if (input === "false" || input === false) return false as T;
     return false as T;
   }
   return String(input).trim() as T;
 }
 
 // TODO  preSave before element.handler?
-export async function setValue<T>(element: PathSetting<T>, value: any) {
+export async function setValue<T>(element: PathSetting<T>, value: number | string | boolean | null) {
   if (element.handler) {
     element.handler.setValue(value);
     return;
   }
   const settings = ContextService.settings();
-
-  const current = getByPath(settings, element.path);
-
-  // const coerced = coerceValue(current, value);
-  const coerced = _coerceValue(element, value);
+  const coerced = coerceValue(element, value);
 
   setByPath(settings, element.path, coerced);
 
@@ -96,8 +77,10 @@ export async function setValue<T>(element: PathSetting<T>, value: any) {
 // }
 
 // export function getValue<T>(settings: any, element: { path?: string; handler?: any }) {
-export function getValue<T>(element: PathSetting<T>) {
+export function getValue<T>(element: PathSetting<T>): T {
   const settings = ContextService.settings();
-  const value = element.handler ? element.handler.getValue() : getByPath(settings, element.path);
-  return value;
+  const value = element.handler
+    ? element.handler.getValue()
+    : getByPath(settings, element.path);
+  return value as T;
 }
