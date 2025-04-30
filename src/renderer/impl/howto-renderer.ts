@@ -1,5 +1,5 @@
-import { css } from "../../utils/helper";
-import type { HowToSection } from "../types";
+import { css } from "../../utils/helper.js";
+import { HowToSection } from "../types.js";
 
 export function renderHowToSection(
   bodyEl: HTMLElement,

@@ -1,10 +1,9 @@
-import { loadLocalizedSettings } from "../i18n/loader";
-import type { ConfigContext } from "../renderer/types";
+import { ConfigContext } from "../renderer/types.js";
 
 export class ContextService<T> {
   private static instance: any;
 
-  private constructor(private context: ConfigContext<T>) {}
+  private constructor(private context: ConfigContext<T>) { }
 
   static get<T>(): ContextService<T> {
     if (!ContextService.instance) {
@@ -23,6 +22,10 @@ export class ContextService<T> {
   static settings<T>(): T {
     return this.instance.context.settings;
   }
+  static defaults<T>(): T {
+    return this.instance.context.defaults;
+  }
+
   static async saveData<T>(settings: T) {
     this.instance.context.saveData(settings);
   }
@@ -32,8 +35,5 @@ export class ContextService<T> {
   }
   static app() {
     return this.instance.context.app;
-  }
-  static refreshSettings() {
-    this.instance.context.refreshSettings();
   }
 }

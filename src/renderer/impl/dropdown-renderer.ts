@@ -1,8 +1,7 @@
 import type { Setting } from "obsidian";
-import type { PathRendererResult } from "./abstract-path-renderer";
-import { AbstractPathRenderer } from "./abstract-path-renderer";
-import type { Dropdown } from "../types";
-import { setValue } from "../../utils/value-utils";
+import { getValue, setValue } from "../../utils/value-utils.js";
+import { Dropdown } from "../types.js";
+import { AbstractPathRenderer, PathRendererResult } from "./abstract-path-renderer.js";
 
 export class DropdownRenderer<T> extends AbstractPathRenderer<T> {
   protected createElement(
@@ -12,6 +11,7 @@ export class DropdownRenderer<T> extends AbstractPathRenderer<T> {
     let result!: PathRendererResult;
 
     setting.addDropdown((dropdown) => {
+      dropdown.setValue(getValue(element));
       element.items.forEach((item) => {
         dropdown.addOption(item.value, item.display);
         dropdown.onChange(async (value: any) => {

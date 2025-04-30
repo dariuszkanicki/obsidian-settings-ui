@@ -1,4 +1,4 @@
-import type { App, Plugin } from "obsidian";
+import type { App, Plugin } from 'obsidian';
 
 // Limit recursion depth to 3
 type PrevDepth = [never, 0, 1, 2]; // used to decrement depth
@@ -13,12 +13,8 @@ type PrevDepth = [never, 0, 1, 2]; // used to decrement depth
 export type Path<T, D extends number = 3> = [D] extends [never]
   ? never
   : {
-      [K in keyof T & string]: T[K] extends object
-        ? T[K] extends any[]
-          ? never
-          : K | `${K}.${Path<T[K], PrevDepth[D]>}`
-        : K;
-    }[keyof T & string];
+    [K in keyof T & string]: T[K] extends object ? (T[K] extends any[] ? never : K | `${K}.${Path<T[K], PrevDepth[D]>}`) : K;
+  }[keyof T & string];
 
 export interface LocalizedSetting {
   id: string;
@@ -26,6 +22,7 @@ export interface LocalizedSetting {
   hint?: string;
   tooltip?: string;
   buttonText?: string;
+  text?: string;
 }
 
 // 🔹Base for all setting types
@@ -50,7 +47,7 @@ export interface PathSetting<T> extends BaseSetting {
   placeholder?: string | number;
   customInputClass?: string;
   handler?: SettingHandler<T>;
-  preSave?: (value: T) => void;
+  preSave?: (value: any) => void;
   postSave?: () => void;
 }
 
@@ -65,7 +62,7 @@ export interface GroupSetting<T> {
 }
 
 export interface Conditional<T> {
-  type: "Conditional";
+  type: 'Conditional';
   showIf: boolean;
   items: SettingElement<T>[];
 }
@@ -73,39 +70,39 @@ export interface Conditional<T> {
 // export interface PathSetting<T> extends BaseSetting, PersistentSetting<T> {}
 
 export interface Button extends BaseSetting {
-  type: "Button";
+  type: 'Button';
   buttonText: string;
   onClick: () => void;
 }
 export interface Status extends BaseSetting {
-  type: "Status";
+  type: 'Status';
   items: StatusField[];
 }
 export interface RadioGroup<T> extends GroupSetting<T> {
-  type: "RadioGroup";
+  type: 'RadioGroup';
   items: Toggle<T>[];
   postSave?: () => void;
   defaultIndex?: number;
 }
 
 export interface Textfield<T> extends PathSetting<T> {
-  type: "Textfield";
+  type: 'Textfield';
 }
 export interface Numberfield<T> extends PathSetting<T> {
-  type: "Numberfield";
+  type: 'Numberfield';
   unit?: string;
   min?: number;
   max?: number;
 }
 export interface Textarea<T> extends PathSetting<T> {
-  type: "Textarea";
+  type: 'Textarea';
 }
 export interface Toggle<T> extends PathSetting<T> {
-  type: "Toggle";
+  type: 'Toggle';
   radioCallback?: (path: string, value: boolean) => void;
 }
 export interface Dropdown<T> extends PathSetting<T> {
-  type: "Dropdown";
+  type: 'Dropdown';
   items: DropdownItem[];
 }
 
@@ -136,20 +133,20 @@ export type HowToSection = {
 
 // 🔹 Top-level or group-level setting items (generic)
 // prettier-ignore
-export type SettingElement<T> = 
-    Button          | 
-    Status          | 
-    RadioGroup<T>   |
-    Conditional<T>  |
-    Dropdown<T>     | 
-    Textfield<T>    | 
-    Numberfield<T>  |
-    Textarea<T>     | 
-    Toggle<T>;
+export type SettingElement<T> =
+  Button |
+  Status |
+  RadioGroup<T> |
+  Conditional<T> |
+  Dropdown<T> |
+  Textfield<T> |
+  Numberfield<T> |
+  Textarea<T> |
+  Toggle<T>;
 
 // 🔹 Groups of settings
 export type SettingGroup<T> = {
-  type: "SettingGroup";
+  type: 'SettingGroup';
   label: string;
   items: SettingElement<T>[];
 };
@@ -166,8 +163,9 @@ export type ConfigContext<T> = {
   plugin: Plugin;
   pluginId: string;
   settings: T;
+  defaults: T;
   saveData: (settings: T) => Promise<void>;
-  refreshSettings: () => Promise<void>;
+  // refreshSettings: () => Promise<void>;
   settingsMap: Map<string, LocalizedSetting> | null;
 };
 

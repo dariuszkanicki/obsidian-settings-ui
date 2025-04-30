@@ -1,6 +1,6 @@
-import type { LocalizedSetting } from "../renderer/types"; // adjust path accordingly
-import { ContextService } from "../utils/context-service";
-import { getCurrentLanguage } from "../utils/storage";
+import type { LocalizedSetting } from "../renderer/types.js";
+import { ContextService } from "../utils/context-service.js";
+import { getCurrentLanguage } from "../utils/storage.js";
 
 export async function loadLocalizedSettings(): Promise<
   Map<string, LocalizedSetting>

@@ -1,6 +1,4 @@
 import { describe, expect, it } from "vitest";
-import { coerceValue } from "./value-utils";
-import { PathSetting } from "../renderer/types";
 
 // export interface TestStructure {
 //   testNumber: number,

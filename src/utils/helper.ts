@@ -1,8 +1,9 @@
 import type { Setting } from 'obsidian';
-import type { BaseSetting, LocalizedSetting, PathSetting } from '../renderer/types';
-import { ContextService } from './context-service';
-import { replacePlaceholders } from '../renderer/impl/setting-helper';
-import { createIcons, icons } from 'lucide';
+import { replacePlaceholders } from '../renderer/impl/setting-helper.js';
+import { PathSetting, BaseSetting, LocalizedSetting } from '../renderer/types.js';
+import { ContextService } from './context-service.js';
+import { createTooltip } from './tooltip.js';
+import { getValue, getDefaultValue } from './value-utils.js';
 
 export function addCodeHighlightedText(container: HTMLElement, label: string) {
   container.empty();
@@ -27,90 +28,41 @@ export function css(className: string | string[]): string {
   return className.startsWith(prefix) ? className : `${prefix}${className}`;
 }
 
-export function defaultButton<T>(setting: Setting, element: PathSetting<T>) {
-  // const result = translation(
-  //   element,
-  //   "tooltip",
-  //   element.tooltip,
-  //   element.tooltipParameters,
-  // );
-  // if (result) {
-  // const wrapper = document.createElement('span');
-  // wrapper.className = css('icon-wrapper');
+export function defaultButton<T>(noDefaultValueBar: boolean | undefined, setting: Setting, element: PathSetting<T>) {
 
-  // const tooltipIcon = wrapper.createEl('span', { cls: [css('default-icon'), 'file-json-icon'] });
-  // tooltipIcon.tabIndex = 0;
-  // tooltipIcon.onclick = (ev) => {
-  //   alert('clicked!');
-  // };
-  // const id = element.path;
-  // const uid = `tooltip-${id}`;
-  // tooltipIcon.setAttribute('aria-describedby', uid);
-
-  // const tooltipDiv = document.createElement('div');
-  // tooltipDiv.className = css('tooltip');
-  // tooltipDiv.id = uid;
-  // tooltipDiv.role = 'tooltip';
-  // // tooltipDiv.innerText = result;
-  // wrapper.appendChild(tooltipIcon);
+  if (noDefaultValueBar === true) {
+    return;
+  }
 
   const inputEl = setting.controlEl.firstChild!;
-  let optionalElement;
+  let optionalUnitElement;
   setting.controlEl.removeChild(inputEl);
   if (setting.controlEl.firstChild !== null) {
-    optionalElement = setting.controlEl.removeChild(setting.controlEl.firstChild);
+    optionalUnitElement = setting.controlEl.removeChild(setting.controlEl.firstChild);
   }
 
-  const itemWrapper = setting.controlEl.createDiv({ cls: 'dkani-ui-input-wrapper' });
-  // itemWrapper.appendChild(wrapper);
-  _addIcon(itemWrapper, element, 'file-json-icon');
+  const currentValue = getValue(element);
+  const defaultValue = getDefaultValue(element);
+  const itemWrapper = setting.controlEl.createDiv({ cls: css('input-wrapper') });
+  const iconWrapper = itemWrapper.createDiv({ cls: css('icon-wrapper') });
+  const iconSpan = iconWrapper.createSpan({ cls: css('default-icon') });
+  if (currentValue !== defaultValue) {
+    iconSpan.style.cssText = 'display: none';
+  }
+  createTooltip(iconSpan, textTranslation('defaultValue').text, { position: 'bottom' });
+
+  itemWrapper.appendChild(iconWrapper);
   itemWrapper.appendChild(inputEl);
-  if (optionalElement) {
-    itemWrapper.appendChild(optionalElement);
+  if (optionalUnitElement) {
+    itemWrapper.appendChild(optionalUnitElement);
   }
-}
-
-function _addIcon<T>(container: HTMLElement, element: PathSetting<T>, iconName: string) {
-  const span = container.createSpan({ cls: css('icon-wrapper') });
-  const icon = span.createSpan({ cls: [css('default-icon'), `${iconName}`] });
-  // icon.tabIndex = 0;
-  icon.onclick = (ev) => {
-    alert('clicked!');
-  };
-  const uid = `tooltip-${element.path}-${iconName}`;
-  icon.setAttribute('aria-describedby', uid);
-
-  // const tooltipDiv = document.createElement('div');
-  // tooltipDiv.className = css('tooltip');
-  // tooltipDiv.id = uid;
-  // tooltipDiv.role = 'tooltip';
-  // tooltipDiv.innerText = result;
-  span.appendChild(icon);
 }
 
 export function tooltip<T>(setting: Setting, element: BaseSetting | PathSetting<T>) {
   const result = translation(element, 'tooltip', element.tooltip, element.tooltipParameters);
   if (result) {
-    const wrapper = document.createElement('span');
-    wrapper.className = css('icon-wrapper');
-
-    const tooltipIcon = document.createElement('span');
-    tooltipIcon.className = css('tooltip-icon');
-    tooltipIcon.tabIndex = 0;
-    tooltipIcon.innerText = 'ℹ️';
-    const id = 'path' in element ? element.path : element.id;
-    const uid = `tooltip-${id}`;
-    tooltipIcon.setAttribute('aria-describedby', uid);
-
-    const tooltipDiv = document.createElement('div');
-    tooltipDiv.className = css('tooltip');
-    tooltipDiv.id = uid;
-    tooltipDiv.role = 'tooltip';
-    tooltipDiv.innerText = result;
-
-    wrapper.appendChild(tooltipIcon);
-    wrapper.appendChild(tooltipDiv);
-    setting.nameEl.appendChild(wrapper);
+    const tooltipIcon = setting.nameEl.createSpan({ cls: css('tooltip-icon'), text: 'ℹ️' });
+    createTooltip(tooltipIcon, result, { position: 'bottom' });
   }
 }
 
@@ -145,5 +97,10 @@ export function translation<T>(element: BaseSetting | PathSetting<T>, item: stri
       result = translated;
     }
   }
+  return result;
+}
+
+export function textTranslation(id: string) {
+  const result = ContextService.settingsMap().get(id);
   return result;
 }

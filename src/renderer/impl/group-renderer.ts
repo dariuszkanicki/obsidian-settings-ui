@@ -1,17 +1,16 @@
-import { ContextService } from '../../utils/context-service';
-import { Html, Tag } from '../../utils/html';
-import { isSettingGroupExpanded, setSettingGroupExpanded } from '../../utils/storage';
+import { Html, Tag } from "../../utils/html.js";
+import { isSettingGroupExpanded, setSettingGroupExpanded } from "../../utils/storage.js";
 
 export class GroupRenderer {
-  constructor(private container: HTMLElement) {}
+  constructor(private container: HTMLElement) { }
 
   render(label: string): HTMLElement {
     const html = new Html(this.container);
     // prettier-ignore
     html.createDIV('group')
       .createDIV('group-header')
-        .createSPAN('group-toggle', '▼', Tag.close)
-        .createDIV('group-title', label, Tag.close)
+      .createSPAN('group-toggle', '▼', Tag.close)
+      .createDIV('group-title', label, Tag.close)
       .closeTag()
       .createDIV('group-body');
 

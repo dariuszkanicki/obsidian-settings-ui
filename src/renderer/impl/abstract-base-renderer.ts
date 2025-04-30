@@ -1,9 +1,9 @@
 import type { Setting } from "obsidian";
-import type { BaseSetting } from "../types";
-import { createSetting } from "./setting-helper";
+import { BaseSetting } from "../types.js";
+import { createSetting } from "./setting-helper.js";
 
 export abstract class AbstractBaseRenderer<T> {
-  constructor(private element: BaseSetting) {}
+  constructor(private element: BaseSetting) { }
 
   render(container: HTMLElement, groupMember: boolean): void {
     const setting = createSetting(this.element, container, groupMember);

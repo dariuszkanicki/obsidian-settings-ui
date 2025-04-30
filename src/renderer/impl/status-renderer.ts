@@ -1,8 +1,8 @@
 import type { Setting } from "obsidian";
-import type { Status } from "../types";
-import { css } from "../../utils/helper";
-import { AbstractBaseRenderer } from "./abstract-base-renderer";
-import { getSettingFontSize } from "../../utils/storage";
+import { css } from "../../utils/helper.js";
+import { getSettingFontSize } from "../../utils/storage.js";
+import { Status } from "../types.js";
+import { AbstractBaseRenderer } from "./abstract-base-renderer.js";
 
 export class StatusRenderer<T> extends AbstractBaseRenderer<T> {
   protected createElement(setting: Setting, element: Status) {

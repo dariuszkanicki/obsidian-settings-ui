@@ -1,28 +1,25 @@
-import type { PathSetting } from "../renderer/types";
-import { ContextService } from "./context-service";
-import { getByPath, setByPath } from "./path";
+import { PathSetting } from "../renderer/types.js";
+import { ContextService } from "./context-service.js";
+import { setByPath, getByPath } from "./path.js";
 
-export function coerceValue<T>(
-  element: PathSetting<T>,
-  input: number | boolean | string | null,
-): T {
-  if (element.type === "Numberfield") {
-    if (input === "") {
-      return 0 as T;
+export function coerceValue<T>(element: PathSetting<T>, input: number | boolean | string | null): number | boolean | string {
+  if (element.type === 'Numberfield') {
+    if (input === '') {
+      return 0;
     }
     const parsed = parseFloat(String(input));
     if (!isNaN(parsed)) {
-      return parsed as T;
+      return parsed;
     } else {
-      throw Error("wrong input " + input);
+      throw Error('wrong input ' + input);
     }
   }
-  if (element.type === "Toggle") {
-    if (input === "true" || input === true) return true as T;
-    if (input === "false" || input === false) return false as T;
-    return false as T;
+  if (element.type === 'Toggle') {
+    if (input === 'true' || input === true) return true;
+    if (input === 'false' || input === false) return false;
+    return false;
   }
-  return String(input).trim() as T;
+  return String(input).trim();
 }
 
 // TODO  preSave before element.handler?
@@ -31,7 +28,12 @@ export async function setValue<T>(element: PathSetting<T>, value: number | strin
     element.handler.setValue(value);
     return;
   }
+
+  console.log('SET VALUE', element, value);
+  // console.trace("Here is it....");
+  // debugger;
   const settings = ContextService.settings();
+  console.log("settings", settings);
   const coerced = coerceValue(element, value);
 
   setByPath(settings, element.path, coerced);
@@ -39,6 +41,7 @@ export async function setValue<T>(element: PathSetting<T>, value: number | strin
   if (element.preSave) {
     element.preSave(coerced);
   }
+  // console.log("settings RESULT", settings);
   await ContextService.saveData(settings);
 
   if (element.postSave) {
@@ -77,10 +80,13 @@ export async function setValue<T>(element: PathSetting<T>, value: number | strin
 // }
 
 // export function getValue<T>(settings: any, element: { path?: string; handler?: any }) {
-export function getValue<T>(element: PathSetting<T>): T {
+export function getValue<T>(element: PathSetting<T>): any {
   const settings = ContextService.settings();
-  const value = element.handler
-    ? element.handler.getValue()
-    : getByPath(settings, element.path);
+  const value = element.handler ? element.handler.getValue() : getByPath(settings, element.path);
+  return value as T;
+}
+export function getDefaultValue<T>(element: PathSetting<T>): any {
+  const settings = ContextService.defaults();
+  const value = element.handler ? element.handler.getValue() : getByPath(settings, element.path);
   return value as T;
 }

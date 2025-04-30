@@ -3,23 +3,41 @@
   "version": "1.0.2",
   "description": "Reusable UI components for Obsidian plugin settings",
   "type": "module",
-  "main": "dist/lib/index.js",
-  "types": "dist/lib/index.d.ts",
-  "exports": {
-    "import": "./dist/lib/index.js",
-    "types": "./dist/lib/index.d.ts"
+  "main": "./dist/lib/index.js",
+  "types": "./dist/lib/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "inject": [
+        "dist/lib/utils/inject-styles.d.ts"
+      ]
+    }
   },
+  "exports": {
+    ".": {
+      "import": "./dist/lib/index.js",
+      "types": "./dist/lib/index.d.ts"
+    },
+    "./inject": {
+      "import": "./dist/lib/utils/inject-styles.js",
+      "types": "./dist/lib/utils/inject-styles.d.ts"
+    }
+  },
+  "files": [
+    "dist/lib",
+    "styles/source-styles.css"
+  ],
   "scripts": {
-    "test:inject": "pnpm build && node dist/lib/bin/inject-prefixed-styles.js",
     "build": "node build.mjs",
+    "test:inject": "pnpm build && node dist/lib/utils/inject-styles.js",
+    "typecheck": "tsc --noEmit",
     "test": "vitest",
     "lint": "eslint src --ext .ts",
     "lint:fix": "eslint src --ext .ts --fix",
     "format": "prettier --check .",
-    "format:fix": "prettier --write ."
-  },
-  "bin": {
-    "dkani-inject-styles": "./dist/lib/bin/inject-prefixed-styles.js"
+    "format:fix": "prettier --write .",
+    "yalc:publish": "pnpm build && yalc publish",
+    "yalc:push": "pnpm yalc:publish && yalc push",
+    "watch": "chokidar src/**/* styles/**/* --ignore dist/**/* -c \"pnpm yalc:push\""
   },
   "keywords": [
     "obsidian",
@@ -29,25 +47,26 @@
   ],
   "author": "Dariusz Kanicki",
   "license": "MIT",
-  "files": [
-    "dist/lib",
-    "styles/source-styles.css"
-  ],
   "dependencies": {
     "lucide": "^0.487.0",
-    "lucide-static": "^0.487.0",
-    "obsidian": "*"
+    "lucide-static": "^0.487.0"
+  },
+  "peerDependencies": {
+    "obsidian": "^1.8.7"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",
     "@types/postcss-prefix-selector": "^1.16.3",
     "@typescript-eslint/eslint-plugin": "^8.31.0",
     "@typescript-eslint/parser": "^8.31.0",
+    "chokidar-cli": "^3.0.0",
     "cpx": "^1.5.0",
+    "esbuild": "^0.25.3",
     "eslint": "^9.25.1",
     "eslint-config-prettier": "^10.1.2",
     "eslint-flat-config-utils": "^2.0.1",
     "eslint-plugin-prettier": "^5.2.6",
+    "fast-glob": "^3.3.3",
     "jiti": "^2.4.2",
     "postcss": "^8.5.3",
     "postcss-cli": "^11.0.1",

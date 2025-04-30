@@ -1,9 +1,8 @@
 import type { Setting, ToggleComponent } from "obsidian";
-import { css } from "../../utils/helper";
-import type { PathRendererResult } from "./abstract-path-renderer";
-import { AbstractPathRenderer } from "./abstract-path-renderer";
-import type { Toggle } from "../types";
-import { setValue } from "../../utils/value-utils";
+import { css } from "../../utils/helper.js";
+import { getValue, setValue } from "../../utils/value-utils.js";
+import { Toggle } from "../types.js";
+import { AbstractPathRenderer, PathRendererResult } from "./abstract-path-renderer.js";
 
 export class ToggleRenderer<T> extends AbstractPathRenderer<T> {
   private toggleComponent?: ToggleComponent;
@@ -16,6 +15,7 @@ export class ToggleRenderer<T> extends AbstractPathRenderer<T> {
     setting.infoEl.addClass(css("info-toggle"));
     setting.addToggle((toggle) => {
       this.toggleComponent = toggle;
+      toggle.setValue(getValue(element));
       toggle.onChange(async (value: any) => {
         await setValue(element, value);
         const radioCb = element.radioCallback;
@@ -23,7 +23,7 @@ export class ToggleRenderer<T> extends AbstractPathRenderer<T> {
           radioCb(element.path, value);
         }
       });
-      result = { baseComponent: toggle, htmlElement: toggle.toggleEl };
+      result = { baseComponent: toggle, htmlElement: toggle.toggleEl, noDefaultValueBar: true };
     });
     // transform: scale(1.5);
     return result;

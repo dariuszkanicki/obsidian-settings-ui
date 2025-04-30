@@ -1,7 +1,7 @@
 import type { Setting } from "obsidian";
-import { AbstractBaseRenderer } from "./abstract-base-renderer";
-import type { Button } from "../types";
-import { getTranslation } from "../../utils/helper";
+import { getTranslation } from "../../utils/helper.js";
+import { Button } from "../types.js";
+import { AbstractBaseRenderer } from "./abstract-base-renderer.js";
 
 export class ButtonRenderer<T> extends AbstractBaseRenderer<T> {
   protected createElement(setting: Setting, element: Button) {

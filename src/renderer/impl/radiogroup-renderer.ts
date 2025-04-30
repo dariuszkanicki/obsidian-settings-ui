@@ -1,9 +1,9 @@
 import type { ToggleComponent } from "obsidian";
-import type { RadioGroup, Toggle } from "../types";
-import { ToggleRenderer } from "./toggle-renderer";
-import { AbstractGroupRenderer } from "./abstract-group-renderer";
-import { Html, Tag } from "../../utils/html";
-import { getLabel } from "./setting-helper";
+import { Html, Tag } from "../../utils/html.js";
+import { Toggle, RadioGroup } from "../types.js";
+import { AbstractGroupRenderer } from "./abstract-group-renderer.js";
+import { getLabel } from "./setting-helper.js";
+import { ToggleRenderer } from "./toggle-renderer.js";
 
 export class RadioGroupRenderer<T> extends AbstractGroupRenderer<T> {
   private itemsMap = new Map<
@@ -17,8 +17,8 @@ export class RadioGroupRenderer<T> extends AbstractGroupRenderer<T> {
     // prettier-ignore
     html.createDIV('group')
       .createDIV('group-header')
-        // .createSPAN('group-toggle', '▼', Tag.close)
-        .createDIV('group-title', getLabel(element), Tag.close)
+      // .createSPAN('group-toggle', '▼', Tag.close)
+      .createDIV('group-title', getLabel(element), Tag.close)
       .closeTag()
       .createDIV('group-body');
 

@@ -1,5 +1,4 @@
-import { Plugin } from "obsidian";
-import { ContextService } from "./context-service";
+import { ContextService } from "./context-service.js";
 
 // global for all Settings controlled by this lib
 export function setDefaultSettingFontSize(): void {

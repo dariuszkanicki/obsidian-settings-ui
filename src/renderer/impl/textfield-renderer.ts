@@ -1,26 +1,28 @@
 import type { Setting, TextAreaComponent, TextComponent } from 'obsidian';
-import { css } from '../../utils/helper';
-import type { PathRendererResult } from './abstract-path-renderer';
-import { AbstractPathRenderer } from './abstract-path-renderer';
-import type { Numberfield, Textarea, Textfield } from '../types';
-import { setValue } from '../../utils/value-utils';
+import { css } from '../../utils/helper.js';
+import { getValue, setValue } from '../../utils/value-utils.js';
+import { Textfield, Textarea, Numberfield } from '../types.js';
+import { AbstractPathRenderer, PathRendererResult } from './abstract-path-renderer.js';
 
 export class InputfieldRenderer<T> extends AbstractPathRenderer<T> {
   // prettier-ignore
   protected createElement(
-    setting: Setting, 
+    setting: Setting,
     element: Textfield<T> | Textarea<T> | Numberfield<T>
   ): PathRendererResult {
 
     let result!: PathRendererResult;
     if (element.type === 'Textarea') {
       setting.addTextArea((ta) => {
+        ta.setValue(getValue(element));
         result = { baseComponent: ta, htmlElement: ta.inputEl };
       });
       setting.infoEl.addClass(css('info-textarea'));
     } else {
       let noHint = false;
       setting.addText((txt) => {
+        txt.setValue(String(getValue(element)));
+        console.log("setValue", element, getValue(element));
         if (element.type === 'Numberfield') {
           txt.inputEl.type = 'number';
           txt.inputEl.classList.add(css('item-short'));
@@ -28,7 +30,7 @@ export class InputfieldRenderer<T> extends AbstractPathRenderer<T> {
           if (numberfield.unit) {
             setting.controlEl.addClass('number');
             setting.controlEl.createEl('label', { text: `${numberfield.unit}` });
-            noHint = true;  
+            noHint = true;
           }
         }
         result = { baseComponent: txt, htmlElement: txt.inputEl, noHint: noHint };
@@ -63,15 +65,10 @@ export class InputfieldRenderer<T> extends AbstractPathRenderer<T> {
       }
     };
 
-    inputEl.onkeydown = (ev: KeyboardEvent) => {
-      if (ev.key === 'Enter' || ev.key === 'Tab') {
-        _handleInputChange();
-      }
-    };
     inputEl.onblur = () => {
       _handleInputChange();
     };
-    
+
     return result;
   }
 }

@@ -3,21 +3,21 @@ import {
   addCodeHighlightedText,
   css,
   getTranslation,
-} from "../../utils/helper";
-import type { BaseSetting, PathSetting } from "../types";
-import { saveMap } from "../../i18n/loader";
-import { ContextService } from "../../utils/context-service";
-import { getSettingFontSize, getSettingLabelWidth } from "../../utils/storage";
+} from "../../utils/helper.js";
+import { saveMap } from "../../i18n/loader.js";
+import { ContextService } from "../../utils/context-service.js";
+import { getSettingLabelWidth, getSettingFontSize } from "../../utils/storage.js";
+import { BaseSetting, PathSetting } from "../types.js";
 
 // prettier-ignore
 export function createSetting<T>(
-  element:      BaseSetting | PathSetting<T>, 
-  container:    HTMLElement, 
-  groupMember:  boolean
+  element: BaseSetting | PathSetting<T>,
+  container: HTMLElement,
+  groupMember: boolean
 ): Setting {
 
   const setting = new Setting(container);
-  setLabel(element,setting.nameEl);
+  setLabel(element, setting.nameEl);
   _setLabelWith();
   _setLabelFontSize();
 
