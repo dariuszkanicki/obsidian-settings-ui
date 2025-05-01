@@ -8,7 +8,8 @@ import { AbstractPathRenderer } from "./impl/abstract-path-renderer.js";
 import { GroupRenderer } from "./impl/group-renderer.js";
 import { renderHowToSection } from "./impl/howto-renderer.js";
 import { rendererRegistry } from "./registry.js";
-import { ConfigContext, SettingsConfig, SettingElement, BaseSetting, PathSetting, GroupSetting } from "./types.js";
+import { ConfigContext, SettingsConfig, SettingElement, BaseSetting, PathSetting, GroupSetting, RadioGroup } from "./types.js";
+import { RadioGroupRenderer } from "./impl/radiogroup-renderer.js";
 
 export class Renderer<T> {
   private context: ConfigContext<T>;
@@ -82,7 +83,7 @@ export class Renderer<T> {
       return;
     }
 
-    let renderer: AbstractBaseRenderer<T> | AbstractPathRenderer<T> | AbstractGroupRenderer<T>;
+    let renderer: AbstractBaseRenderer<T> | AbstractPathRenderer<T> | AbstractGroupRenderer<T> | RadioGroupRenderer<T>;
 
     if (entry.type === 'base') {
       renderer = new entry.ctor(el as BaseSetting);
@@ -90,6 +91,8 @@ export class Renderer<T> {
       renderer = new entry.ctor(el as PathSetting<T>);
     } else if (entry.type === 'group') {
       renderer = new entry.ctor(el as GroupSetting<T>);
+    } else if (entry.type === 'radio') {
+      renderer = new entry.ctor(el as RadioGroup<T>);
     } else {
       throw Error(`unknown renderer type ${el.type}`);
     }

@@ -15,17 +15,19 @@ export class ToggleRenderer<T> extends AbstractPathRenderer<T> {
     setting.infoEl.addClass(css("info-toggle"));
     setting.addToggle((toggle) => {
       this.toggleComponent = toggle;
+
       toggle.setValue(getValue(element));
       toggle.onChange(async (value: any) => {
         await setValue(element, value);
-        const radioCb = element.radioCallback;
-        if (radioCb !== undefined) {
-          radioCb(element.path, value);
-        }
       });
       result = { baseComponent: toggle, htmlElement: toggle.toggleEl, noDefaultValueBar: true };
     });
     // transform: scale(1.5);
     return result;
+  }
+
+  setInternalValue(toggle: ToggleComponent, value: boolean) {
+    console.log("setInternalValue", value);
+    toggle.setValue(value);
   }
 }

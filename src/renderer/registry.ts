@@ -7,7 +7,7 @@ import { RadioGroupRenderer } from "./impl/radiogroup-renderer.js";
 import { StatusRenderer } from "./impl/status-renderer.js";
 import { InputfieldRenderer } from "./impl/textfield-renderer.js";
 import { ToggleRenderer } from "./impl/toggle-renderer.js";
-import { BaseSetting, GroupSetting, PathSetting } from "./types.js";
+import { BaseSetting, GroupSetting, PathSetting, RadioGroup } from "./types.js";
 
 type RendererConstructor =
   | {
@@ -21,12 +21,16 @@ type RendererConstructor =
   | {
     type: "path";
     ctor: new <T>(element: PathSetting<T>) => AbstractPathRenderer<T>;
+  }
+  | {
+    type: "radio";
+    ctor: new <T>(element: RadioGroup<T>) => RadioGroupRenderer<T>;
   };
 
 export const rendererRegistry: Record<string, RendererConstructor> = {
   Button: { type: "base", ctor: ButtonRenderer },
   Status: { type: "base", ctor: StatusRenderer },
-  RadioGroup: { type: "group", ctor: RadioGroupRenderer },
+  RadioGroup: { type: "radio", ctor: RadioGroupRenderer },
   Textfield: { type: "path", ctor: InputfieldRenderer },
   Numberfield: { type: "path", ctor: InputfieldRenderer },
   Textarea: { type: "path", ctor: InputfieldRenderer },

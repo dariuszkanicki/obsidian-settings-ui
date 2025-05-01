@@ -27,7 +27,7 @@ export interface LocalizedSetting {
 
 // 🔹Base for all setting types
 export interface BaseSetting {
-  type: string;
+  type?: string;
   id?: string;
   label?: string;
   labelParameters?: string[];
@@ -78,12 +78,18 @@ export interface Status extends BaseSetting {
   type: 'Status';
   items: StatusField[];
 }
-export interface RadioGroup<T> extends GroupSetting<T> {
+export interface RadioGroup<T> extends PathSetting<T> {
   type: 'RadioGroup';
-  items: Toggle<T>[];
+  items: RadioItem[];
   postSave?: () => void;
-  defaultIndex?: number;
+  defaultId?: string;
 }
+export interface RadioItem extends BaseSetting {
+  // type: 'RadioItem';
+  id: string;
+  // radioCallback?: (path: string, value: boolean) => void;
+}
+
 
 export interface Textfield<T> extends PathSetting<T> {
   type: 'Textfield';
@@ -99,7 +105,6 @@ export interface Textarea<T> extends PathSetting<T> {
 }
 export interface Toggle<T> extends PathSetting<T> {
   type: 'Toggle';
-  radioCallback?: (path: string, value: boolean) => void;
 }
 export interface Dropdown<T> extends PathSetting<T> {
   type: 'Dropdown';
