@@ -42,11 +42,10 @@ export interface BaseSetting {
 
 // 🔹additionally for settings that store values (e.g., in your plugin's settings object)
 export interface PathSetting<T> extends BaseSetting {
-  path: Path<T>;
-  defaultValue?: string | number;
+  path?: Path<T>;
+  handler?: SettingHandler<T>;
   placeholder?: string | number;
   customInputClass?: string;
-  handler?: SettingHandler<T>;
   preSave?: (value: any) => void;
   postSave?: () => void;
 }
@@ -71,7 +70,7 @@ export interface Conditional<T> {
 
 export interface Button extends BaseSetting {
   type: 'Button';
-  buttonText: string;
+  buttonText?: string;
   onClick: () => void;
 }
 export interface Status extends BaseSetting {
@@ -153,6 +152,7 @@ export type SettingElement<T> =
 export type SettingGroup<T> = {
   type: 'SettingGroup';
   label: string;
+  showIf?: boolean;
   items: SettingElement<T>[];
 };
 
@@ -170,7 +170,7 @@ export type ConfigContext<T> = {
   settings: T;
   defaults: T;
   saveData: (settings: T) => Promise<void>;
-  // refreshSettings: () => Promise<void>;
+  refreshSettings: () => Promise<void>;
   settingsMap: Map<string, LocalizedSetting> | null;
 };
 

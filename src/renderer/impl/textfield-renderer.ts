@@ -1,8 +1,10 @@
 import type { Setting, TextAreaComponent, TextComponent } from 'obsidian';
 import { css } from '../../utils/helper.js';
-import { getValue, setValue } from '../../utils/value-utils.js';
+import { getDefaultValue, getValue, setValue } from '../../utils/value-utils.js';
 import { Textfield, Textarea, Numberfield } from '../types.js';
 import { AbstractPathRenderer, PathRendererResult } from './abstract-path-renderer.js';
+import { getDefaultSettings } from 'node:http2';
+import { ContextService } from '../../utils/context-service.js';
 
 export class InputfieldRenderer<T> extends AbstractPathRenderer<T> {
   // prettier-ignore
@@ -44,13 +46,16 @@ export class InputfieldRenderer<T> extends AbstractPathRenderer<T> {
     const inputEl = result.htmlElement as HTMLInputElement;
 
     const _handleInputChange = () => {
+      const defaultValue = getDefaultValue(element);
+      console.log("defaultValue", defaultValue);
       if (element.type === 'Numberfield') {
         let val = Number(inputEl.value);
         if (!isNaN(val)) {
-          if (element.min !== undefined && val < element.min) {
+          if (inputEl.value === '') {
+            val = defaultValue;
+          } else if (element.min !== undefined && val < element.min) {
             val = element.min;
-          }
-          if (element.max !== undefined && val > element.max) {
+          } else if (element.max !== undefined && val > element.max) {
             val = element.max;
           }
           inputEl.value = String(val);
@@ -58,11 +63,14 @@ export class InputfieldRenderer<T> extends AbstractPathRenderer<T> {
         }
       } else {
         let value = inputEl.value;
-        if (element.placeholder && (value === '')) {
-          value = element.placeholder as string;
+        if (value === '' && defaultValue && defaultValue !== '') {
+          value = defaultValue;
         }
-        setValue(element, value as string);
+        console.log("setValue", element, value);
+        inputEl.value = value;
+        setValue(element, value);
       }
+      ContextService.refresh();
     };
 
     inputEl.onblur = () => {

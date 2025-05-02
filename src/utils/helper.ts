@@ -28,9 +28,9 @@ export function css(className: string | string[]): string {
   return className.startsWith(prefix) ? className : `${prefix}${className}`;
 }
 
-export function defaultButton<T>(noDefaultValueBar: boolean | undefined, setting: Setting, element: PathSetting<T>) {
+export function defaultBar<T>(noDefaultValueBar: boolean | undefined, setting: Setting, element: PathSetting<T>) {
 
-  if (noDefaultValueBar === true) {
+  if (noDefaultValueBar === true || element.handler) {
     return;
   }
 

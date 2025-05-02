@@ -27,6 +27,8 @@ export async function setValue<T>(element: PathSetting<T>, value: number | strin
   if (element.handler) {
     element.handler.setValue(value);
     return;
+  } else if (!element.path) {
+    console.error("neither path nor handler specified for ", element);
   }
 
   console.log('SET VALUE', element, value);
@@ -36,7 +38,7 @@ export async function setValue<T>(element: PathSetting<T>, value: number | strin
   console.log("settings", settings);
   const coerced = coerceValue(element, value);
 
-  setByPath(settings, element.path, coerced);
+  setByPath(settings, element.path!, coerced);
 
   if (element.preSave) {
     element.preSave(coerced);
@@ -82,11 +84,11 @@ export async function setValue<T>(element: PathSetting<T>, value: number | strin
 // export function getValue<T>(settings: any, element: { path?: string; handler?: any }) {
 export function getValue<T>(element: PathSetting<T>): any {
   const settings = ContextService.settings();
-  const value = element.handler ? element.handler.getValue() : getByPath(settings, element.path);
+  const value = element.handler ? element.handler.getValue() : getByPath(settings, element.path!);
   return value as T;
 }
 export function getDefaultValue<T>(element: PathSetting<T>): any {
   const settings = ContextService.defaults();
-  const value = element.handler ? element.handler.getValue() : getByPath(settings, element.path);
+  const value = element.handler ? element.handler.getValue() : getByPath(settings, element.path!);
   return value as T;
 }

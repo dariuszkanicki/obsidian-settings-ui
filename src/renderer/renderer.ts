@@ -8,8 +8,9 @@ import { AbstractPathRenderer } from "./impl/abstract-path-renderer.js";
 import { GroupRenderer } from "./impl/group-renderer.js";
 import { renderHowToSection } from "./impl/howto-renderer.js";
 import { rendererRegistry } from "./registry.js";
-import { ConfigContext, SettingsConfig, SettingElement, BaseSetting, PathSetting, GroupSetting, RadioGroup } from "./types.js";
+import { ConfigContext, SettingsConfig, SettingElement, BaseSetting, PathSetting, GroupSetting, RadioGroup, Conditional, SettingGroup } from "./types.js";
 import { RadioGroupRenderer } from "./impl/radiogroup-renderer.js";
+import { getDefaultValue } from "../utils/value-utils.js";
 
 export class Renderer<T> {
   private context: ConfigContext<T>;
@@ -31,7 +32,16 @@ export class Renderer<T> {
       defaults: this.defaults,
       saveData: this.saveData,
       settingsMap: null,
+      refreshSettings: this.refreshSettings
     };
+  }
+
+  isSettingGroup<T>(el: any): el is SettingGroup<T> {
+    return el?.type === 'SettingGroup' && Array.isArray(el.items);
+  }
+
+  isConditional<T>(el: any): el is Conditional<T> {
+    return el?.type === 'Conditional' && Array.isArray(el.items);
   }
 
   async renderSettings() {
@@ -51,36 +61,56 @@ export class Renderer<T> {
     }
 
     for (const el of this.config.elements) {
-      if ('type' in el && el.type === 'SettingGroup') {
+      if (this.isSettingGroup(el)) {
         const bodyEl = groupRenderer.render(el.label);
-        el.items.forEach((item) => {
-          if ('type' in item && item.type === 'Conditional') {
+        for (const item of el.items) {
+          if (this.isConditional(item)) {
             if (item.showIf === true) {
-              item.items.forEach((conditionalItem) => this._renderElement(bodyEl, conditionalItem, true));
+              for (const conditionalItem of item.items) {
+                this._renderElement(bodyEl, conditionalItem, true);
+              }
             }
           } else {
             this._renderElement(bodyEl, item, true);
           }
-        });
+        }
       } else {
         this._renderElement(this.container, el);
       }
     }
   }
 
+
+  private _checkConsistency(el: PathSetting<T>, elType: string, elDataType: string) {
+    const datatype = typeof getDefaultValue(el);
+    if (el.type === elType && datatype !== elDataType) {
+      throw Error(`${el.path}: '${elType}' specified for datatype '${datatype}'`);
+    } else if (el.type !== elType && datatype === elDataType) {
+      throw Error(`${el.path}: '${el.type}' specified for datatype '${elDataType}'`);
+    }
+  }
+
   // prettier-ignore
   private _renderElement(
     container: HTMLElement,
-    el: SettingElement<T>,
+    el: SettingElement<T> | SettingGroup<T>,
     groupMember = false
   ) {
     if (el.showIf === false) return;
 
     const entry = rendererRegistry[el.type];
-
     if (!entry) {
       console.warn(`No renderer found for type: ${el.type}`);
       return;
+    }
+
+    if ('path' in el) {
+      try {
+        this._checkConsistency(el, 'Numberfield', 'number');
+        this._checkConsistency(el, 'Toggle', 'boolean');
+      } catch (e) {
+        console.error(e);
+      }
     }
 
     let renderer: AbstractBaseRenderer<T> | AbstractPathRenderer<T> | AbstractGroupRenderer<T> | RadioGroupRenderer<T>;
@@ -99,3 +129,4 @@ export class Renderer<T> {
     renderer.render(container, groupMember);
   }
 }
+

@@ -1,5 +1,5 @@
 import type { BaseComponent, Setting } from 'obsidian';
-import { css, defaultButton, tooltip, hint } from '../../utils/helper.js';
+import { css, defaultBar, tooltip, hint } from '../../utils/helper.js';
 import { getSettingFontSize } from '../../utils/storage.js';
 import { PathSetting } from '../types.js';
 import { createSetting } from './setting-helper.js';
@@ -20,7 +20,7 @@ export abstract class AbstractPathRenderer<T> {
 
     created.htmlElement.classList.add(css('item'));
     // this._initValue(created.baseComponent);
-    defaultButton(created.noDefaultValueBar, setting, this.element);
+    defaultBar(created.noDefaultValueBar, setting, this.element);
     tooltip(setting, this.element);
     const hintElement = hint(created.noHint, setting, this.element);
     this._scaleFont(created.htmlElement, hintElement);

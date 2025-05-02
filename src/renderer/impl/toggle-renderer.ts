@@ -3,6 +3,7 @@ import { css } from "../../utils/helper.js";
 import { getValue, setValue } from "../../utils/value-utils.js";
 import { Toggle } from "../types.js";
 import { AbstractPathRenderer, PathRendererResult } from "./abstract-path-renderer.js";
+import { ContextService } from "../../utils/context-service.js";
 
 export class ToggleRenderer<T> extends AbstractPathRenderer<T> {
   private toggleComponent?: ToggleComponent;
@@ -19,6 +20,7 @@ export class ToggleRenderer<T> extends AbstractPathRenderer<T> {
       toggle.setValue(getValue(element));
       toggle.onChange(async (value: any) => {
         await setValue(element, value);
+        ContextService.refresh();
       });
       result = { baseComponent: toggle, htmlElement: toggle.toggleEl, noDefaultValueBar: true };
     });

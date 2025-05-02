@@ -314,12 +314,13 @@ input.dkani-ui-item-short {
   cursor: pointer;
 }
 .dkani-ui-group.radio {
-  max-width: 708px;
+  border-radius: 10px;
 }
 
 /* defaultValue vertical bar === BEGIN */
 .dkani-ui-input-wrapper {
   display: flex;
+  width: 100%;
 }
 .dkani-ui-icon-wrapper {
   display: flex;
@@ -327,7 +328,7 @@ input.dkani-ui-item-short {
 }
 .dkani-ui-default-icon {
   width: 5px;
-  height: 22px;
+  height: 90%;
   background: #a3f7b5;
   margin-left: -5px;
   display: block;

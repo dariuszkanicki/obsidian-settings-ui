@@ -36,4 +36,7 @@ export class ContextService<T> {
   static app() {
     return this.instance.context.app;
   }
+  static refresh() {
+    this.instance.context.refreshSettings();
+  }
 }
