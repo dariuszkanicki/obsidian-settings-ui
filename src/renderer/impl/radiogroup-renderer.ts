@@ -26,15 +26,12 @@ export class RadioGroupRenderer<T> {
     const bodyEl = html.getElement("group-body")!;
 
     let valueSet = false;
-    console.log("group", this.element, getValue(this.element));
 
     this.element.items.forEach((item, index) => {
-      console.log("item", item);
       const renderer = new RadioItemRenderer(item);
       renderer.render(bodyEl, true)
 
       renderer.setGroupCallback((path: string, value: boolean) => {
-        console.log("group.callback", path, value);
         if (value === true) {
           setValue(this.element, path);
         } else {

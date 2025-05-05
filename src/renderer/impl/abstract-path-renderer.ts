@@ -1,8 +1,9 @@
 import type { BaseComponent, Setting } from 'obsidian';
-import { css, defaultBar, tooltip, hint } from '../../utils/helper.js';
+import { css, defaultBar, tooltip, hint, previewAsHint } from '../../utils/helper.js';
 import { getSettingFontSize } from '../../utils/storage.js';
 import { PathSetting } from '../types.js';
 import { createSetting } from './setting-helper.js';
+import { getValue } from '../../utils/value-utils.js';
 
 export type PathRendererResult = {
   baseComponent: BaseComponent;
@@ -12,43 +13,34 @@ export type PathRendererResult = {
 };
 
 export abstract class AbstractPathRenderer<T> {
+
+  setting!: Setting;
+  hintElement?: HTMLElement;
+
   constructor(private element: PathSetting<T>) { }
 
   render(container: HTMLElement, groupMember: boolean) {
-    const setting = createSetting(this.element, container, groupMember);
-    const created = this.createElement(setting, this.element);
+    this.setting = createSetting(this.element, container, groupMember);
+    const created = this.createElement(this.setting, this.element);
 
     created.htmlElement.classList.add(css('item'));
-    // this._initValue(created.baseComponent);
-    defaultBar(created.noDefaultValueBar, setting, this.element);
-    tooltip(setting, this.element);
-    const hintElement = hint(created.noHint, setting, this.element);
-    this._scaleFont(created.htmlElement, hintElement);
+    defaultBar(created.noDefaultValueBar, this.setting, this.element);
+    tooltip(this.setting, this.element);
+    let small = hint(created.noHint, this.setting, this.element);
+    if (this.element.validate) {
+      const value = getValue(this.element);
+      const { valid, data, invalid, preview } = this.element.validate(value);
+      console.log("element.validate", value, valid, data, preview);
+      if (preview) {
+        small = previewAsHint(this.setting, preview);
+      }
+    }
+    this._scaleFont(created.htmlElement, small);
 
     return created;
   }
 
   protected abstract createElement(setting: Setting, element: PathSetting<T>): PathRendererResult;
-
-  // TODO created.baseComponent probably not needed anymore
-  // private _initValue(baseComponent: BaseComponent) {
-  //   if ('setValue' in baseComponent && typeof baseComponent.setValue === 'function') {
-  //     const value = getValue(this.element);
-  //     // if placeholder is set, don't set the value if it's equals placeholder, so the placeholder is displayed as such
-  //     if (this.element.placeholder === undefined || this.element.placeholder !== value) {
-  //       let _value: any;
-  //       if (typeof value === 'number') {
-  //         _value = String(value);
-  //       } else if (this.element.type === 'Toggle') {
-  //         _value = value === undefined ? false : value;
-  //       } else {
-  //         _value = value;
-  //       }
-  //       console.log("_initValue", this.element, _value, typeof _value);
-  //       (baseComponent as any).setValue(_value);
-  //     }
-  //   }
-  // }
 
   private _scaleFont(htmlElement: HTMLElement, hintElement?: HTMLElement) {
     const fontSize = getSettingFontSize();

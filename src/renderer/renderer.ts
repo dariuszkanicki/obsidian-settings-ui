@@ -45,7 +45,6 @@ export class Renderer<T> {
   }
 
   async renderSettings() {
-    // console.log('this.config', this.config);
     ContextService.initialize(this.context);
     this.context.settingsMap = await loadLocalizedSettings();
     this.container.empty();
@@ -56,13 +55,13 @@ export class Renderer<T> {
 
     if (this.config.howTo) {
       const label = this.config.howTo.label ?? 'How to use this plugin';
-      const howtoEl = groupRenderer.render(label);
+      const howtoEl = groupRenderer.render(this.config.howTo);
       renderHowToSection(howtoEl, this.context.pluginId, this.config.howTo);
     }
 
     for (const el of this.config.elements) {
       if (this.isSettingGroup(el)) {
-        const bodyEl = groupRenderer.render(el.label);
+        const bodyEl = groupRenderer.render(el);
         for (const item of el.items) {
           if (this.isConditional(item)) {
             if (item.showIf === true) {
@@ -80,9 +79,9 @@ export class Renderer<T> {
     }
   }
 
-
   private _checkConsistency(el: PathSetting<T>, elType: string, elDataType: string) {
     const datatype = typeof getDefaultValue(el);
+
     if (el.type === elType && datatype !== elDataType) {
       throw Error(`${el.path}: '${elType}' specified for datatype '${datatype}'`);
     } else if (el.type !== elType && datatype === elDataType) {

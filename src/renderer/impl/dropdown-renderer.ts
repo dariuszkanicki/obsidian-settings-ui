@@ -2,6 +2,8 @@ import type { Setting } from "obsidian";
 import { getValue, setValue } from "../../utils/value-utils.js";
 import { Dropdown } from "../types.js";
 import { AbstractPathRenderer, PathRendererResult } from "./abstract-path-renderer.js";
+import { ContextService } from "../../utils/context-service.js";
+import { translateDropdownItem, translation } from "../../utils/translation.js";
 
 export class DropdownRenderer<T> extends AbstractPathRenderer<T> {
   protected createElement(
@@ -11,12 +13,17 @@ export class DropdownRenderer<T> extends AbstractPathRenderer<T> {
     let result!: PathRendererResult;
 
     setting.addDropdown((dropdown) => {
-      dropdown.setValue(getValue(element));
       element.items.forEach((item) => {
-        dropdown.addOption(item.value, item.display);
-        dropdown.onChange(async (value: any) => {
-          await setValue(element, value);
-        });
+        let label = translateDropdownItem(element, item, item.label)!;
+        if (!label) {
+          label = item.id;
+        }
+        dropdown.addOption(item.id, label);
+      });
+      dropdown.setValue(getValue(element));
+      dropdown.onChange(async (value: any) => {
+        await setValue(element, value);
+        ContextService.refresh();
       });
       result = { baseComponent: dropdown, htmlElement: dropdown.selectEl };
     });

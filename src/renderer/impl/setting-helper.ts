@@ -2,12 +2,12 @@ import { Setting } from "obsidian";
 import {
   addCodeHighlightedText,
   css,
-  getTranslation,
 } from "../../utils/helper.js";
 import { saveMap } from "../../i18n/loader.js";
 import { ContextService } from "../../utils/context-service.js";
 import { getSettingLabelWidth, getSettingFontSize } from "../../utils/storage.js";
 import { BaseSetting, PathSetting } from "../types.js";
+import { getTranslation } from "../../utils/translation.js";
 
 // prettier-ignore
 export function createSetting<T>(

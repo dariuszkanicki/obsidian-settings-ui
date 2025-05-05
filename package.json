@@ -48,6 +48,8 @@
   "author": "Dariusz Kanicki",
   "license": "MIT",
   "dependencies": {
+    "@simonwep/pickr": "^1.9.1",
+    "colord": "^2.9.3",
     "lucide": "^0.487.0",
     "lucide-static": "^0.487.0"
   },

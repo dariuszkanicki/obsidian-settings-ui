@@ -29,7 +29,6 @@ export class ToggleRenderer<T> extends AbstractPathRenderer<T> {
   }
 
   setInternalValue(toggle: ToggleComponent, value: boolean) {
-    console.log("setInternalValue", value);
     toggle.setValue(value);
   }
 }

@@ -2,6 +2,7 @@ import { AbstractBaseRenderer } from "./impl/abstract-base-renderer.js";
 import { AbstractGroupRenderer } from "./impl/abstract-group-renderer.js";
 import { AbstractPathRenderer } from "./impl/abstract-path-renderer.js";
 import { ButtonRenderer } from "./impl/button-renderer.js";
+import { ColorpickerRenderer } from "./impl/colorpicker-renderer.js";
 import { DropdownRenderer } from "./impl/dropdown-renderer.js";
 import { RadioGroupRenderer } from "./impl/radiogroup-renderer.js";
 import { StatusRenderer } from "./impl/status-renderer.js";
@@ -36,4 +37,5 @@ export const rendererRegistry: Record<string, RendererConstructor> = {
   Textarea: { type: "path", ctor: InputfieldRenderer },
   Dropdown: { type: "path", ctor: DropdownRenderer },
   Toggle: { type: "path", ctor: ToggleRenderer },
+  Color: { type: "path", ctor: ColorpickerRenderer },
 };

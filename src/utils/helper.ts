@@ -1,9 +1,9 @@
 import type { Setting } from 'obsidian';
-import { replacePlaceholders } from '../renderer/impl/setting-helper.js';
 import { PathSetting, BaseSetting, LocalizedSetting } from '../renderer/types.js';
 import { ContextService } from './context-service.js';
-import { createTooltip } from './tooltip.js';
+import { createInteractiveTooltip, createTooltip } from './tooltip.js';
 import { getValue, getDefaultValue } from './value-utils.js';
+import { textTranslation, translation } from './translation.js';
 
 export function addCodeHighlightedText(container: HTMLElement, label: string) {
   container.empty();
@@ -43,6 +43,7 @@ export function defaultBar<T>(noDefaultValueBar: boolean | undefined, setting: S
 
   const currentValue = getValue(element);
   const defaultValue = getDefaultValue(element);
+
   const itemWrapper = setting.controlEl.createDiv({ cls: css('input-wrapper') });
   const iconWrapper = itemWrapper.createDiv({ cls: css('icon-wrapper') });
   const iconSpan = iconWrapper.createSpan({ cls: css('default-icon') });
@@ -62,7 +63,9 @@ export function tooltip<T>(setting: Setting, element: BaseSetting | PathSetting<
   const result = translation(element, 'tooltip', element.tooltip, element.tooltipParameters);
   if (result) {
     const tooltipIcon = setting.nameEl.createSpan({ cls: css('tooltip-icon'), text: 'ℹ️' });
-    createTooltip(tooltipIcon, result, { position: 'bottom' });
+    // createTooltip(tooltipIcon, result, { position: 'bottom' });
+    createInteractiveTooltip(tooltipIcon, result, { position: 'bottom' });
+
   }
 }
 
@@ -70,7 +73,7 @@ export function hint<T>(noHint: boolean | undefined, setting: Setting, element: 
   let small: HTMLElement | undefined;
 
   if (noHint === undefined || !noHint) {
-    const descString = translation(element, 'hint', element.hint);
+    const descString = translation(element, 'hint', element.hint, element.hintParameters);
     if (descString) {
       small = setting.controlEl.createEl('small', { text: descString });
     }
@@ -78,29 +81,14 @@ export function hint<T>(noHint: boolean | undefined, setting: Setting, element: 
   return small;
 }
 
-export function getTranslation<T>(element: BaseSetting | PathSetting<T>) {
-  const key = 'path' in element ? element.path : (element.id ?? '');
-  if (key) {
-    return ContextService.settingsMap().get(key); // LocalizedSetting
-  }
-  return undefined;
-}
+export function previewAsHint(setting: Setting, htmlString: string) {
 
-export function translation<T>(element: BaseSetting | PathSetting<T>, item: string, elementString?: string, replacements?: string[]) {
-  const translation = getTranslation(element);
-  let result = elementString;
-  const translated = translation ? translation[item as keyof LocalizedSetting] : undefined;
-  if (translated) {
-    if (replacements) {
-      result = replacePlaceholders(translated, replacements);
-    } else {
-      result = translated;
-    }
-  }
-  return result;
-}
+  const small = setting.controlEl.createEl('small');
+  const template = document.createElement('template');
+  template.innerHTML = htmlString.trim(); // parses HTML safely
 
-export function textTranslation(id: string) {
-  const result = ContextService.settingsMap().get(id);
-  return result;
+  if (template.content.firstChild) {
+    small.appendChild(template.content.firstChild);
+  }
+  return small;
 }

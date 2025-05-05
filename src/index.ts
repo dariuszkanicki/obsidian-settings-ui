@@ -16,6 +16,7 @@ export async function renderSettings<T>(
   saveData: (settings: T) => Promise<void>,
   refreshSettings: () => Promise<void>,
 ) {
+
   const renderer = new Renderer(
     app,
     plugin,

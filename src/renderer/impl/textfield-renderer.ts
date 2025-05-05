@@ -1,10 +1,11 @@
 import type { Setting, TextAreaComponent, TextComponent } from 'obsidian';
-import { css } from '../../utils/helper.js';
+import { css, hint, previewAsHint } from '../../utils/helper.js';
 import { getDefaultValue, getValue, setValue } from '../../utils/value-utils.js';
 import { Textfield, Textarea, Numberfield } from '../types.js';
 import { AbstractPathRenderer, PathRendererResult } from './abstract-path-renderer.js';
 import { getDefaultSettings } from 'node:http2';
 import { ContextService } from '../../utils/context-service.js';
+import { getTranslation, translation } from '../../utils/translation.js';
 
 export class InputfieldRenderer<T> extends AbstractPathRenderer<T> {
   // prettier-ignore
@@ -23,8 +24,8 @@ export class InputfieldRenderer<T> extends AbstractPathRenderer<T> {
     } else {
       let noHint = false;
       setting.addText((txt) => {
-        txt.setValue(String(getValue(element)));
-        console.log("setValue", element, getValue(element));
+        const value = String(getValue(element));
+        txt.setValue(value);
         if (element.type === 'Numberfield') {
           txt.inputEl.type = 'number';
           txt.inputEl.classList.add(css('item-short'));
@@ -35,19 +36,25 @@ export class InputfieldRenderer<T> extends AbstractPathRenderer<T> {
             noHint = true;
           }
         }
+        // if (element.validate) {
+        //   const { valid, data, invalid, preview } = element.validate(value);
+        //   console.log("element.validate", value, valid, data, preview);
+        //   if (preview) {
+        //     previewAsHint(this.setting, preview);
+        //   }
+        // }
         result = { baseComponent: txt, htmlElement: txt.inputEl, noHint: noHint };
       });
     }
     if (element.placeholder !== undefined) {
-      // console.log("placeholder",element.placeholder);
       (result.baseComponent as (TextComponent | TextAreaComponent)).setPlaceholder(String(element.placeholder));
     }
 
     const inputEl = result.htmlElement as HTMLInputElement;
 
-    const _handleInputChange = () => {
+    const _handleInputChange = async () => {
+      let isValid = true;
       const defaultValue = getDefaultValue(element);
-      console.log("defaultValue", defaultValue);
       if (element.type === 'Numberfield') {
         let val = Number(inputEl.value);
         if (!isNaN(val)) {
@@ -59,18 +66,34 @@ export class InputfieldRenderer<T> extends AbstractPathRenderer<T> {
             val = element.max;
           }
           inputEl.value = String(val);
-          setValue(element, val as number);
+          await setValue(element, val as number);
         }
       } else {
         let value = inputEl.value;
         if (value === '' && defaultValue && defaultValue !== '') {
           value = defaultValue;
+        } else if (element.validate) {
+          const { valid, data, invalid, preview } = element.validate(value);
+          console.log("element.validate", value, valid, data, preview);
+          if (valid === false) {
+            inputEl.setAttr('style', 'border-color: red; border-width: 2px');
+            element.hint = getTranslation(element)?.invalid ?? invalid ?? "Invalid value!";
+            if (this.hintElement === undefined) {
+              this.hintElement = hint(false, this.setting, element);
+            }
+            isValid = false;
+          } else if (data) {
+            value = data;
+          }
         }
-        console.log("setValue", element, value);
-        inputEl.value = value;
-        setValue(element, value);
+        if (isValid === true) {
+          inputEl.value = value;
+          await setValue(element, value);
+        }
       }
-      ContextService.refresh();
+      if (isValid === true) {
+        ContextService.refresh();
+      }
     };
 
     inputEl.onblur = () => {

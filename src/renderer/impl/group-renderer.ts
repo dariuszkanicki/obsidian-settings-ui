@@ -1,10 +1,15 @@
 import { Html, Tag } from "../../utils/html.js";
 import { isSettingGroupExpanded, setSettingGroupExpanded } from "../../utils/storage.js";
+import { translation } from "../../utils/translation.js";
+import { HowToSection, SettingElement, SettingGroup } from "../types.js";
 
 export class GroupRenderer {
   constructor(private container: HTMLElement) { }
 
-  render(label: string): HTMLElement {
+  render<T>(element: SettingGroup<T> | HowToSection): HTMLElement {
+
+    const label = translation(element, 'label', element.label, element.labelParameters)!;
+
     const html = new Html(this.container);
     // prettier-ignore
     html.createDIV('group')
@@ -15,7 +20,6 @@ export class GroupRenderer {
       .createDIV('group-body');
 
     let expanded = isSettingGroupExpanded(label);
-    // console.log("expanded", expanded, typeof expanded);
     const bodyEl = html.getElement('group-body')!;
     const toggleIcon = html.getElement('group-toggle')!;
     const titleEl = html.getElement('group-title')!;

@@ -22,10 +22,8 @@ export class RadioItemRenderer<T> extends AbstractBaseRenderer<T> {
       // toggle.setValue(getValue(element));
       toggle.onChange(async (value: any) => {
         if (this.ignoreOnChange === true) {
-          console.log("item.onChange ignored", value, element.id)
           this.ignoreOnChange = false;
         } else {
-          console.log("item.onChange", value, element.id)
           toggle.setValue(value);
           this.callback(element.id, value);
         }
@@ -38,7 +36,6 @@ export class RadioItemRenderer<T> extends AbstractBaseRenderer<T> {
   }
   setInternalValue(value: boolean) {
     this.ignoreOnChange = true;
-    console.log("setInternalValue", value);
     this.toggle.setValue(value);
   }
 }

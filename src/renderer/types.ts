@@ -23,6 +23,7 @@ export interface LocalizedSetting {
   tooltip?: string;
   buttonText?: string;
   text?: string;
+  invalid?: string;
 }
 
 // 🔹Base for all setting types
@@ -48,6 +49,7 @@ export interface PathSetting<T> extends BaseSetting {
   customInputClass?: string;
   preSave?: (value: any) => void;
   postSave?: () => void;
+  validate?: (value: any) => { valid: boolean, data?: any, invalid?: string, preview?: string };
 }
 
 // 🔹Base for all setting types
@@ -105,6 +107,10 @@ export interface Textarea<T> extends PathSetting<T> {
 export interface Toggle<T> extends PathSetting<T> {
   type: 'Toggle';
 }
+export interface Colorpicker<T> extends PathSetting<T> {
+  type: 'Color';
+}
+
 export interface Dropdown<T> extends PathSetting<T> {
   type: 'Dropdown';
   items: DropdownItem[];
@@ -119,13 +125,15 @@ export type StatusField = {
 
 // 🔹 Dropdown option item
 export type DropdownItem = {
-  display: string;
-  value: string;
+  id: string;
+  label?: string;
 };
 
 // 🔹 How-to support section
 export type HowToSection = {
+  id?: string;
   label?: string;
+  labelParameters?: string[];
   description: string;
   readmeURL?: string;
   classes?: {
@@ -146,12 +154,15 @@ export type SettingElement<T> =
   Textfield<T> |
   Numberfield<T> |
   Textarea<T> |
-  Toggle<T>;
+  Toggle<T> |
+  Colorpicker<T>;
 
 // 🔹 Groups of settings
 export type SettingGroup<T> = {
   type: 'SettingGroup';
-  label: string;
+  id?: string;
+  label?: string;
+  labelParameters?: string[];
   showIf?: boolean;
   items: SettingElement<T>[];
 };
@@ -176,6 +187,6 @@ export type ConfigContext<T> = {
 
 // 🔹Shared setting handler interface
 export type SettingHandler<T> = {
-  setValue: (value: number | string | boolean | null) => void;
+  setValue: (value: number | string | boolean | null) => any | undefined;
   getValue: () => number | string | boolean;
 };

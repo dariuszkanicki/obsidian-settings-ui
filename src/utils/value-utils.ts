@@ -24,26 +24,24 @@ export function coerceValue<T>(element: PathSetting<T>, input: number | boolean 
 
 // TODO  preSave before element.handler?
 export async function setValue<T>(element: PathSetting<T>, value: number | string | boolean | null) {
+  let _value = value;
   if (element.handler) {
-    element.handler.setValue(value);
-    return;
+    const handlerValue = element.handler.setValue(value);
+    if (handlerValue) {
+      _value = handlerValue;
+    }
   } else if (!element.path) {
     console.error("neither path nor handler specified for ", element);
   }
 
-  console.log('SET VALUE', element, value);
-  // console.trace("Here is it....");
-  // debugger;
   const settings = ContextService.settings();
-  console.log("settings", settings);
-  const coerced = coerceValue(element, value);
+  const coerced = coerceValue(element, _value);
 
   setByPath(settings, element.path!, coerced);
 
   if (element.preSave) {
     element.preSave(coerced);
   }
-  // console.log("settings RESULT", settings);
   await ContextService.saveData(settings);
 
   if (element.postSave) {
