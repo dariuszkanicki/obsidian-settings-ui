@@ -1,9 +1,9 @@
-import { ConfigContext } from "../renderer/types.js";
+import { ConfigContext } from '../renderer/types.js';
 
 export class ContextService<T> {
   private static instance: any;
 
-  private constructor(private context: ConfigContext<T>) { }
+  private constructor(private context: ConfigContext<T>) {}
 
   static get<T>(): ContextService<T> {
     if (!ContextService.instance) {
@@ -36,7 +36,7 @@ export class ContextService<T> {
   static app() {
     return this.instance.context.app;
   }
-  static refresh() {
-    this.instance.context.refreshSettings();
+  static async refresh() {
+    await this.instance.context.refreshSettings();
   }
 }

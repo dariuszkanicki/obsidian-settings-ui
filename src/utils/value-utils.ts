@@ -1,8 +1,8 @@
-import { PathSetting } from "../renderer/types.js";
-import { ContextService } from "./context-service.js";
-import { setByPath, getByPath } from "./path.js";
+import { PathSetting } from '../renderer/types.js';
+import { ContextService } from './context-service.js';
+import { setByPath, getByPath } from './path.js';
 
-export function coerceValue<T>(element: PathSetting<T>, input: number | boolean | string | null): number | boolean | string {
+export function coerceValue<T>(element: PathSetting<T>, input: number | boolean | string | null): any {
   if (element.type === 'Numberfield') {
     if (input === '') {
       return 0;
@@ -19,24 +19,29 @@ export function coerceValue<T>(element: PathSetting<T>, input: number | boolean 
     if (input === 'false' || input === false) return false;
     return false;
   }
+  if (element.type === 'Color') {
+    return input;
+  }
   return String(input).trim();
 }
 
 // TODO  preSave before element.handler?
-export async function setValue<T>(element: PathSetting<T>, value: number | string | boolean | null) {
+export async function setValue<T>(element: PathSetting<T>, value: any) {
   let _value = value;
   if (element.handler) {
     const handlerValue = element.handler.setValue(value);
-    if (handlerValue) {
-      _value = handlerValue;
-    }
+    return;
+    // if (handlerValue) {
+    //   _value = handlerValue;
+    // }
   } else if (!element.path) {
-    console.error("neither path nor handler specified for ", element);
+    console.error('neither path nor handler specified for ', element);
   }
 
   const settings = ContextService.settings();
+  console.log('element', element, _value);
   const coerced = coerceValue(element, _value);
-
+  console.log('coerced', coerced);
   setByPath(settings, element.path!, coerced);
 
   if (element.preSave) {

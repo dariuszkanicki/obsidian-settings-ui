@@ -1,0 +1,450 @@
+[
+  {
+    "label": "Automatic",
+    "type": null,
+    "desc": null,
+    "placeholder": null,
+    "path": null
+  },
+  {
+    "label": "Split timers for automatic commit and sync",
+    "type": "Toggle",
+    "desc": "Enable to use one interval for commit and another for sync.",
+    "placeholder": null,
+    "path": null
+  },
+  {
+    "label": "`Auto ${commitOrSync} interval (minutes",
+    "type": "Textfield",
+    "desc": null,
+    "placeholder": null,
+    "path": "autoSaveInterval"
+  },
+  {
+    "label": "`Auto ${commitOrSync} after stopping file edits`",
+    "type": "Toggle",
+    "desc": null,
+    "placeholder": null,
+    "path": null
+  },
+  {
+    "label": "`Auto ${commitOrSync} after latest commit`",
+    "type": "Toggle",
+    "desc": null,
+    "placeholder": null,
+    "path": null
+  },
+  {
+    "label": "`Auto push interval (minutes",
+    "type": "Textfield",
+    "desc": "Push commits every X minutes. Set to 0 (default",
+    "placeholder": null,
+    "path": "autoPushInterval"
+  },
+  {
+    "label": "Auto pull interval (minutes",
+    "type": "Textfield",
+    "desc": "Pull changes every X minutes. Set to 0 (default",
+    "placeholder": null,
+    "path": "autoPullInterval"
+  },
+  {
+    "label": "`Specify custom commit message on auto ${commitOrSync}`",
+    "type": "Toggle",
+    "desc": "You will get a pop up to specify your message.",
+    "placeholder": null,
+    "path": null
+  },
+  {
+    "label": "`Commit message on auto ${commitOrSync}`",
+    "type": "TextArea",
+    "desc": null,
+    "placeholder": "DEFAULT_SETTINGS.autoCommitMessage",
+    "path": null
+  },
+  {
+    "label": "Commit message",
+    "type": null,
+    "desc": null,
+    "placeholder": null,
+    "path": null
+  },
+  {
+    "label": "Commit message on manual commit",
+    "type": "TextArea",
+    "desc": null,
+    "placeholder": "DEFAULT_SETTINGS.commitMessage",
+    "path": null
+  },
+  {
+    "label": "{{date}} placeholder format",
+    "type": null,
+    "desc": null,
+    "placeholder": null,
+    "path": null
+  },
+  {
+    "label": "{{hostname}} placeholder replacement",
+    "type": "Textfield",
+    "desc": "Specify custom hostname for every device.",
+    "placeholder": null,
+    "path": null
+  },
+  {
+    "label": "Preview commit message",
+    "type": "Button",
+    "desc": null,
+    "placeholder": null,
+    "path": null
+  },
+  {
+    "label": "List filenames affected by commit in the commit body",
+    "type": "Toggle",
+    "desc": null,
+    "placeholder": null,
+    "path": null
+  },
+  {
+    "label": "Pull",
+    "type": null,
+    "desc": null,
+    "placeholder": null,
+    "path": null
+  },
+  {
+    "label": "Merge strategy",
+    "type": "Dropdown",
+    "desc": null,
+    "placeholder": null,
+    "path": null
+  },
+  {
+    "label": "Pull on startup",
+    "type": "Toggle",
+    "desc": "Automatically pull commits when Obsidian starts.",
+    "placeholder": null,
+    "path": null
+  },
+  {
+    "label": "Commit-and-sync",
+    "type": null,
+    "desc": null,
+    "placeholder": null,
+    "path": null
+  },
+  {
+    "label": "Push on commit-and-sync",
+    "type": "Toggle",
+    "desc": null,
+    "placeholder": null,
+    "path": null
+  },
+  {
+    "label": "Pull on commit-and-sync",
+    "type": "Toggle",
+    "desc": null,
+    "placeholder": null,
+    "path": null
+  },
+  {
+    "label": "Line author information",
+    "type": null,
+    "desc": null,
+    "placeholder": null,
+    "path": null
+  },
+  {
+    "label": "History view",
+    "type": null,
+    "desc": null,
+    "placeholder": null,
+    "path": null
+  },
+  {
+    "label": "Show Author",
+    "type": "Dropdown",
+    "desc": "Show the author of the commit in the history view.",
+    "placeholder": null,
+    "path": null
+  },
+  {
+    "label": "Show Date",
+    "type": "Toggle",
+    "desc": null,
+    "placeholder": null,
+    "path": null
+  },
+  {
+    "label": "Source control view",
+    "type": null,
+    "desc": null,
+    "placeholder": null,
+    "path": null
+  },
+  {
+    "label": "Automatically refresh source control view on file changes",
+    "type": "Toggle",
+    "desc": null,
+    "placeholder": null,
+    "path": null
+  },
+  {
+    "label": "Source control view refresh interval",
+    "type": "Textfield",
+    "desc": null,
+    "placeholder": null,
+    "path": "refreshSourceControlTimer"
+  },
+  {
+    "label": "Miscellaneous",
+    "type": null,
+    "desc": null,
+    "placeholder": null,
+    "path": null
+  },
+  {
+    "label": "Diff view style",
+    "type": "Dropdown",
+    "desc": null,
+    "placeholder": null,
+    "path": null
+  },
+  {
+    "label": "Disable notifications",
+    "type": "Toggle",
+    "desc": null,
+    "placeholder": null,
+    "path": null
+  },
+  {
+    "label": "Hide notifications for no changes",
+    "type": "Toggle",
+    "desc": null,
+    "placeholder": null,
+    "path": null
+  },
+  {
+    "label": "Show status bar",
+    "type": "Toggle",
+    "desc": "Obsidian must be restarted for the changes to take affect.",
+    "placeholder": null,
+    "path": null
+  },
+  {
+    "label": "File menu integration",
+    "type": "Toggle",
+    "desc": null,
+    "placeholder": null,
+    "path": null
+  },
+  {
+    "label": "Show branch status bar",
+    "type": "Toggle",
+    "desc": "Obsidian must be restarted for the changes to take affect.",
+    "placeholder": null,
+    "path": null
+  },
+  {
+    "label": "Show the count of modified files in the status bar",
+    "type": "Toggle",
+    "desc": null,
+    "placeholder": null,
+    "path": null
+  },
+  {
+    "label": "Authentication/commit author",
+    "type": null,
+    "desc": null,
+    "placeholder": null,
+    "path": null
+  },
+  {
+    "label": "Commit author",
+    "type": null,
+    "desc": null,
+    "placeholder": null,
+    "path": null
+  },
+  {
+    "label": "Username on your git server. E.g. your username on GitHub",
+    "type": "Textfield",
+    "desc": null,
+    "placeholder": null,
+    "path": null
+  },
+  {
+    "label": "Password/Personal access token",
+    "type": "Textfield",
+    "desc": "Type in your password. You won't be able to see it again.",
+    "placeholder": null,
+    "path": null
+  },
+  {
+    "label": "Author name for commit",
+    "type": "Textfield",
+    "desc": null,
+    "placeholder": null,
+    "path": null
+  },
+  {
+    "label": "Author email for commit",
+    "type": "Textfield",
+    "desc": null,
+    "placeholder": null,
+    "path": null
+  },
+  {
+    "label": "Advanced",
+    "type": null,
+    "desc": null,
+    "placeholder": null,
+    "path": null
+  },
+  {
+    "label": "Update submodules",
+    "type": "Toggle",
+    "desc": null,
+    "placeholder": null,
+    "path": null
+  },
+  {
+    "label": "Submodule recurse checkout/switch",
+    "type": "Toggle",
+    "desc": null,
+    "placeholder": null,
+    "path": null
+  },
+  {
+    "label": "Custom Git binary path",
+    "type": "Textfield",
+    "desc": null,
+    "placeholder": null,
+    "path": null
+  },
+  {
+    "label": "Additional environment variables",
+    "type": "TextArea",
+    "desc": null,
+    "placeholder": null,
+    "path": null
+  },
+  {
+    "label": "Additional PATH environment variable paths",
+    "type": "TextArea",
+    "desc": "Use each line for one path",
+    "placeholder": null,
+    "path": null
+  },
+  {
+    "label": "Reload with new environment variables",
+    "type": "Button",
+    "desc": null,
+    "placeholder": null,
+    "path": null
+  },
+  {
+    "label": "Custom base path (Git repository path",
+    "type": "Textfield",
+    "desc": null,
+    "placeholder": null,
+    "path": null
+  },
+  {
+    "label": "Custom Git directory path (Instead of '.git",
+    "type": "Textfield",
+    "desc": null,
+    "placeholder": null,
+    "path": null
+  },
+  {
+    "label": "Disable on this device",
+    "type": "Toggle",
+    "desc": null,
+    "placeholder": null,
+    "path": null
+  },
+  {
+    "label": "Support",
+    "type": null,
+    "desc": null,
+    "placeholder": null,
+    "path": null
+  },
+  {
+    "label": "Donate",
+    "type": "Button",
+    "desc": null,
+    "placeholder": null,
+    "path": null
+  },
+  {
+    "label": "\n      \"Show commit authoring information next to each line\",\n    ",
+    "type": null,
+    "desc": "Only available on desktop currently.",
+    "placeholder": null,
+    "path": null
+  },
+  {
+    "label": "Follow movement and copies across files and commits",
+    "type": "Dropdown",
+    "desc": "",
+    "placeholder": null,
+    "path": null
+  },
+  {
+    "label": "Show commit hash",
+    "type": "Toggle",
+    "desc": null,
+    "placeholder": null,
+    "path": null
+  },
+  {
+    "label": "Author name display",
+    "type": "Dropdown",
+    "desc": "If and how the author is displayed",
+    "placeholder": null,
+    "path": null
+  },
+  {
+    "label": "Authoring date display",
+    "type": "Dropdown",
+    "desc": null,
+    "placeholder": null,
+    "path": null
+  },
+  {
+    "label": "Authoring date display timezone",
+    "type": "Dropdown",
+    "desc": null,
+    "placeholder": null,
+    "path": null
+  },
+  {
+    "label": "\n        \"Oldest age in coloring\",\n      ",
+    "type": "Textfield",
+    "desc": null,
+    "placeholder": null,
+    "path": null
+  },
+  {
+    "label": "Text color",
+    "type": "Textfield",
+    "desc": null,
+    "placeholder": null,
+    "path": null
+  },
+  {
+    "label": "Ignore whitespace and newlines in changes",
+    "type": "Toggle",
+    "desc": null,
+    "placeholder": null,
+    "path": null
+  },
+  {
+    "label": "",
+    "type": "Textfield",
+    "desc": null,
+    "placeholder": null,
+    "path": null
+  }
+]

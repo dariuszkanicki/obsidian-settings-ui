@@ -13,14 +13,14 @@ type PrevDepth = [never, 0, 1, 2]; // used to decrement depth
 export type Path<T, D extends number = 3> = [D] extends [never]
   ? never
   : {
-    [K in keyof T & string]: T[K] extends object ? (T[K] extends any[] ? never : K | `${K}.${Path<T[K], PrevDepth[D]>}`) : K;
-  }[keyof T & string];
+      [K in keyof T & string]: T[K] extends object ? (T[K] extends any[] ? never : K | `${K}.${Path<T[K], PrevDepth[D]>}`) : K;
+    }[keyof T & string];
 
 export interface LocalizedSetting {
   id: string;
   label?: string;
   hint?: string;
-  tooltip?: string;
+  tooltip?: string | string[];
   buttonText?: string;
   text?: string;
   invalid?: string;
@@ -49,7 +49,7 @@ export interface PathSetting<T> extends BaseSetting {
   customInputClass?: string;
   preSave?: (value: any) => void;
   postSave?: () => void;
-  validate?: (value: any) => { valid: boolean, data?: any, invalid?: string, preview?: string };
+  validate?: (value: any) => { valid: boolean; data?: any; invalid?: string; preview?: string };
 }
 
 // 🔹Base for all setting types
@@ -91,12 +91,19 @@ export interface RadioItem extends BaseSetting {
   // radioCallback?: (path: string, value: boolean) => void;
 }
 
-
 export interface Textfield<T> extends PathSetting<T> {
   type: 'Textfield';
 }
+
+export type NumberConstraint = {
+  min?: number;
+  max?: number;
+  unit?: string;
+};
+
 export interface Numberfield<T> extends PathSetting<T> {
   type: 'Numberfield';
+  constraint?: NumberConstraint;
   unit?: string;
   min?: number;
   max?: number;
@@ -107,13 +114,21 @@ export interface Textarea<T> extends PathSetting<T> {
 export interface Toggle<T> extends PathSetting<T> {
   type: 'Toggle';
 }
-export interface Colorpicker<T> extends PathSetting<T> {
+export interface Color<T> extends PathSetting<T> {
   type: 'Color';
+  datatype?: 'RGB' | 'string' | 'Hex';
+  preview?: () => string;
 }
 
+export interface ColorDropdown<T> extends PathSetting<T> {
+  type: 'ColorDropdown';
+  datatype?: 'RGB' | 'string' | 'Hex'; // 'Hex' is default
+  withCustomOption?: boolean;
+  items: DropdownItem[];
+}
 export interface Dropdown<T> extends PathSetting<T> {
   type: 'Dropdown';
-  items: DropdownItem[];
+  items: DropdownItem[] | string[];
 }
 
 // 🔸 Shared status object for read-only status badges
@@ -151,11 +166,12 @@ export type SettingElement<T> =
   RadioGroup<T> |
   Conditional<T> |
   Dropdown<T> |
+  ColorDropdown<T> |
   Textfield<T> |
   Numberfield<T> |
   Textarea<T> |
   Toggle<T> |
-  Colorpicker<T>;
+  Color<T>;
 
 // 🔹 Groups of settings
 export type SettingGroup<T> = {
@@ -180,6 +196,7 @@ export type ConfigContext<T> = {
   pluginId: string;
   settings: T;
   defaults: T;
+  container: HTMLElement;
   saveData: (settings: T) => Promise<void>;
   refreshSettings: () => Promise<void>;
   settingsMap: Map<string, LocalizedSetting> | null;

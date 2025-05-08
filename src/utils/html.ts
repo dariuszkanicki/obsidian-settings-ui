@@ -1,4 +1,4 @@
-import { addCodeHighlightedText, css } from "./helper.js";
+import { highlightAsCode, css } from './helper.js';
 
 export enum Tag {
   Open,
@@ -20,7 +20,7 @@ export class Html {
   createDIV(className: string, text?: string, tag: Tag = Tag.Open): Html {
     this.containers.push(this._last().createDiv({ cls: css(className) }));
     if (text) {
-      addCodeHighlightedText(this._last(), text);
+      highlightAsCode(this._last(), text);
     }
     this.elementMap.set(className, this._last());
     if (tag === Tag.close) {

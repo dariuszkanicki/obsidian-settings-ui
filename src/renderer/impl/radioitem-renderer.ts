@@ -1,21 +1,25 @@
-import type { Setting, ToggleComponent } from "obsidian";
-import { css } from "../../utils/helper.js";
-import { getValue, setValue } from "../../utils/value-utils.js";
-import { RadioItem, Toggle } from "../types.js";
-import { AbstractPathRenderer, PathRendererResult } from "./abstract-path-renderer.js";
-import { AbstractBaseRenderer } from "./abstract-base-renderer.js";
+import type { Setting, ToggleComponent } from 'obsidian';
+import { css, tooltip, tooltip4Radioitem } from '../../utils/helper.js';
+import { getValue, setValue } from '../../utils/value-utils.js';
+import { BaseSetting, RadioGroup, RadioItem, Toggle } from '../types.js';
+import { AbstractPathRenderer, PathRendererResult } from './abstract-path-renderer.js';
+import { AbstractBaseRenderer } from './abstract-base-renderer.js';
 
 export class RadioItemRenderer<T> extends AbstractBaseRenderer<T> {
   private toggle!: ToggleComponent;
   private callback!: (path: string, value: boolean) => void;
   private ignoreOnChange: boolean = false;
 
-  protected createElement(
-    setting: Setting,
-    element: RadioItem,
+  constructor(
+    private parent: RadioGroup<T>,
+    element: BaseSetting,
   ) {
+    super(element);
+  }
+
+  protected createElement(setting: Setting, element: RadioItem) {
     let result!: PathRendererResult;
-    setting.infoEl.addClass(css("info-toggle"));
+    setting.infoEl.addClass(css('info-toggle'));
     setting.addToggle((toggle) => {
       this.toggle = toggle;
 
@@ -29,6 +33,7 @@ export class RadioItemRenderer<T> extends AbstractBaseRenderer<T> {
         }
       });
     });
+    tooltip4Radioitem(setting, element, this.parent);
   }
 
   setGroupCallback(callback: (path: string, value: boolean) => void) {

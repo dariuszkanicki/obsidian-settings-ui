@@ -121,13 +121,16 @@
   margin-left: 5px;
 }
 
-.dkani-ui-group-item > .setting-item-control.number,
-.dkani-ui-item > .setting-item-control.number {
-  display: inline-flex;
-  align-items: center !important;
-  gap: 6px;
-  flex: none !important;
-  flex-direction: unset;
+input.dkani-ui-colorpicker {
+  width: auto !important;
+}
+.dkani-ui-colorpicker-preview {
+  display: flex;
+  align-items: center;
+  margin-left: 3px;
+}
+.dkani-ui-colorpicker-preview label {
+  padding: 2px;
 }
 
 .setting-item.dkani-ui-group-item > .setting-item-control small,

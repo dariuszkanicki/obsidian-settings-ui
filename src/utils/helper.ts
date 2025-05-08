@@ -1,13 +1,13 @@
 import type { Setting } from 'obsidian';
-import { PathSetting, BaseSetting, LocalizedSetting } from '../renderer/types.js';
+import { PathSetting, BaseSetting, LocalizedSetting, Numberfield } from '../renderer/types.js';
 import { ContextService } from './context-service.js';
 import { createInteractiveTooltip, createTooltip } from './tooltip.js';
 import { getValue, getDefaultValue } from './value-utils.js';
 import { textTranslation, translation } from './translation.js';
 
-export function addCodeHighlightedText(container: HTMLElement, label: string) {
+export function highlightAsCode(container: HTMLElement, text: string) {
   container.empty();
-  const parts = label.split(/(`[^`]+`)/);
+  const parts = text.split(/(`[^`]+`)/);
   for (const part of parts) {
     if (part.startsWith('`') && part.endsWith('`')) {
       container.createEl('code', {
@@ -19,6 +19,47 @@ export function addCodeHighlightedText(container: HTMLElement, label: string) {
     }
   }
 }
+export function highlightTextAsCode(text: string): string {
+  const parts = text.split(/(`[^`]+`)/);
+  return parts
+    .map((part) => {
+      if (part.startsWith('`') && part.endsWith('`')) {
+        const code = escapeHtml(part.slice(1, -1));
+        return `<code class="${css('label-code')}">${code}</code>`;
+      } else {
+        // return escapeHtml(part);
+        return part;
+      }
+    })
+    .join('');
+}
+function escapeHtml(text: string): string {
+  return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+}
+
+export function highlightTextAsCodeMarkdown(text: string): string {
+  const parts = text.split(/(`[^`]+`)/);
+  return parts
+    .map((part) => {
+      if (part.startsWith('`') && part.endsWith('`')) {
+        return part; // Keep the code span as-is
+      } else {
+        return escapeMarkdown(part); // Escape surrounding text
+      }
+    })
+    .join('');
+}
+function escapeMarkdown(text: string): string {
+  return text
+    .replace(/\\/g, '\\\\')
+    .replace(/[*_~`]/g, '\\$&')
+    .replace(/#/g, '\\#')
+    .replace(/\[/g, '\\[')
+    .replace(/\]/g, '\\]')
+    .replace(/\(/g, '\\(')
+    .replace(/\)/g, '\\)')
+    .replace(/>/g, '\\>');
+}
 
 export function css(className: string | string[]): string {
   const prefix = `${ContextService.pluginId()}-dkani-ui-`;
@@ -29,20 +70,26 @@ export function css(className: string | string[]): string {
 }
 
 export function defaultBar<T>(noDefaultValueBar: boolean | undefined, setting: Setting, element: PathSetting<T>) {
-
   if (noDefaultValueBar === true || element.handler) {
     return;
   }
 
   const inputEl = setting.controlEl.firstChild!;
-  let optionalUnitElement;
+  let optionalElements = [];
   setting.controlEl.removeChild(inputEl);
-  if (setting.controlEl.firstChild !== null) {
-    optionalUnitElement = setting.controlEl.removeChild(setting.controlEl.firstChild);
+  while (setting.controlEl.firstChild !== null) {
+    optionalElements.push(setting.controlEl.removeChild(setting.controlEl.firstChild));
   }
 
-  const currentValue = getValue(element);
-  const defaultValue = getDefaultValue(element);
+  let currentValue = getValue(element);
+  let defaultValue = getDefaultValue(element);
+
+  if (typeof currentValue === 'object') {
+    currentValue = JSON.stringify(currentValue);
+  }
+  if (typeof defaultValue === 'object') {
+    defaultValue = JSON.stringify(defaultValue);
+  }
 
   const itemWrapper = setting.controlEl.createDiv({ cls: css('input-wrapper') });
   const iconWrapper = itemWrapper.createDiv({ cls: css('icon-wrapper') });
@@ -54,35 +101,38 @@ export function defaultBar<T>(noDefaultValueBar: boolean | undefined, setting: S
 
   itemWrapper.appendChild(iconWrapper);
   itemWrapper.appendChild(inputEl);
-  if (optionalUnitElement) {
-    itemWrapper.appendChild(optionalUnitElement);
-  }
+  optionalElements.forEach((optionalElement) => {
+    itemWrapper.appendChild(optionalElement);
+  });
 }
 
-export function tooltip<T>(setting: Setting, element: BaseSetting | PathSetting<T>) {
-  const result = translation(element, 'tooltip', element.tooltip, element.tooltipParameters);
-  if (result) {
+export function tooltip<T>(setting: Setting, element: BaseSetting | PathSetting<T>, addition: string) {
+  let text = translation(element, 'tooltip', element.tooltip, element.tooltipParameters);
+  if (text) {
+    text = highlightTextAsCode(`${text}\n${addition}`);
     const tooltipIcon = setting.nameEl.createSpan({ cls: css('tooltip-icon'), text: 'ℹ️' });
-    // createTooltip(tooltipIcon, result, { position: 'bottom' });
-    createInteractiveTooltip(tooltipIcon, result, { position: 'bottom' });
-
+    createInteractiveTooltip(tooltipIcon, text, { position: 'bottom' });
+  }
+}
+export function tooltip4Radioitem<T>(setting: Setting, element: BaseSetting | PathSetting<T>, parent: PathSetting<T>) {
+  let text = translation(element, 'tooltip', element.tooltip, parent.tooltipParameters);
+  if (text) {
+    text = highlightTextAsCode(`${text}`);
+    const tooltipIcon = setting.nameEl.createSpan({ cls: css('tooltip-icon'), text: 'ℹ️' });
+    createInteractiveTooltip(tooltipIcon, text, { position: 'bottom' });
   }
 }
 
-export function hint<T>(noHint: boolean | undefined, setting: Setting, element: BaseSetting | PathSetting<T>) {
+export function hint<T>(setting: Setting, element: BaseSetting | PathSetting<T>) {
   let small: HTMLElement | undefined;
-
-  if (noHint === undefined || !noHint) {
-    const descString = translation(element, 'hint', element.hint, element.hintParameters);
-    if (descString) {
-      small = setting.controlEl.createEl('small', { text: descString });
-    }
+  const descString = translation(element, 'hint', element.hint, element.hintParameters);
+  if (descString) {
+    small = setting.controlEl.createEl('small', { text: descString });
   }
   return small;
 }
 
 export function previewAsHint(setting: Setting, htmlString: string) {
-
   const small = setting.controlEl.createEl('small');
   const template = document.createElement('template');
   template.innerHTML = htmlString.trim(); // parses HTML safely

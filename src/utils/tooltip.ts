@@ -4,7 +4,7 @@ export function createTooltip(
   options?: {
     delay?: number;
     position?: 'top' | 'bottom' | 'left' | 'right';
-  }
+  },
 ) {
   const delay = options?.delay ?? 0;
   const position = options?.position ?? 'top';
@@ -30,7 +30,7 @@ export function createTooltip(
       pointerEvents: 'none',
       transition: 'opacity 0.15s ease-in-out',
       opacity: '0',
-      maxWidth: '300px'
+      maxWidth: '300px',
     });
 
     document.body.appendChild(tooltipEl);
@@ -38,7 +38,8 @@ export function createTooltip(
     const rect = triggerEl.getBoundingClientRect();
     const tipRect = tooltipEl.getBoundingClientRect();
 
-    let top = 0, left = 0;
+    let top = 0,
+      left = 0;
 
     switch (position) {
       case 'top':
@@ -86,7 +87,6 @@ export function createTooltip(
   });
 }
 
-
 export function createInteractiveTooltip(
   triggerEl: HTMLElement,
   content: string,
@@ -95,11 +95,11 @@ export function createInteractiveTooltip(
     position?: 'top' | 'bottom' | 'left' | 'right';
     html?: boolean; // allow full HTML, not just plain text
     width?: string;
-  }
+  },
 ) {
   const delay = options?.delay ?? 0;
   const position = options?.position ?? 'top';
-  const width = options?.width ?? '300px';
+  const width = options?.width ?? '500px';
   const allowHtml = options?.html ?? false;
 
   let tooltipEl: HTMLDivElement | null = null;
@@ -124,13 +124,13 @@ export function createInteractiveTooltip(
       color: 'var(--text-normal)',
       padding: '8px 12px',
       borderRadius: '8px',
-      fontSize: '13px',
+      fontSize: '14px',
       boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
       whiteSpace: 'normal',
       pointerEvents: 'auto', // allow interaction!
       transition: 'opacity 0.15s ease-in-out',
       opacity: '0',
-      maxWidth: width
+      maxWidth: width,
     });
 
     document.body.appendChild(tooltipEl);
@@ -138,7 +138,8 @@ export function createInteractiveTooltip(
     const rect = triggerEl.getBoundingClientRect();
     const tipRect = tooltipEl.getBoundingClientRect();
 
-    let top = 0, left = 0;
+    let top = 0,
+      left = 0;
 
     switch (position) {
       case 'top':

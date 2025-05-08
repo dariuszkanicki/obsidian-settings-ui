@@ -1,16 +1,26 @@
-import { App, Plugin } from "obsidian";
-import { loadLocalizedSettings } from "../i18n/loader.js";
-import { ContextService } from "../utils/context-service.js";
-import { renderGear } from "./gear.js";
-import { AbstractBaseRenderer } from "./impl/abstract-base-renderer.js";
-import { AbstractGroupRenderer } from "./impl/abstract-group-renderer.js";
-import { AbstractPathRenderer } from "./impl/abstract-path-renderer.js";
-import { GroupRenderer } from "./impl/group-renderer.js";
-import { renderHowToSection } from "./impl/howto-renderer.js";
-import { rendererRegistry } from "./registry.js";
-import { ConfigContext, SettingsConfig, SettingElement, BaseSetting, PathSetting, GroupSetting, RadioGroup, Conditional, SettingGroup } from "./types.js";
-import { RadioGroupRenderer } from "./impl/radiogroup-renderer.js";
-import { getDefaultValue } from "../utils/value-utils.js";
+import { App, Plugin } from 'obsidian';
+import { loadLocalizedSettings } from '../i18n/loader.js';
+import { ContextService } from '../utils/context-service.js';
+import { renderGear } from './gear.js';
+import { AbstractBaseRenderer } from './impl/abstract-base-renderer.js';
+import { AbstractGroupRenderer } from './impl/abstract-group-renderer.js';
+import { AbstractPathRenderer } from './impl/abstract-path-renderer.js';
+import { GroupRenderer } from './impl/group-renderer.js';
+import { renderHowToSection } from './impl/howto-renderer.js';
+import { rendererRegistry } from './registry.js';
+import {
+  ConfigContext,
+  SettingsConfig,
+  SettingElement,
+  BaseSetting,
+  PathSetting,
+  GroupSetting,
+  RadioGroup,
+  Conditional,
+  SettingGroup,
+} from './types.js';
+import { RadioGroupRenderer } from './impl/radiogroup-renderer.js';
+import { getDefaultValue } from '../utils/value-utils.js';
 
 export class Renderer<T> {
   private context: ConfigContext<T>;
@@ -30,9 +40,10 @@ export class Renderer<T> {
       pluginId: this.plugin.manifest.id,
       settings: this.settings,
       defaults: this.defaults,
+      container: this.container,
       saveData: this.saveData,
       settingsMap: null,
-      refreshSettings: this.refreshSettings
+      refreshSettings: this.refreshSettings,
     };
   }
 
@@ -128,4 +139,3 @@ export class Renderer<T> {
     renderer.render(container, groupMember);
   }
 }
-
