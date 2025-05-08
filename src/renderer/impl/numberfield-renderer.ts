@@ -1,4 +1,4 @@
-import type { Setting, TextComponent } from 'obsidian';
+import type { Setting } from 'obsidian';
 import { css } from '../../utils/helper.js';
 import { getDefaultValue, getValue, setValue } from '../../utils/value-utils.js';
 import { Numberfield } from '../types.js';
@@ -24,15 +24,15 @@ export class NumberfieldRenderer<T> extends AbstractPathRenderer<T> {
       txt.onChange(async (value) => {
         const defaultValue = getDefaultValue(element);
         const oldValue = getValue(element);
-        let val = Number(inputEl.value);
+        let val = Number(value);
         if (!isNaN(val)) {
-          if (inputEl.value === '') {
+          if (value === '') {
             val = defaultValue;
           } else if (element.constraint) {
             const c = element.constraint;
             val = Math.max(c.min ?? -Infinity, Math.min(val, c.max ?? Infinity));
           }
-          inputEl.value = String(val);
+          txt.setValue(String(val));
           await setValue(element, val as number);
           if ((oldValue !== defaultValue && val == defaultValue) || (oldValue === defaultValue && val !== defaultValue)) {
             ContextService.refresh();
@@ -41,8 +41,6 @@ export class NumberfieldRenderer<T> extends AbstractPathRenderer<T> {
       });
       result = { baseComponent: txt, htmlElement: txt.inputEl };
     });
-    const inputEl = result.htmlElement as HTMLInputElement;
-
     return result;
   }
   protected tooltipAddition(element: Numberfield<T>) {
