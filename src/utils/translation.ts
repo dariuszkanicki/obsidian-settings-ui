@@ -2,14 +2,15 @@ import { replacePlaceholders } from '../renderer/impl/setting-helper.js';
 import { BaseSetting, PathSetting, LocalizedSetting, DropdownItem, Dropdown, ColorDropdown } from '../renderer/types.js';
 import { ContextService } from './context-service.js';
 
-function _defaultKey<T>(element: BaseSetting | PathSetting<T>) {
-  return 'path' in element ? element.path : (element.id ?? '');
+function _defaultKey(element: { path?: string; id?: string }): string {
+  return 'path' in element ? element.path! : (element.id ?? '');
 }
+
 function _dropdownKey<T>(dropdown: Dropdown<T> | ColorDropdown<T>, item: DropdownItem) {
   return `${dropdown.path}.${item.id}`;
 }
 
-export function getTranslation<T>(element: BaseSetting | PathSetting<T>) {
+export function getTranslation(element: { path?: string; id?: string }) {
   return ContextService.settingsMap().get(_defaultKey(element));
 }
 
@@ -32,9 +33,26 @@ export function translateDropdownItemById<T>(dropdown: Dropdown<T> | ColorDropdo
   return result;
 }
 
-export function translation<T>(element: BaseSetting | PathSetting<T>, item: string, elementString?: string, replacements?: string[]) {
+export function translateString(element: { path?: string; id?: string }, item: string, elementString?: string, replacements?: string[]) {
   const translation = getTranslation(element);
   let result = elementString;
+  let translated = translation ? translation[item as keyof LocalizedSetting] : undefined;
+  if (translated && Array.isArray(translated)) {
+    translated = translated.join('\n');
+  }
+  if (translated) {
+    if (replacements) {
+      result = replacePlaceholders(translated, replacements);
+    } else {
+      result = translated;
+    }
+  }
+  return result;
+}
+
+export function translation(element: { path?: string; id?: string }, item: string, elementString?: string[], replacements?: string[]) {
+  const translation = getTranslation(element);
+  let result = elementString?.join('\n');
   let translated = translation ? translation[item as keyof LocalizedSetting] : undefined;
   if (translated && Array.isArray(translated)) {
     translated = translated.join('\n');

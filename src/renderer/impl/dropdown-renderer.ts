@@ -3,7 +3,7 @@ import { getValue, setValue } from '../../utils/value-utils.js';
 import { Dropdown } from '../types.js';
 import { AbstractPathRenderer, PathRendererResult } from './abstract-path-renderer.js';
 import { ContextService } from '../../utils/context-service.js';
-import { translateDropdownItem, translateDropdownItemById, translation } from '../../utils/translation.js';
+import { translateDropdownItem, translateDropdownItemById } from '../../utils/translation.js';
 
 export class DropdownRenderer<T> extends AbstractPathRenderer<T> {
   protected createElement(setting: Setting, element: Dropdown<T>): PathRendererResult {

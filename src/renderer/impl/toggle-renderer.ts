@@ -1,19 +1,16 @@
-import type { Setting, ToggleComponent } from "obsidian";
-import { css } from "../../utils/helper.js";
-import { getValue, setValue } from "../../utils/value-utils.js";
-import { Toggle } from "../types.js";
-import { AbstractPathRenderer, PathRendererResult } from "./abstract-path-renderer.js";
-import { ContextService } from "../../utils/context-service.js";
+import type { Setting, ToggleComponent } from 'obsidian';
+import { css } from '../../utils/helper.js';
+import { getValue, setValue } from '../../utils/value-utils.js';
+import { Toggle } from '../types.js';
+import { AbstractPathRenderer, PathRendererResult } from './abstract-path-renderer.js';
+import { ContextService } from '../../utils/context-service.js';
 
 export class ToggleRenderer<T> extends AbstractPathRenderer<T> {
   private toggleComponent?: ToggleComponent;
 
-  protected createElement(
-    setting: Setting,
-    element: Toggle<T>,
-  ): PathRendererResult {
+  protected createElement(setting: Setting, element: Toggle<T>): PathRendererResult {
     let result!: PathRendererResult;
-    setting.infoEl.addClass(css("info-toggle"));
+    setting.infoEl.addClass(css('info-toggle'));
     setting.addToggle((toggle) => {
       this.toggleComponent = toggle;
 
@@ -26,9 +23,5 @@ export class ToggleRenderer<T> extends AbstractPathRenderer<T> {
     });
     // transform: scale(1.5);
     return result;
-  }
-
-  setInternalValue(toggle: ToggleComponent, value: boolean) {
-    toggle.setValue(value);
   }
 }

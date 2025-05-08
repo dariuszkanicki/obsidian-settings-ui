@@ -3,7 +3,7 @@ import { PathSetting, BaseSetting, LocalizedSetting, Numberfield } from '../rend
 import { ContextService } from './context-service.js';
 import { createInteractiveTooltip, createTooltip } from './tooltip.js';
 import { getValue, getDefaultValue } from './value-utils.js';
-import { textTranslation, translation } from './translation.js';
+import { textTranslation, translateString, translation } from './translation.js';
 
 export function highlightAsCode(container: HTMLElement, text: string) {
   container.empty();
@@ -104,13 +104,17 @@ export function defaultBar<T>(noDefaultValueBar: boolean | undefined, setting: S
   optionalElements.forEach((optionalElement) => {
     itemWrapper.appendChild(optionalElement);
   });
+  return iconSpan;
 }
 
 export function tooltip<T>(setting: Setting, element: BaseSetting | PathSetting<T>, addition: string) {
   let text = translation(element, 'tooltip', element.tooltip, element.tooltipParameters);
   if (text) {
     text = highlightTextAsCode(`${text}\n${addition}`);
-    const tooltipIcon = setting.nameEl.createSpan({ cls: css('tooltip-icon'), text: 'ℹ️' });
+    const icon = text.startsWith('!') ? '⚠️' : 'ℹ️';
+    const cls = text.startsWith('!') ? 'tooltip-icon-warning' : 'tooltip-icon-info';
+    text = text.startsWith('!') ? text.substring(1) : text;
+    const tooltipIcon = setting.nameEl.createSpan({ cls: css(cls), text: icon });
     createInteractiveTooltip(tooltipIcon, text, { position: 'bottom' });
   }
 }
@@ -122,10 +126,18 @@ export function tooltip4Radioitem<T>(setting: Setting, element: BaseSetting | Pa
     createInteractiveTooltip(tooltipIcon, text, { position: 'bottom' });
   }
 }
+export function tooltip4Group(parentEl: HTMLElement, element: { path?: string; id?: string; tooltip?: string[] }) {
+  let text = translation(element, 'tooltip', element.tooltip);
+  if (text) {
+    text = highlightTextAsCode(`${text}`);
+    const tooltipIcon = parentEl.createSpan({ cls: css('tooltip-icon'), text: 'ℹ️' });
+    createInteractiveTooltip(tooltipIcon, text, { position: 'bottom' });
+  }
+}
 
 export function hint<T>(setting: Setting, element: BaseSetting | PathSetting<T>) {
   let small: HTMLElement | undefined;
-  const descString = translation(element, 'hint', element.hint, element.hintParameters);
+  const descString = translateString(element, 'hint', element.hint, element.hintParameters);
   if (descString) {
     small = setting.controlEl.createEl('small', { text: descString });
   }

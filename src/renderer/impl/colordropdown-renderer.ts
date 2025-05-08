@@ -3,7 +3,7 @@ import { getValue, setValue } from '../../utils/value-utils.js';
 import { ColorDropdown } from '../types.js';
 import { AbstractPathRenderer, PathRendererResult } from './abstract-path-renderer.js';
 import { ContextService } from '../../utils/context-service.js';
-import { translateDropdownItem, translation } from '../../utils/translation.js';
+import { translateDropdownItem } from '../../utils/translation.js';
 import { isCustomOptionChosen, setCustomOption } from '../../utils/storage.js';
 import { rgbObject } from './colorpicker-renderer.js';
 import { colord } from 'colord';

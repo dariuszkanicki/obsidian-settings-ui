@@ -20,7 +20,7 @@ export interface LocalizedSetting {
   id: string;
   label?: string;
   hint?: string;
-  tooltip?: string | string[];
+  tooltip?: string[];
   buttonText?: string;
   text?: string;
   invalid?: string;
@@ -34,7 +34,7 @@ export interface BaseSetting {
   labelParameters?: string[];
   hint?: string;
   hintParameters?: string[];
-  tooltip?: string;
+  tooltip?: string[];
   tooltipParameters?: string[];
   customItemClass?: string;
   showIf?: boolean;
@@ -49,7 +49,6 @@ export interface PathSetting<T> extends BaseSetting {
   customInputClass?: string;
   preSave?: (value: any) => void;
   postSave?: () => void;
-  validate?: (value: any) => { valid: boolean; data?: any; invalid?: string; preview?: string };
 }
 
 // 🔹Base for all setting types
@@ -93,6 +92,7 @@ export interface RadioItem extends BaseSetting {
 
 export interface Textfield<T> extends PathSetting<T> {
   type: 'Textfield';
+  validate?: (value: any) => { valid: boolean; data?: any; invalid?: string; preview?: string };
 }
 
 export type NumberConstraint = {
@@ -110,6 +110,7 @@ export interface Numberfield<T> extends PathSetting<T> {
 }
 export interface Textarea<T> extends PathSetting<T> {
   type: 'Textarea';
+  validate?: (value: any) => { valid: boolean; data?: any; invalid?: string; preview?: string };
 }
 export interface Toggle<T> extends PathSetting<T> {
   type: 'Toggle';
@@ -179,6 +180,7 @@ export type SettingGroup<T> = {
   id?: string;
   label?: string;
   labelParameters?: string[];
+  tooltip?: string[];
   showIf?: boolean;
   items: SettingElement<T>[];
 };

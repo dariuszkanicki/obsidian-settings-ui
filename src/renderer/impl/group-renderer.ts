@@ -1,14 +1,14 @@
-import { Html, Tag } from "../../utils/html.js";
-import { isSettingGroupExpanded, setSettingGroupExpanded } from "../../utils/storage.js";
-import { translation } from "../../utils/translation.js";
-import { HowToSection, SettingElement, SettingGroup } from "../types.js";
+import { tooltip, tooltip4Group } from '../../utils/helper.js';
+import { Html, Tag } from '../../utils/html.js';
+import { isSettingGroupExpanded, setSettingGroupExpanded } from '../../utils/storage.js';
+import { translateString } from '../../utils/translation.js';
+import { HowToSection, SettingElement, SettingGroup } from '../types.js';
 
 export class GroupRenderer {
-  constructor(private container: HTMLElement) { }
+  constructor(private container: HTMLElement) {}
 
   render<T>(element: SettingGroup<T> | HowToSection): HTMLElement {
-
-    const label = translation(element, 'label', element.label, element.labelParameters)!;
+    const label = translateString(element, 'label', element.label, element.labelParameters)!;
 
     const html = new Html(this.container);
     // prettier-ignore
@@ -23,6 +23,8 @@ export class GroupRenderer {
     const bodyEl = html.getElement('group-body')!;
     const toggleIcon = html.getElement('group-toggle')!;
     const titleEl = html.getElement('group-title')!;
+
+    tooltip4Group(titleEl, element);
 
     const applyState = () => {
       if (expanded) {

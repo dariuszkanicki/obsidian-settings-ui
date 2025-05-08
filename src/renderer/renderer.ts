@@ -93,10 +93,14 @@ export class Renderer<T> {
   private _checkConsistency(el: PathSetting<T>, elType: string, elDataType: string) {
     const datatype = typeof getDefaultValue(el);
 
+    if (datatype === undefined) {
+      throw Error(`${el.path}: '${elType}' is missing default value`);
+    }
+
     if (el.type === elType && datatype !== elDataType) {
-      throw Error(`${el.path}: '${elType}' specified for datatype '${datatype}'`);
+      throw Error(`${el.path}: '${elType}' specified for default datatype '${datatype}'`);
     } else if (el.type !== elType && datatype === elDataType) {
-      throw Error(`${el.path}: '${el.type}' specified for datatype '${elDataType}'`);
+      throw Error(`${el.path}: '${el.type}' specified for elDatatype '${elDataType}'`);
     }
   }
 

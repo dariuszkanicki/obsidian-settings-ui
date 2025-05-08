@@ -13,7 +13,10 @@ export type PathRendererResult = {
 export abstract class AbstractPathRenderer<T> {
   setting!: Setting;
   hintElement?: HTMLElement;
+  errorElement?: HTMLElement;
+
   protected container!: HTMLElement;
+  private defaultBarSpan?: HTMLSpanElement;
 
   constructor(private element: PathSetting<T>) {}
 
@@ -22,9 +25,9 @@ export abstract class AbstractPathRenderer<T> {
     this.setting = createSetting(this.element, containerEl, groupMember);
     const created = this.createElement(this.setting, this.element);
     created.htmlElement.classList.add(css('item'));
-    defaultBar(created.noDefaultValueBar, this.setting, this.element);
+    this.defaultBarSpan = defaultBar(created.noDefaultValueBar, this.setting, this.element);
     tooltip(this.setting, this.element, this.tooltipAddition(this.element));
-    let small = hint(this.setting, this.element);
+    this.hintElement = hint(this.setting, this.element);
     // if (this.element.validate) {
     //   const value = getValue(this.element);
     //   const { valid, data, invalid, preview } = this.element.validate(value);
@@ -32,12 +35,22 @@ export abstract class AbstractPathRenderer<T> {
     // small = previewAsHint(this.setting, preview);
     //   }
     // }
-    this._scaleFont(created.htmlElement, small);
+    this._scaleFont(created.htmlElement, this.hintElement);
     return created;
   }
 
   protected tooltipAddition(element: PathSetting<T>) {
     return '';
+  }
+
+  protected displayDefaultBar(display: boolean) {
+    if (this.defaultBarSpan) {
+      if (display) {
+        this.defaultBarSpan.style.cssText = 'display: block';
+      } else {
+        this.defaultBarSpan.style.cssText = 'display: none';
+      }
+    }
   }
 
   protected abstract createElement(setting: Setting, element: PathSetting<T>): PathRendererResult;
