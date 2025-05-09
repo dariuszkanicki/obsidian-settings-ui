@@ -1,7 +1,7 @@
-import type { Setting } from "obsidian";
-import { Button } from "../types.js";
-import { AbstractBaseRenderer } from "./abstract-base-renderer.js";
-import { getTranslation } from "../../utils/translation.js";
+import type { Setting } from 'obsidian';
+import { Button } from '../types.js';
+import { AbstractBaseRenderer } from './abstract-base-renderer.js';
+import { getTranslation } from '../../utils/translation.js';
 
 export class ButtonRenderer<T> extends AbstractBaseRenderer<T> {
   protected createElement(setting: Setting, element: Button) {
@@ -17,6 +17,7 @@ export class ButtonRenderer<T> extends AbstractBaseRenderer<T> {
     setting.addButton((button) => {
       button.setButtonText(_buttonText());
       button.onClick(() => element.onClick());
+      button.setCta();
     });
   }
 }

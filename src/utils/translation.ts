@@ -33,6 +33,31 @@ export function translateDropdownItemById<T>(dropdown: Dropdown<T> | ColorDropdo
   return result;
 }
 
+export function translateArray(
+  element: { path?: string; id?: string },
+  item: string,
+  index: number,
+  elementString?: string,
+  replacements?: string[],
+) {
+  const translation = getTranslation(element);
+  let result = elementString;
+  let translated;
+  let translatedArray = translation ? translation[item as keyof LocalizedSetting] : undefined;
+  console.log('translatedArray', translatedArray);
+  if (Array.isArray(translatedArray)) {
+    translated = translatedArray[index];
+  }
+  if (translated) {
+    if (replacements) {
+      result = replacePlaceholders(translated, replacements);
+    } else {
+      result = translated;
+    }
+  }
+  return result;
+}
+
 export function translateString(element: { path?: string; id?: string }, item: string, elementString?: string, replacements?: string[]) {
   const translation = getTranslation(element);
   let result = elementString;
@@ -46,6 +71,9 @@ export function translateString(element: { path?: string; id?: string }, item: s
     } else {
       result = translated;
     }
+  }
+  if (!result) {
+    console.warn(`translation not found for path/id '${element.path || element.id}'`);
   }
   return result;
 }

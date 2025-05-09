@@ -21,6 +21,7 @@ import {
 } from './types.js';
 import { RadioGroupRenderer } from './impl/radiogroup-renderer.js';
 import { getDefaultValue } from '../utils/value-utils.js';
+import { renderSupportSection } from './impl/support-renderer.js';
 
 export class Renderer<T> {
   private context: ConfigContext<T>;
@@ -69,7 +70,6 @@ export class Renderer<T> {
       const howtoEl = groupRenderer.render(this.config.howTo);
       renderHowToSection(howtoEl, this.context.pluginId, this.config.howTo);
     }
-
     for (const el of this.config.elements) {
       if (this.isSettingGroup(el)) {
         const bodyEl = groupRenderer.render(el);
@@ -88,6 +88,7 @@ export class Renderer<T> {
         this._renderElement(this.container, el);
       }
     }
+    renderSupportSection(this.container);
   }
 
   private _checkConsistency(el: PathSetting<T>, elType: string, elDataType: string) {

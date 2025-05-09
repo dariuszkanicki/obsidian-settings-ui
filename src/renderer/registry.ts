@@ -6,6 +6,7 @@ import { ColorDropdownRenderer } from './impl/colordropdown-renderer.js';
 import { ColorpickerRenderer } from './impl/colorpicker-renderer.js';
 import { DropdownRenderer } from './impl/dropdown-renderer.js';
 import { NumberfieldRenderer } from './impl/numberfield-renderer.js';
+import { PasswordRenderer } from './impl/password-renderer.js';
 import { RadioGroupRenderer } from './impl/radiogroup-renderer.js';
 import { StatusRenderer } from './impl/status-renderer.js';
 import { InputfieldRenderer } from './impl/textfield-renderer.js';
@@ -35,6 +36,7 @@ export const rendererRegistry: Record<string, RendererConstructor> = {
   Status: { type: 'base', ctor: StatusRenderer },
   RadioGroup: { type: 'radio', ctor: RadioGroupRenderer },
   Numberfield: { type: 'path', ctor: NumberfieldRenderer },
+  Password: { type: 'path', ctor: PasswordRenderer },
   Textfield: { type: 'path', ctor: InputfieldRenderer },
   Textarea: { type: 'path', ctor: InputfieldRenderer },
   Dropdown: { type: 'path', ctor: DropdownRenderer },

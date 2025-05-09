@@ -62,7 +62,7 @@ export class InputfieldRenderer<T> extends AbstractPathRenderer<T> {
           }
         }
         await setValue(element, value);
-        ContextService.refresh();
+        // ContextService.refresh();
       }
       this.displayDefaultBar(value === getDefaultValue(element));
     });

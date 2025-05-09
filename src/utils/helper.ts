@@ -69,6 +69,7 @@ export function css(className: string | string[]): string {
   return className.startsWith(prefix) ? className : `${prefix}${className}`;
 }
 
+// TODO refactor with rearrangeInput()
 export function defaultBar<T>(noDefaultValueBar: boolean | undefined, setting: Setting, element: PathSetting<T>) {
   if (noDefaultValueBar === true || element.handler) {
     return;
@@ -97,6 +98,28 @@ export function defaultBar<T>(noDefaultValueBar: boolean | undefined, setting: S
   if (currentValue !== defaultValue) {
     iconSpan.style.cssText = 'display: none';
   }
+  createTooltip(iconSpan, textTranslation('defaultValue').text, { position: 'bottom' });
+
+  itemWrapper.appendChild(iconWrapper);
+  itemWrapper.appendChild(inputEl);
+  optionalElements.forEach((optionalElement) => {
+    itemWrapper.appendChild(optionalElement);
+  });
+  return iconSpan;
+}
+
+export function rearrangeInput<T>(setting: Setting) {
+  const inputEl = setting.controlEl.firstChild!;
+  let optionalElements = [];
+  setting.controlEl.removeChild(inputEl);
+  while (setting.controlEl.firstChild !== null) {
+    optionalElements.push(setting.controlEl.removeChild(setting.controlEl.firstChild));
+  }
+
+  const itemWrapper = setting.controlEl.createDiv({ cls: css('input-wrapper') });
+  const iconWrapper = itemWrapper.createDiv({ cls: css('icon-wrapper') });
+  const iconSpan = iconWrapper.createSpan({ cls: css('default-icon') });
+  iconSpan.style.cssText = 'display: none';
   createTooltip(iconSpan, textTranslation('defaultValue').text, { position: 'bottom' });
 
   itemWrapper.appendChild(iconWrapper);

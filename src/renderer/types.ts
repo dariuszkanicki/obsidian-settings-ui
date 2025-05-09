@@ -18,7 +18,7 @@ export type Path<T, D extends number = 3> = [D] extends [never]
 
 export interface LocalizedSetting {
   id: string;
-  label?: string;
+  label?: string | string[];
   hint?: string;
   tooltip?: string[];
   buttonText?: string;
@@ -44,7 +44,7 @@ export interface BaseSetting {
 // 🔹additionally for settings that store values (e.g., in your plugin's settings object)
 export interface PathSetting<T> extends BaseSetting {
   path?: Path<T>;
-  handler?: SettingHandler<T>;
+  handler?: SettingHandler;
   placeholder?: string | number;
   customInputClass?: string;
   preSave?: (value: any) => void;
@@ -93,6 +93,9 @@ export interface RadioItem extends BaseSetting {
 export interface Textfield<T> extends PathSetting<T> {
   type: 'Textfield';
   validate?: (value: any) => { valid: boolean; data?: any; invalid?: string; preview?: string };
+}
+export interface Password<T> extends PathSetting<T> {
+  type: 'Password';
 }
 
 export type NumberConstraint = {
@@ -149,6 +152,7 @@ export type DropdownItem = {
 export type HowToSection = {
   id?: string;
   label?: string;
+  currentLabelIndex?: number;
   labelParameters?: string[];
   description: string;
   readmeURL?: string;
@@ -169,6 +173,7 @@ export type SettingElement<T> =
   Dropdown<T> |
   ColorDropdown<T> |
   Textfield<T> |
+  Password<T> |
   Numberfield<T> |
   Textarea<T> |
   Toggle<T> |
@@ -178,6 +183,7 @@ export type SettingElement<T> =
 export type SettingGroup<T> = {
   type: 'SettingGroup';
   id?: string;
+  currentLabelIndex?: number;
   label?: string;
   labelParameters?: string[];
   tooltip?: string[];
@@ -204,8 +210,7 @@ export type ConfigContext<T> = {
   settingsMap: Map<string, LocalizedSetting> | null;
 };
 
-// 🔹Shared setting handler interface
-export type SettingHandler<T> = {
-  setValue: (value: number | string | boolean | null) => any | undefined;
-  getValue: () => number | string | boolean;
+export type SettingHandler = {
+  setValue: (value: number | string | boolean | null) => void | Promise<void>;
+  getValue: () => number | string | boolean | Promise<number | string | boolean>;
 };
