@@ -5,4 +5,4 @@ export type Numberfield = PathSetting<T> & {
   type: 'Numberfield';
 ```
 
-**Extends:** [`PathSetting<T>`](PathSetting.md)
+**Extends:** [`PathSetting`](PathSetting.md)

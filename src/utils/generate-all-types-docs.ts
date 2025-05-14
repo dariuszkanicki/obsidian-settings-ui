@@ -17,16 +17,17 @@ const OUTPUT_DIR = 'docs/generated-types';
 function extractTypes(source: string): Record<string, TypeDefinition> {
   const typeMap: Record<string, TypeDefinition> = {};
 
-  const interfacePattern = /export\s+interface\s+(\w+)[^{]*{([\s\S]*?)}\s*/gm;
+  const interfacePattern = /export\s+interface\s+(\w+)\s*(?:extends\s+([^{]+))?\s*{([\s\S]*?)}\s*/gm;
   let match: RegExpExecArray | null;
 
   while ((match = interfacePattern.exec(source)) !== null) {
-    const [_, name, body] = match;
+    const [_, name, ext, body] = match;
     typeMap[name] = {
       kind: 'interface',
       name,
+      extends: ext?.trim(),
       properties: parseProperties(body),
-      body: body.trim(),
+      body: indentProperties(body.trim()),
     };
   }
 
@@ -63,12 +64,40 @@ function parseProperties(body: string): Record<string, string> {
   return props;
 }
 
-function generateMarkdown(def: TypeDefinition): string {
+function indentProperties(body: string): string {
+  return body
+    .split('\n')
+    .map((line) => '  ' + line.trim())
+    .join('\n');
+}
+
+function _linkType(value: string, known: Set<string>): string {
+  return value
+    .split('|')
+    .map((v) => {
+      const cleaned = v
+        .trim()
+        .replace(/\[\]|<.*?>|\(.*?\)/g, '')
+        .trim();
+      return known.has(cleaned) ? `[\`${v.trim()}\`](${cleaned}.md)` : `\`${v.trim()}\``;
+    })
+    .join(' | ');
+}
+function linkType(value: string, known: Set<string>): string {
+  return value.replace(/\b[\w]+(?:<[^>]+>)?/g, (match) => {
+    const name = match.replace(/<.*?>/, ''); // Strip generics for lookup
+    return known.has(name) ? `[\`${match}\`](${name}.md)` : `\`${match}\``;
+  });
+}
+
+function generateMarkdown(def: TypeDefinition, knownTypes: Set<string>): string {
   const lines: string[] = [
     `# \`${def.name}\` (${def.kind})`,
     '',
     '```ts',
-    def.kind === 'type' ? `export type ${def.name} = ${def.body};` : `export interface ${def.name} {\n${def.body}\n}`,
+    def.kind === 'type'
+      ? `export type ${def.name} = ${def.body};`
+      : `export interface ${def.name}${def.extends ? ' extends ' + def.extends : ''} {\n${def.body}\n}`,
     '```',
     '',
   ];
@@ -78,11 +107,14 @@ function generateMarkdown(def: TypeDefinition): string {
       .split(/[\|\&]/)
       .map((s) =>
         s
+          .replace(/<.*?>/, '')
+          .replace(/^[()]+/, '')
+          .replace(/[()]+$/, '')
           .replace(/^\(+/, '') // remove leading (
           .replace(/\)+$/, '') // remove trailing )
           .trim(),
       )
-      .filter((v, i, a) => v && a.indexOf(v) === i); // deduplicate
+      .filter((v, i, a) => v && a.indexOf(v) === i);
 
     const links = parts.map((part) => {
       const nameOnly = part
@@ -98,7 +130,7 @@ function generateMarkdown(def: TypeDefinition): string {
   if (def.properties) {
     lines.push('## Properties');
     for (const [key, value] of Object.entries(def.properties)) {
-      lines.push(`- \`${key}\`: \`${value}\``);
+      lines.push(`- \`${key}\`: ${linkType(value, knownTypes)}`);
     }
   }
 
@@ -118,12 +150,13 @@ function generateIndex(all: Record<string, TypeDefinition>): string {
 const filePath = path.resolve(INPUT_FILE);
 const source = fs.readFileSync(filePath, 'utf-8');
 const typeMap = extractTypes(source);
+const knownTypes = new Set(Object.keys(typeMap));
 
 fs.mkdirSync(OUTPUT_DIR, { recursive: true });
 
 for (const typeName in typeMap) {
   const def = typeMap[typeName];
-  const markdown = generateMarkdown(def);
+  const markdown = generateMarkdown(def, knownTypes);
   const mdPath = path.join(OUTPUT_DIR, `${typeName}.md`);
   fs.writeFileSync(mdPath, markdown, 'utf-8');
   console.log(`✅ ${typeName}.md written`);

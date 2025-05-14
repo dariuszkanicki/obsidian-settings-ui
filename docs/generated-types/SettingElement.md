@@ -15,4 +15,4 @@ export type SettingElement = Button |
   Color<T>;
 ```
 
-**Extends:** [`Button`](Button.md) | [`Status`](Status.md) | [`RadioGroup<T>`](RadioGroup.md) | [`Conditional<T>`](Conditional.md) | [`Dropdown<T>`](Dropdown.md) | [`ColorDropdown<T>`](ColorDropdown.md) | [`Textfield<T>`](Textfield.md) | [`Password<T>`](Password.md) | [`Numberfield<T>`](Numberfield.md) | [`Textarea<T>`](Textarea.md) | [`Toggle<T>`](Toggle.md) | [`Color<T>`](Color.md)
+**Extends:** [`Button`](Button.md) | [`Status`](Status.md) | [`RadioGroup`](RadioGroup.md) | [`Conditional`](Conditional.md) | [`Dropdown`](Dropdown.md) | [`ColorDropdown`](ColorDropdown.md) | [`Textfield`](Textfield.md) | [`Password`](Password.md) | [`Numberfield`](Numberfield.md) | [`Textarea`](Textarea.md) | [`Toggle`](Toggle.md) | [`Color`](Color.md)

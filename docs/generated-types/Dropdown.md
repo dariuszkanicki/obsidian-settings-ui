@@ -5,4 +5,4 @@ export type Dropdown = PathSetting<T> & {
   type: 'Dropdown';
 ```
 
-**Extends:** [`PathSetting<T>`](PathSetting.md)
+**Extends:** [`PathSetting`](PathSetting.md)

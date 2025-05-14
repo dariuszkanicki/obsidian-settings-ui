@@ -1,8 +1,8 @@
 # `PathSettingWithHandlerBase` (interface)
 
 ```ts
-export interface PathSettingWithHandlerBase {
-handler: SettingHandler;
+export interface PathSettingWithHandlerBase extends CommonProperties {
+  handler: SettingHandler;
   // id: string; // ✅ required when handler is present
   path?: never; // ⛔️ disallow if handler is used
   placeholder?: string | number;
@@ -12,10 +12,11 @@ handler: SettingHandler;
 }
 ```
 
+**Extends:** [`CommonProperties`](CommonProperties.md)
 ## Properties
-- `handler`: `SettingHandler`
-- `path`: `never; // ⛔️ disallow if handler is used`
-- `placeholder`: `string | number`
+- `handler`: [`SettingHandler`](SettingHandler.md)
+- `path`: `never`; // ⛔️ `disallow` `if` `handler` `is` `used`
+- `placeholder`: `string` | `number`
 - `customInputClass`: `string`
-- `preSave`: `(value: any) => void | Promise<void>`
-- `postSave`: `() => void`
+- `preSave`: (`value`: `any`) => `void` | `Promise<void>`
+- `postSave`: () => `void`

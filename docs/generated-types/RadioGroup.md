@@ -5,4 +5,4 @@ export type RadioGroup = PathSetting<T> & {
   type: 'RadioGroup';
 ```
 
-**Extends:** [`PathSetting<T>`](PathSetting.md)
+**Extends:** [`PathSetting`](PathSetting.md)

@@ -71,9 +71,22 @@ function indentProperties(body: string): string {
     .join('\n');
 }
 
-function generateMarkdown(def: TypeDefinition): string {
+function linkType(value: string, known: Set<string>): string {
+  return value
+    .split('|')
+    .map((v) => {
+      const cleaned = v
+        .trim()
+        .replace(/\[\]|<.*?>|\(.*?\)/g, '')
+        .trim();
+      return known.has(cleaned) ? `[\`${v.trim()}\`](${cleaned}.md)` : `\`${v.trim()}\``;
+    })
+    .join(' | ');
+}
+
+function generateMarkdown(def: TypeDefinition, knownTypes: Set<string>): string {
   const lines: string[] = [
-    `# \\`${def.name}\\` (${def.kind})`,
+    `# \`${def.name}\` (${def.kind})`,
     '',
     '```ts',
     def.kind === 'type'
@@ -91,7 +104,7 @@ function generateMarkdown(def: TypeDefinition): string {
           .replace(/<.*?>/, '')
           .replace(/^[()]+/, '')
           .replace(/[()]+$/, '')
-          .trim()
+          .trim(),
       )
       .filter((v, i, a) => v && a.indexOf(v) === i);
 
@@ -104,7 +117,7 @@ function generateMarkdown(def: TypeDefinition): string {
   if (def.properties) {
     lines.push('## Properties');
     for (const [key, value] of Object.entries(def.properties)) {
-      lines.push(`- \\`${key}\\`: \\`${value}\\``);
+      lines.push(`- \`${key}\`: ${linkType(value, knownTypes)}`);
     }
   }
 
@@ -124,12 +137,13 @@ function generateIndex(all: Record<string, TypeDefinition>): string {
 const filePath = path.resolve(INPUT_FILE);
 const source = fs.readFileSync(filePath, 'utf-8');
 const typeMap = extractTypes(source);
+const knownTypes = new Set(Object.keys(typeMap));
 
 fs.mkdirSync(OUTPUT_DIR, { recursive: true });
 
 for (const typeName in typeMap) {
   const def = typeMap[typeName];
-  const markdown = generateMarkdown(def);
+  const markdown = generateMarkdown(def, knownTypes);
   const mdPath = path.join(OUTPUT_DIR, `${typeName}.md`);
   fs.writeFileSync(mdPath, markdown, 'utf-8');
   console.log(`✅ ${typeName}.md written`);

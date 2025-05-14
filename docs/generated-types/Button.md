@@ -1,14 +1,15 @@
 # `Button` (interface)
 
 ```ts
-export interface Button {
-type: 'Button';
+export interface Button extends BaseSetting {
+  type: 'Button';
   buttonText?: string;
   onClick: () => void;
 }
 ```
 
+**Extends:** [`BaseSetting`](BaseSetting.md)
 ## Properties
-- `type`: `'Button'`
+- `type`: '[`Button`](Button.md)'
 - `buttonText`: `string`
-- `onClick`: `() => void`
+- `onClick`: () => `void`

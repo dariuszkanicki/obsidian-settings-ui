@@ -5,4 +5,4 @@ export type Toggle = PathSetting<T> & {
   type: 'Toggle';
 ```
 
-**Extends:** [`PathSetting<T>`](PathSetting.md)
+**Extends:** [`PathSetting`](PathSetting.md)

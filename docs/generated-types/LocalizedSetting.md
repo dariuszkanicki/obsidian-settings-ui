@@ -2,7 +2,7 @@
 
 ```ts
 export interface LocalizedSetting {
-id: string;
+  id: string;
   label?: string;
   hint?: string;
   tooltip?: string[];
@@ -16,7 +16,7 @@ id: string;
 - `id`: `string`
 - `label`: `string`
 - `hint`: `string`
-- `tooltip`: `string[]`
+- `tooltip`: `string`[]
 - `buttonText`: `string`
 - `text`: `string`
 - `invalid`: `string`

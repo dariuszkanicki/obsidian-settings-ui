@@ -5,4 +5,4 @@ export type Textfield = PathSetting<T> & {
   type: 'Textfield';
 ```
 
-**Extends:** [`PathSetting<T>`](PathSetting.md)
+**Extends:** [`PathSetting`](PathSetting.md)

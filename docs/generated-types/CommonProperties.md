@@ -2,7 +2,7 @@
 
 ```ts
 export interface CommonProperties {
-type?: string;
+  type?: string;
   label?: string;
   hint?: string;
   tooltip?: string[];
@@ -18,9 +18,9 @@ type?: string;
 - `type`: `string`
 - `label`: `string`
 - `hint`: `string`
-- `tooltip`: `string[]`
-- `replacements`: `() => Replacement[]`
+- `tooltip`: `string`[]
+- `replacements`: () => [`Replacement`](Replacement.md)[]
 - `customItemClass`: `string`
-- `showIf`: `boolean | (() => boolean)`
+- `showIf`: `boolean` | (() => `boolean`)
 - `disabled`: `boolean`
 - `withoutLabel`: `boolean`
