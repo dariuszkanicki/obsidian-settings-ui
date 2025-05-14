@@ -1,5 +1,4 @@
-import { replacePlaceholders } from '../renderer/impl/setting-helper.js';
-import { BaseSetting, PathSetting, LocalizedSetting, DropdownItem, Dropdown, ColorDropdown } from '../renderer/types.js';
+import { LocalizedSetting, DropdownItem, Dropdown, ColorDropdown, Replacement, Button } from '../renderer/types.js';
 import { ContextService } from './context-service.js';
 
 function _defaultKey(element: { path?: string; id?: string }): string {
@@ -10,92 +9,81 @@ function _dropdownKey<T>(dropdown: Dropdown<T> | ColorDropdown<T>, item: Dropdow
   return `${dropdown.path}.${item.id}`;
 }
 
-export function getTranslation(element: { path?: string; id?: string }) {
-  return ContextService.settingsMap().get(_defaultKey(element));
-}
-
-export function translateDropdownItem<T>(dropdown: Dropdown<T> | ColorDropdown<T>, item: DropdownItem, elementString?: string) {
-  const translation = ContextService.settingsMap().get(_dropdownKey(dropdown, item));
-  let result = elementString;
-  const translated = translation ? translation.label : undefined;
-  if (translated) {
-    result = translated;
-  }
-  return result;
-}
-export function translateDropdownItemById<T>(dropdown: Dropdown<T> | ColorDropdown<T>, id: string) {
-  let result = undefined;
-  const translation = ContextService.settingsMap().get(id);
-  const translated = translation ? translation.label : undefined;
-  if (translated) {
-    result = translated;
-  }
-  return result;
-}
-
-export function translateArray(
+function _applyReplacements(
   element: { path?: string; id?: string },
-  item: string,
-  index: number,
-  elementString?: string,
-  replacements?: string[],
-) {
-  const translation = getTranslation(element);
-  let result = elementString;
-  let translated;
-  let translatedArray = translation ? translation[item as keyof LocalizedSetting] : undefined;
-  console.log('translatedArray', translatedArray);
-  if (Array.isArray(translatedArray)) {
-    translated = translatedArray[index];
-  }
-  if (translated) {
-    if (replacements) {
-      result = replacePlaceholders(translated, replacements);
-    } else {
-      result = translated;
+  template: string,
+  replacements: { name: string; text: string }[],
+): string {
+  return template.replace(/\$\{(\w+)\}/g, (_, key) => {
+    const replacement = replacements.find((r) => r.name === key);
+    const result = replacement?.text ?? `<<${key}>>`;
+    if (result === `<<${key}>>`) {
+      console.warn(`missing replacement '${key}' for id '${element.path || element.id}'`);
     }
-  }
-  return result;
+    return result;
+  });
 }
 
-export function translateString(element: { path?: string; id?: string }, item: string, elementString?: string, replacements?: string[]) {
-  const translation = getTranslation(element);
-  let result = elementString;
-  let translated = translation ? translation[item as keyof LocalizedSetting] : undefined;
-  if (translated && Array.isArray(translated)) {
-    translated = translated.join('\n');
+export function translateDropdownItemLabel<T>(dropdown: Dropdown<T> | ColorDropdown<T>, item: DropdownItem): string {
+  const localizedSetting = ContextService.localizedSettingMap()?.get(_dropdownKey(dropdown, item));
+  if (localizedSetting && localizedSetting.label) {
+    return localizedSetting.label;
+  } else {
+    return item.label ?? item.id;
   }
-  if (translated) {
-    if (replacements) {
-      result = replacePlaceholders(translated, replacements);
-    } else {
-      result = translated;
-    }
-  }
-  if (!result) {
-    console.warn(`translation not found for path/id '${element.path || element.id}'`);
-  }
-  return result;
 }
 
-export function translation(element: { path?: string; id?: string }, item: string, elementString?: string[], replacements?: string[]) {
-  const translation = getTranslation(element);
-  let result = elementString?.join('\n');
-  let translated = translation ? translation[item as keyof LocalizedSetting] : undefined;
-  if (translated && Array.isArray(translated)) {
-    translated = translated.join('\n');
+export function translateDropdownItemLabelById<T>(dropdown: Dropdown<T> | ColorDropdown<T>, id: string): string {
+  const localizedSetting = ContextService.localizedSettingMap()?.get(id);
+  if (localizedSetting && localizedSetting.label) {
+    return localizedSetting.label;
+  } else {
+    return id;
   }
-  if (translated) {
-    if (replacements) {
-      result = replacePlaceholders(translated, replacements);
-    } else {
-      result = translated;
-    }
-  }
-  return result;
 }
 
-export function textTranslation(id: string) {
-  const result = ContextService.settingsMap().get(id);
-  return result;
+export function translateButtonText(button: Button): string {
+  const localizedSetting = ContextService.localizedSettingMap()?.get(_defaultKey(button));
+  if (localizedSetting && localizedSetting.buttonText) {
+    return localizedSetting.buttonText;
+  } else if (button.buttonText) {
+    return button.buttonText;
+  } else {
+    console.warn('buttonText not specified for ', button.id);
+    return button.id;
+  }
+}
+
+export function translateElementPart<T>(
+  element: { path?: string; id?: string; replacements?: () => Replacement[] },
+  part: string,
+  fallback?: string | string[],
+): string | undefined {
+  const localizedSetting = ContextService.localizedSettingMap()?.get(_defaultKey(element));
+  let localizedItem = localizedSetting ? localizedSetting[part as keyof LocalizedSetting] : undefined;
+
+  if (localizedItem && Array.isArray(localizedItem)) {
+    localizedItem = localizedItem.join('\n');
+  }
+  if (localizedItem && element.replacements) {
+    localizedItem = _applyReplacements(element, localizedItem, element.replacements());
+  }
+
+  if (!localizedItem && !fallback && part === 'label') {
+    console.warn(`label not found, neither in element nor in translation path/id '${element.path || element.id}'`);
+  }
+  if (!localizedItem && fallback) {
+    if (Array.isArray(fallback)) {
+      return fallback.join('\n');
+    }
+    return fallback;
+  }
+  return localizedItem;
+}
+
+export function localizedSetting4Text(id: string) {
+  return ContextService.localizedSettingMap()?.get(id);
+}
+export function localizedSetting(element: { path?: string; id?: string }) {
+  return ContextService.localizedSettingMap()?.get(_defaultKey(element));
 }

@@ -1,7 +1,7 @@
 import type { ToggleComponent } from 'obsidian';
 import { Html, Tag } from '../../utils/html.js';
 import { Toggle, RadioGroup } from '../types.js';
-import { getLabel } from './setting-helper.js';
+import { label } from './setting-helper.js';
 import { ToggleRenderer } from './toggle-renderer.js';
 import { getValue, setValue } from '../../utils/value-utils.js';
 import { RadioItemRenderer } from './radioitem-renderer.js';
@@ -18,9 +18,11 @@ export class RadioGroupRenderer<T> {
     // prettier-ignore
     html.createDIV('group')
       .createDIV('group-header')
-      .createDIV('group-title', getLabel(this.element), Tag.close)
+      .createDIV('group-title', '', Tag.close)
       .closeTag()
       .createDIV('group-body');
+
+    label(this.element, html.getElement('group-title')!);
 
     html.getElement('group')?.addClass('radio');
     const bodyEl = html.getElement('group-body')!;

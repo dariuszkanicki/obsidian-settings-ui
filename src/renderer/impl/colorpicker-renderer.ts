@@ -6,7 +6,8 @@ import { plugin } from 'postcss';
 import { Textfield, Textarea, Numberfield, Color } from '../types.js';
 import { getValue, setValue } from '../../utils/value-utils.js';
 import { colord } from 'colord';
-import { css, previewAsHint } from '../../utils/helper.js';
+import { css } from '../../utils/helper.js';
+import { previewAsHint } from '../../utils/hint.js';
 import { ContextService } from '../../utils/context-service.js';
 
 export class ColorpickerRenderer<T> extends AbstractPathRenderer<T> {

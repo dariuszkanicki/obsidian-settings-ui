@@ -18,7 +18,7 @@ export type Path<T, D extends number = 3> = [D] extends [never]
 
 export interface LocalizedSetting {
   id: string;
-  label?: string | string[];
+  label?: string;
   hint?: string;
   tooltip?: string[];
   buttonText?: string;
@@ -26,39 +26,45 @@ export interface LocalizedSetting {
   invalid?: string;
 }
 
-// 🔹Base for all setting types
-export interface BaseSetting {
+export type Replacement = {
+  name: string;
+  text: string;
+};
+
+export interface CommonProperties {
   type?: string;
-  id?: string;
   label?: string;
-  labelParameters?: string[];
   hint?: string;
-  hintParameters?: string[];
   tooltip?: string[];
-  tooltipParameters?: string[];
+  replacements?: () => Replacement[];
   customItemClass?: string;
-  showIf?: boolean;
+  showIf?: boolean | (() => boolean);
   disabled?: boolean;
+  withoutLabel?: boolean;
+}
+
+// 🔹Base for all setting types
+export interface BaseSetting extends CommonProperties {
+  // type: string;
+  id: string;
+  // label?: string;
+  // hint?: string;
+  // tooltip?: string[];
+  // replacements?: Replacement[];
+  // customItemClass?: string;
+  // showIf?: boolean;
+  // disabled?: boolean;
 }
 
 // 🔹additionally for settings that store values (e.g., in your plugin's settings object)
-export interface PathSetting<T> extends BaseSetting {
-  path?: Path<T>;
+export interface PathSetting<T> extends CommonProperties {
+  path: Path<T>;
+  id?: string;
   handler?: SettingHandler;
   placeholder?: string | number;
   customInputClass?: string;
-  preSave?: (value: any) => void;
+  preSave?: (value: any) => void | Promise<void>;
   postSave?: () => void;
-}
-
-// 🔹Base for all setting types
-export interface GroupSetting<T> {
-  type: string;
-  items: SettingElement<T>[];
-  id?: string;
-  label?: string;
-  labelParameters?: string[];
-  showIf?: boolean;
 }
 
 export interface Conditional<T> {
@@ -66,8 +72,6 @@ export interface Conditional<T> {
   showIf: boolean;
   items: SettingElement<T>[];
 }
-
-// export interface PathSetting<T> extends BaseSetting, PersistentSetting<T> {}
 
 export interface Button extends BaseSetting {
   type: 'Button';
@@ -85,9 +89,7 @@ export interface RadioGroup<T> extends PathSetting<T> {
   defaultId?: string;
 }
 export interface RadioItem extends BaseSetting {
-  // type: 'RadioItem';
   id: string;
-  // radioCallback?: (path: string, value: boolean) => void;
 }
 
 export interface Textfield<T> extends PathSetting<T> {
@@ -150,10 +152,8 @@ export type DropdownItem = {
 
 // 🔹 How-to support section
 export type HowToSection = {
-  id?: string;
+  id: string;
   label?: string;
-  currentLabelIndex?: number;
-  labelParameters?: string[];
   description: string;
   readmeURL?: string;
   classes?: {
@@ -161,6 +161,7 @@ export type HowToSection = {
     title?: string;
     description?: string;
   };
+  replacements?: () => Replacement[];
 };
 
 // 🔹 Top-level or group-level setting items (generic)
@@ -179,17 +180,27 @@ export type SettingElement<T> =
   Toggle<T> |
   Color<T>;
 
+// TODO SettingGroup vs. GroupSetting, replace GroupSetting
+
 // 🔹 Groups of settings
 export type SettingGroup<T> = {
   type: 'SettingGroup';
-  id?: string;
-  currentLabelIndex?: number;
+  id: string;
   label?: string;
-  labelParameters?: string[];
+  replacements?: () => Replacement[];
   tooltip?: string[];
   showIf?: boolean;
   items: SettingElement<T>[];
 };
+
+// 🔹Base for all setting types
+export interface GroupSetting<T> {
+  type: string;
+  items: SettingElement<T>[];
+  id?: string;
+  label?: string;
+  showIf?: boolean;
+}
 
 // 🔹Section definition
 export type SettingsConfig<T> = {
@@ -207,10 +218,11 @@ export type ConfigContext<T> = {
   container: HTMLElement;
   saveData: (settings: T) => Promise<void>;
   refreshSettings: () => Promise<void>;
-  settingsMap: Map<string, LocalizedSetting> | null;
+  localizedSettingMap: Map<string, LocalizedSetting> | null;
 };
 
 export type SettingHandler = {
-  setValue: (value: number | string | boolean | null) => void | Promise<void>;
+  // id: string;
+  setValue: (value: any) => void | Promise<void>;
   getValue: () => number | string | boolean | Promise<number | string | boolean>;
 };

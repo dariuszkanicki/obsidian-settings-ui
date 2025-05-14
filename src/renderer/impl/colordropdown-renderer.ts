@@ -3,7 +3,7 @@ import { getValue, setValue } from '../../utils/value-utils.js';
 import { ColorDropdown } from '../types.js';
 import { AbstractPathRenderer, PathRendererResult } from './abstract-path-renderer.js';
 import { ContextService } from '../../utils/context-service.js';
-import { translateDropdownItem } from '../../utils/translation.js';
+import { translateDropdownItemLabel } from '../../utils/translation.js';
 import { isCustomOptionChosen, setCustomOption } from '../../utils/storage.js';
 import { rgbObject } from './colorpicker-renderer.js';
 import { colord } from 'colord';
@@ -51,13 +51,7 @@ export class ColorDropdownRenderer<T> extends AbstractPathRenderer<T> {
     }
 
     setting.addDropdown((dropdown) => {
-      element.items.forEach((item) => {
-        let label = translateDropdownItem(element, item, item.label)!;
-        if (!label) {
-          label = item.id;
-        }
-        dropdown.addOption(item.id, label);
-      });
+      element.items.forEach((item) => dropdown.addOption(item.id, translateDropdownItemLabel(element, item)));
 
       if (element.withCustomOption) {
         dropdown.addOption('custom', 'custom');

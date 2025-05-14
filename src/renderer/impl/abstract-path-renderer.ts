@@ -1,8 +1,10 @@
 import type { BaseComponent, Setting } from 'obsidian';
-import { css, defaultBar, tooltip, hint } from '../../utils/helper.js';
+import { css, defaultBar } from '../../utils/helper.js';
+import { hint } from '../../utils/hint.js';
 import { getSettingFontSize } from '../../utils/storage.js';
 import { PathSetting } from '../types.js';
 import { createSetting } from './setting-helper.js';
+import { tooltip } from '../../utils/tooltip-helper.js';
 
 export type PathRendererResult = {
   baseComponent: BaseComponent;

@@ -3,7 +3,7 @@ import { getValue, setValue } from '../../utils/value-utils.js';
 import { Dropdown } from '../types.js';
 import { AbstractPathRenderer, PathRendererResult } from './abstract-path-renderer.js';
 import { ContextService } from '../../utils/context-service.js';
-import { translateDropdownItem, translateDropdownItemById } from '../../utils/translation.js';
+import { translateDropdownItemLabel, translateDropdownItemLabelById } from '../../utils/translation.js';
 
 export class DropdownRenderer<T> extends AbstractPathRenderer<T> {
   protected createElement(setting: Setting, element: Dropdown<T>): PathRendererResult {
@@ -13,11 +13,9 @@ export class DropdownRenderer<T> extends AbstractPathRenderer<T> {
       element.items.forEach((item) => {
         let label;
         if (typeof item === 'string') {
-          let label = translateDropdownItemById(element, item) ?? item;
-          dropdown.addOption(item, label);
+          dropdown.addOption(item, translateDropdownItemLabelById(element, item));
         } else {
-          let label = translateDropdownItem(element, item, item.label) ?? item.id;
-          dropdown.addOption(item.id, label);
+          dropdown.addOption(item.id, translateDropdownItemLabel(element, item));
         }
       });
       dropdown.setValue(getValue(element));

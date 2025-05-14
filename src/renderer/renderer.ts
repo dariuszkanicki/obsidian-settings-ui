@@ -43,7 +43,7 @@ export class Renderer<T> {
       defaults: this.defaults,
       container: this.container,
       saveData: this.saveData,
-      settingsMap: null,
+      localizedSettingMap: null,
       refreshSettings: this.refreshSettings,
     };
   }
@@ -56,9 +56,9 @@ export class Renderer<T> {
     return el?.type === 'Conditional' && Array.isArray(el.items);
   }
 
-  async renderSettings() {
+  async renderSettings(): Promise<void> {
     ContextService.initialize(this.context);
-    this.context.settingsMap = await loadLocalizedSettings();
+    this.context.localizedSettingMap = await loadLocalizedSettings();
     this.container.empty();
 
     await renderGear(this.container, this.refreshSettings);

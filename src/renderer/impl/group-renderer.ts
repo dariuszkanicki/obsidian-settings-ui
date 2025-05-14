@@ -1,8 +1,8 @@
-import { tooltip, tooltip4Group } from '../../utils/helper.js';
 import { Html, Tag } from '../../utils/html.js';
 import { isSettingGroupExpanded, setSettingGroupExpanded } from '../../utils/storage.js';
-import { translateArray, translateString } from '../../utils/translation.js';
-import { HowToSection, SettingElement, SettingGroup } from '../types.js';
+import { tooltip4Group } from '../../utils/tooltip-helper.js';
+import { translateElementPart } from '../../utils/translation.js';
+import { HowToSection, SettingGroup } from '../types.js';
 
 export class GroupRenderer {
   constructor(private container: HTMLElement) {}
@@ -10,13 +10,8 @@ export class GroupRenderer {
   render<T>(element: SettingGroup<T> | HowToSection): HTMLElement {
     let index;
     let label;
-    if (element.currentLabelIndex !== undefined) {
-      index = element.currentLabelIndex;
-      const elementString = element.label ? element.label[index] : undefined;
-      label = translateArray(element, 'label', index, elementString, element.labelParameters)!;
-    } else {
-      label = translateString(element, 'label', element.label, element.labelParameters)!;
-    }
+    label = translateElementPart(element, 'label', element.label) ?? 'unknown';
+
     const html = new Html(this.container);
     // prettier-ignore
     html.createDIV('group')

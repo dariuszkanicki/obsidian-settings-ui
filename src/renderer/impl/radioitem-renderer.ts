@@ -1,9 +1,10 @@
 import type { Setting, ToggleComponent } from 'obsidian';
-import { css, tooltip, tooltip4Radioitem } from '../../utils/helper.js';
+import { css } from '../../utils/helper.js';
 import { getValue, setValue } from '../../utils/value-utils.js';
 import { BaseSetting, RadioGroup, RadioItem, Toggle } from '../types.js';
 import { AbstractPathRenderer, PathRendererResult } from './abstract-path-renderer.js';
 import { AbstractBaseRenderer } from './abstract-base-renderer.js';
+import { tooltip4Radioitem } from '../../utils/tooltip-helper.js';
 
 export class RadioItemRenderer<T> extends AbstractBaseRenderer<T> {
   private toggle!: ToggleComponent;

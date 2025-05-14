@@ -39,14 +39,15 @@ export async function setValue<T>(element: PathSetting<T>, value: any) {
   }
 
   const settings = ContextService.settings();
-  console.log('element', element, _value);
   const coerced = coerceValue(element, _value);
-  console.log('coerced', coerced);
   setByPath(settings, element.path!, coerced);
 
   if (element.preSave) {
-    element.preSave(coerced);
+    console.log('presave', element, coerced);
+    await element.preSave(coerced);
+    console.log('presave done');
   }
+  console.log('saveData', settings);
   await ContextService.saveData(settings);
 
   if (element.postSave) {
@@ -91,7 +92,10 @@ export function getValue<T>(element: PathSetting<T>): any {
   return value as T;
 }
 export function getDefaultValue<T>(element: PathSetting<T>): any {
+  if (element.handler) {
+    return undefined;
+  }
   const settings = ContextService.defaults();
-  const value = element.handler ? element.handler.getValue() : getByPath(settings, element.path!);
+  const value = getByPath(settings, element.path!);
   return value as T;
 }

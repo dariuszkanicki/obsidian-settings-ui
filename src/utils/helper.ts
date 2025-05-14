@@ -1,9 +1,9 @@
 import type { Setting } from 'obsidian';
-import { PathSetting, BaseSetting, LocalizedSetting, Numberfield } from '../renderer/types.js';
+import { PathSetting, LocalizedSetting, Numberfield } from '../renderer/types.js';
 import { ContextService } from './context-service.js';
-import { createInteractiveTooltip, createTooltip } from './tooltip.js';
+import { createTooltip } from './tooltip.js';
 import { getValue, getDefaultValue } from './value-utils.js';
-import { textTranslation, translateString, translation } from './translation.js';
+import { localizedSetting4Text } from './translation.js';
 
 export function highlightAsCode(container: HTMLElement, text: string) {
   container.empty();
@@ -98,7 +98,10 @@ export function defaultBar<T>(noDefaultValueBar: boolean | undefined, setting: S
   if (currentValue !== defaultValue) {
     iconSpan.style.cssText = 'display: none';
   }
-  createTooltip(iconSpan, textTranslation('defaultValue').text, { position: 'bottom' });
+  const defaultText = localizedSetting4Text('defaultValue')?.text;
+  if (defaultText) {
+    createTooltip(iconSpan, defaultText, { position: 'bottom' });
+  }
 
   itemWrapper.appendChild(iconWrapper);
   itemWrapper.appendChild(inputEl);
@@ -107,6 +110,8 @@ export function defaultBar<T>(noDefaultValueBar: boolean | undefined, setting: S
   });
   return iconSpan;
 }
+
+// TODO why this (because no hint?)
 
 export function rearrangeInput<T>(setting: Setting) {
   const inputEl = setting.controlEl.firstChild!;
@@ -120,7 +125,10 @@ export function rearrangeInput<T>(setting: Setting) {
   const iconWrapper = itemWrapper.createDiv({ cls: css('icon-wrapper') });
   const iconSpan = iconWrapper.createSpan({ cls: css('default-icon') });
   iconSpan.style.cssText = 'display: none';
-  createTooltip(iconSpan, textTranslation('defaultValue').text, { position: 'bottom' });
+  const tooltipText = localizedSetting4Text('defaultValue')?.text;
+  if (tooltipText) {
+    createTooltip(iconSpan, tooltipText, { position: 'bottom' });
+  }
 
   itemWrapper.appendChild(iconWrapper);
   itemWrapper.appendChild(inputEl);
@@ -128,52 +136,4 @@ export function rearrangeInput<T>(setting: Setting) {
     itemWrapper.appendChild(optionalElement);
   });
   return iconSpan;
-}
-
-export function tooltip<T>(setting: Setting, element: BaseSetting | PathSetting<T>, addition: string) {
-  let text = translation(element, 'tooltip', element.tooltip, element.tooltipParameters);
-  if (text) {
-    text = highlightTextAsCode(`${text}\n${addition}`);
-    const icon = text.startsWith('!') ? '⚠️' : 'ℹ️';
-    const cls = text.startsWith('!') ? 'tooltip-icon-warning' : 'tooltip-icon-info';
-    text = text.startsWith('!') ? text.substring(1) : text;
-    const tooltipIcon = setting.nameEl.createSpan({ cls: css(cls), text: icon });
-    createInteractiveTooltip(tooltipIcon, text, { position: 'bottom' });
-  }
-}
-export function tooltip4Radioitem<T>(setting: Setting, element: BaseSetting | PathSetting<T>, parent: PathSetting<T>) {
-  let text = translation(element, 'tooltip', element.tooltip, parent.tooltipParameters);
-  if (text) {
-    text = highlightTextAsCode(`${text}`);
-    const tooltipIcon = setting.nameEl.createSpan({ cls: css('tooltip-icon'), text: 'ℹ️' });
-    createInteractiveTooltip(tooltipIcon, text, { position: 'bottom' });
-  }
-}
-export function tooltip4Group(parentEl: HTMLElement, element: { path?: string; id?: string; tooltip?: string[] }) {
-  let text = translation(element, 'tooltip', element.tooltip);
-  if (text) {
-    text = highlightTextAsCode(`${text}`);
-    const tooltipIcon = parentEl.createSpan({ cls: css('tooltip-icon'), text: 'ℹ️' });
-    createInteractiveTooltip(tooltipIcon, text, { position: 'bottom' });
-  }
-}
-
-export function hint<T>(setting: Setting, element: BaseSetting | PathSetting<T>) {
-  let small: HTMLElement | undefined;
-  const descString = translateString(element, 'hint', element.hint, element.hintParameters);
-  if (descString) {
-    small = setting.controlEl.createEl('small', { text: descString });
-  }
-  return small;
-}
-
-export function previewAsHint(setting: Setting, htmlString: string) {
-  const small = setting.controlEl.createEl('small');
-  const template = document.createElement('template');
-  template.innerHTML = htmlString.trim(); // parses HTML safely
-
-  if (template.content.firstChild) {
-    small.appendChild(template.content.firstChild);
-  }
-  return small;
 }

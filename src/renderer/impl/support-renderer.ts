@@ -1,10 +1,10 @@
 import { Setting } from 'obsidian';
 import { Html, Tag } from '../../utils/html.js';
-import { translateString } from '../../utils/translation.js';
+import { translateElementPart } from '../../utils/translation.js';
 
 export function renderSupportSection(container: HTMLElement) {
-  const groupTitle = translateString({ id: 'supportGroup' }, 'label') ?? 'Support';
-  console.log('groupTitle', groupTitle);
+  const groupTitle = translateElementPart({ id: 'supportGroup' }, 'label') ?? 'Support';
+
   const html = new Html(container);
   // prettier-ignore
   html.createDIV('group')

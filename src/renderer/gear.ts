@@ -2,7 +2,17 @@ import { setIcon } from 'obsidian';
 import path from 'path';
 import { ContextService } from '../utils/context-service.js';
 import { css } from '../utils/helper.js';
-import { getGearSlideout, setDefaultSettingFontSize, getCurrentLanguage, setCurrentLanguage, setGearSlideout, getSettingLabelWidth, setSettingLabelWidth, getSettingFontSize, setSettingFontSize } from '../utils/storage.js';
+import {
+  getGearSlideout,
+  setDefaultSettingFontSize,
+  getCurrentLanguage,
+  setCurrentLanguage,
+  setGearSlideout,
+  getSettingLabelWidth,
+  setSettingLabelWidth,
+  getSettingFontSize,
+  setSettingFontSize,
+} from '../utils/storage.js';
 
 export async function renderGear<T>(bodyEl: HTMLElement, refreshSettings: () => Promise<void>) {
   const settingsPanel = bodyEl.createEl('div', {
@@ -60,7 +70,10 @@ export async function renderGear<T>(bodyEl: HTMLElement, refreshSettings: () => 
     const settingsFiles = entries
       .map((fullPath: string) => path.basename(fullPath))
       .filter((fileName: string) => /^settings-[\w-]+\.json$/.test(fileName));
-    const languageSuffixes = settingsFiles.map((file: { match: (arg0: RegExp) => any[] }) => file.match(/^settings-(.+)\.json$/)?.[1]!);
+    // const languageSuffixes = settingsFiles.map((file: { match: (arg0: RegExp) => any[] }) => file.match(/^settings-(.+)\.json$/)?.[1]!);
+
+    const languageSuffixes = entries.map((file) => file.match(/^settings-(.+)\.json$/)?.[1]).filter((id): id is string => id !== undefined);
+
     return languageSuffixes;
   }
 
