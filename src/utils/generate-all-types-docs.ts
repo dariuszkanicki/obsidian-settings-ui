@@ -36,11 +36,8 @@ function extractTypes(source: string): Record<string, TypeDefinition> {
     const [_, name, body] = match;
     const trimmed = body.trim();
 
-    // Try to extract object part for property parsing
     const objectMatch = trimmed.match(/&?\s*{([\s\S]*)}/);
     const props = objectMatch ? parseProperties(objectMatch[1].trim()) : {};
-
-    // Base type (everything before `{`, or the full body if no object present)
     const base = trimmed.includes('{') ? trimmed.split('{')[0].trim() : trimmed;
 
     typeMap[name] = {
@@ -108,27 +105,17 @@ function generateMarkdown(def: TypeDefinition): string {
   return lines.join('\n');
 }
 
-// Entry
-const [, , typeName] = process.argv;
+// ENTRY POINT
 const filePath = path.resolve(INPUT_FILE);
 const source = fs.readFileSync(filePath, 'utf-8');
+const typeMap = extractTypes(source);
 
-if (!typeName) {
-  console.error('Usage: node extract-types.js <type-name>');
-  process.exit(1);
-}
+fs.mkdirSync(OUTPUT_DIR, { recursive: true });
 
-const result = extractTypes(source);
-
-if (!result[typeName]) {
-  console.error(`❌ Type or interface named "${typeName}" not found in ${INPUT_FILE}`);
-  process.exit(1);
-} else {
-  const markdown = generateMarkdown(result[typeName]);
-
-  fs.mkdirSync(OUTPUT_DIR, { recursive: true });
+for (const typeName in typeMap) {
+  const def = typeMap[typeName];
+  const markdown = generateMarkdown(def);
   const mdPath = path.join(OUTPUT_DIR, `${typeName}.md`);
   fs.writeFileSync(mdPath, markdown, 'utf-8');
-  console.log(`✅ Markdown written to ${mdPath}`);
-  console.log(JSON.stringify(result[typeName], null, 2));
+  console.log(`✅ ${typeName}.md written`);
 }
