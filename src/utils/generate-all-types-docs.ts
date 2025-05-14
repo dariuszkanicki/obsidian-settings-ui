@@ -31,7 +31,8 @@ function extractTypes(source: string): Record<string, TypeDefinition> {
     };
   }
 
-  const typePattern = /export\s+type\s+(\w+)[^=]*=\s*([^;]+);/gm;
+  // const typePattern = /export\s+type\s+(\w+)[^=]*=\s*([^;]+);/gm;
+  const typePattern = /export\s+type\s+(\w+)[^=]*=\s*((?:{[\s\S]*?})|(?:[^\n;]+));/gm;
 
   while ((match = typePattern.exec(source)) !== null) {
     const [_, name, body] = match;
