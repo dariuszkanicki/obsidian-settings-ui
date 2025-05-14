@@ -17,16 +17,17 @@ const OUTPUT_DIR = 'docs/generated-types';
 function extractTypes(source: string): Record<string, TypeDefinition> {
   const typeMap: Record<string, TypeDefinition> = {};
 
-  const interfacePattern = /export\s+interface\s+(\w+)[^{]*{([\s\S]*?)}\s*/gm;
+  const interfacePattern = /export\s+interface\s+(\w+)\s*(?:extends\s+([^{]+))?\s*{([\s\S]*?)}\s*/gm;
   let match: RegExpExecArray | null;
 
   while ((match = interfacePattern.exec(source)) !== null) {
-    const [_, name, body] = match;
+    const [_, name, ext, body] = match;
     typeMap[name] = {
       kind: 'interface',
       name,
+      extends: ext?.trim(),
       properties: parseProperties(body),
-      body: body.trim(),
+      body: indentProperties(body.trim()),
     };
   }
 
@@ -63,34 +64,39 @@ function parseProperties(body: string): Record<string, string> {
   return props;
 }
 
+function indentProperties(body: string): string {
+  return body
+    .split('\n')
+    .map((line) => '  ' + line.trim())
+    .join('\n');
+}
+
 function generateMarkdown(def: TypeDefinition): string {
   const lines: string[] = [
-    `# \`${def.name}\` (${def.kind})`,
+    `# \\`${def.name}\\` (${def.kind})`,
     '',
     '```ts',
-    def.kind === 'type' ? `export type ${def.name} = ${def.body};` : `export interface ${def.name} {\n${def.body}\n}`,
+    def.kind === 'type'
+      ? `export type ${def.name} = ${def.body};`
+      : `export interface ${def.name}${def.extends ? ' extends ' + def.extends : ''} {\n${def.body}\n}`,
     '```',
     '',
   ];
 
   if (def.extends) {
     const parts = def.extends
-      .split(/[\|\&]/)
+      .split(/[|&]/)
       .map((s) =>
         s
-          .replace(/^\(+/, '') // remove leading (
-          .replace(/\)+$/, '') // remove trailing )
-          .trim(),
+          .replace(/<.*?>/, '')
+          .replace(/^[()]+/, '')
+          .replace(/[()]+$/, '')
+          .trim()
       )
-      .filter((v, i, a) => v && a.indexOf(v) === i); // deduplicate
+      .filter((v, i, a) => v && a.indexOf(v) === i);
 
     const links = parts.map((part) => {
-      const nameOnly = part
-        .replace(/<.*?>/, '') // Remove generics
-        .replace(/[()]/g, '') // Remove parens
-        .trim();
-      const cleanLabel = part.replace(/[()]/g, '').trim(); // Fix link text
-      return `[\`${cleanLabel}\`](${nameOnly}.md)`;
+      return `[\`${part}\`](${part}.md)`;
     });
     lines.push(`**Extends:** ${links.join(' | ')}`);
   }
@@ -98,7 +104,7 @@ function generateMarkdown(def: TypeDefinition): string {
   if (def.properties) {
     lines.push('## Properties');
     for (const [key, value] of Object.entries(def.properties)) {
-      lines.push(`- \`${key}\`: \`${value}\``);
+      lines.push(`- \\`${key}\\`: \\`${value}\\``);
     }
   }
 
