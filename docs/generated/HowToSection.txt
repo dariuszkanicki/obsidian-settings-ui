@@ -6,10 +6,8 @@
     "label?": "string",
     "description": "string",
     "readmeURL?": "string",
-    "classes?": "{",
-    "wrapper?": "string",
-    "title?": "string",
-    "description?": "string"
+    "classes?": "HowToSectionClasses",
+    "replacements?": "() => Replacement[]"
   },
-  "body": "{\r\n  id: string;\r\n  label?: string;\r\n  description: string;\r\n  readmeURL?: string;\r\n  classes?: {\r\n    wrapper?: string;\r\n    title?: string;\r\n    description?: string;\r\n  }"
+  "body": "{\r\n  id: string;\r\n  label?: string;\r\n  description: string;\r\n  readmeURL?: string;\r\n  classes?: HowToSectionClasses;\r\n  replacements?: () => Replacement[];\r\n}"
 }

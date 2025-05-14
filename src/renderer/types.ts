@@ -80,7 +80,7 @@ export interface HandlerWithId extends PathSettingWithHandlerBase {
 }
 
 // 🔹additionally for settings that store values (e.g., in your plugin's settings object)
-export type PathSetting<T> = PathSettingWithPath<T> | (HandlerOnlyLabel | HandlerWithId);
+export type PathSetting<T> = PathSettingWithPath<T> | HandlerOnlyLabel | HandlerWithId;
 
 export interface Conditional<T> {
   type: 'Conditional';
@@ -166,17 +166,19 @@ export type DropdownItem = {
   label?: string;
 };
 
+export type HowToSectionClasses = {
+  wrapper?: string;
+  title?: string;
+  description?: string;
+};
+
 // 🔹 How-to support section
 export type HowToSection = {
   id: string;
   label?: string;
   description: string;
   readmeURL?: string;
-  classes?: {
-    wrapper?: string;
-    title?: string;
-    description?: string;
-  };
+  classes?: HowToSectionClasses;
   replacements?: () => Replacement[];
 };
 

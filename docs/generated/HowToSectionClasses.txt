@@ -1,0 +1,10 @@
+{
+  "name": "HowToSectionClasses",
+  "kind": "type",
+  "properties": {
+    "wrapper?": "string",
+    "title?": "string",
+    "description?": "string"
+  },
+  "body": "{\r\n  wrapper?: string;\r\n  title?: string;\r\n  description?: string;\r\n}"
+}
