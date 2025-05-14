@@ -45,27 +45,42 @@ export interface CommonProperties {
 
 // 🔹Base for all setting types
 export interface BaseSetting extends CommonProperties {
-  // type: string;
   id: string;
-  // label?: string;
-  // hint?: string;
-  // tooltip?: string[];
-  // replacements?: Replacement[];
-  // customItemClass?: string;
-  // showIf?: boolean;
-  // disabled?: boolean;
 }
 
-// 🔹additionally for settings that store values (e.g., in your plugin's settings object)
-export interface PathSetting<T> extends CommonProperties {
+export interface PathSettingWithPath<T> extends CommonProperties {
   path: Path<T>;
-  id?: string;
-  handler?: SettingHandler;
+  handler?: never; // ⛔️ disallow if path is used
+  id?: never; // ⛔️ disallow if path is used
   placeholder?: string | number;
   customInputClass?: string;
   preSave?: (value: any) => void | Promise<void>;
   postSave?: () => void;
 }
+
+export interface PathSettingWithHandlerBase extends CommonProperties {
+  handler: SettingHandler;
+  // id: string; // ✅ required when handler is present
+  path?: never; // ⛔️ disallow if handler is used
+  placeholder?: string | number;
+  customInputClass?: string;
+  preSave?: (value: any) => void | Promise<void>;
+  postSave?: () => void;
+}
+
+export interface HandlerOnlyLabel extends PathSettingWithHandlerBase {
+  id?: never;
+  label: string;
+}
+
+// When using a handler, if you do supply an id then the label is optional.
+export interface HandlerWithId extends PathSettingWithHandlerBase {
+  id: string;
+  label?: string;
+}
+
+// 🔹additionally for settings that store values (e.g., in your plugin's settings object)
+export type PathSetting<T> = PathSettingWithPath<T> | (HandlerOnlyLabel | HandlerWithId);
 
 export interface Conditional<T> {
   type: 'Conditional';
@@ -82,23 +97,23 @@ export interface Status extends BaseSetting {
   type: 'Status';
   items: StatusField[];
 }
-export interface RadioGroup<T> extends PathSetting<T> {
+export type RadioGroup<T> = PathSetting<T> & {
   type: 'RadioGroup';
   items: RadioItem[];
   postSave?: () => void;
   defaultId?: string;
-}
+};
 export interface RadioItem extends BaseSetting {
   id: string;
 }
 
-export interface Textfield<T> extends PathSetting<T> {
+export type Textfield<T> = PathSetting<T> & {
   type: 'Textfield';
   validate?: (value: any) => { valid: boolean; data?: any; invalid?: string; preview?: string };
-}
-export interface Password<T> extends PathSetting<T> {
+};
+export type Password<T> = PathSetting<T> & {
   type: 'Password';
-}
+};
 
 export type NumberConstraint = {
   min?: number;
@@ -106,36 +121,37 @@ export type NumberConstraint = {
   unit?: string;
 };
 
-export interface Numberfield<T> extends PathSetting<T> {
+export type Numberfield<T> = PathSetting<T> & {
   type: 'Numberfield';
   constraint?: NumberConstraint;
   unit?: string;
   min?: number;
   max?: number;
-}
-export interface Textarea<T> extends PathSetting<T> {
+};
+export type Textarea<T> = PathSetting<T> & {
   type: 'Textarea';
   validate?: (value: any) => { valid: boolean; data?: any; invalid?: string; preview?: string };
-}
-export interface Toggle<T> extends PathSetting<T> {
+};
+export type Toggle<T> = PathSetting<T> & {
   type: 'Toggle';
-}
-export interface Color<T> extends PathSetting<T> {
+};
+
+export type Color<T> = PathSetting<T> & {
   type: 'Color';
   datatype?: 'RGB' | 'string' | 'Hex';
   preview?: () => string;
-}
+};
 
-export interface ColorDropdown<T> extends PathSetting<T> {
+export type ColorDropdown<T> = PathSetting<T> & {
   type: 'ColorDropdown';
   datatype?: 'RGB' | 'string' | 'Hex'; // 'Hex' is default
   withCustomOption?: boolean;
   items: DropdownItem[];
-}
-export interface Dropdown<T> extends PathSetting<T> {
+};
+export type Dropdown<T> = PathSetting<T> & {
   type: 'Dropdown';
   items: DropdownItem[] | string[];
-}
+};
 
 // 🔸 Shared status object for read-only status badges
 export type StatusField = {
@@ -222,7 +238,6 @@ export type ConfigContext<T> = {
 };
 
 export type SettingHandler = {
-  // id: string;
   setValue: (value: any) => void | Promise<void>;
   getValue: () => number | string | boolean | Promise<number | string | boolean>;
 };

@@ -29,6 +29,7 @@
   "scripts": {
     "build": "node build.mjs",
     "test:inject": "pnpm build && node dist/lib/utils/inject-styles.js",
+    "test:doc": "pnpm build && node dist/lib/utils/extract-types.js",
     "typecheck": "tsc --noEmit",
     "test": "vitest",
     "lint": "eslint src --ext .ts",
