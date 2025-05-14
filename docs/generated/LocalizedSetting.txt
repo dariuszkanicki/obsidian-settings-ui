@@ -1,0 +1,14 @@
+{
+  "name": "LocalizedSetting",
+  "kind": "interface",
+  "properties": {
+    "id": "string",
+    "label?": "string",
+    "hint?": "string",
+    "tooltip?": "string[]",
+    "buttonText?": "string",
+    "text?": "string",
+    "invalid?": "string"
+  },
+  "body": "  id: string;\n  label?: string;\n  hint?: string;\n  tooltip?: string[];\n  buttonText?: string;\n  text?: string;\n  invalid?: string;"
+}

@@ -31,6 +31,7 @@
     "test:inject": "pnpm build && node dist/lib/utils/inject-styles.js",
     "test:doc": "pnpm build && node dist/lib/utils/extract-types.js",
     "test:docall": "pnpm build && node dist/lib/utils/generate-all-types-docs.js",
+    "doc": "pnpm build && node dist/lib/utils/generate-doc.js",
     "typecheck": "tsc --noEmit",
     "test": "vitest",
     "lint": "eslint src --ext .ts",

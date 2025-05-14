@@ -1,0 +1,10 @@
+{
+  "name": "NumberConstraint",
+  "kind": "type",
+  "properties": {
+    "min?": "number",
+    "max?": "number",
+    "unit?": "string"
+  },
+  "body": "{\r\n  min?: number;\r\n  max?: number;\r\n  unit?: string;\r\n}"
+}

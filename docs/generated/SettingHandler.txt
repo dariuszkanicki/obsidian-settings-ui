@@ -1,0 +1,9 @@
+{
+  "name": "SettingHandler",
+  "kind": "type",
+  "properties": {
+    "setValue": "(value: any) => void | Promise<void>",
+    "getValue": "() => number | string | boolean | Promise<number | string | boolean>"
+  },
+  "body": "{\r\n  setValue: (value: any) => void | Promise<void>;\r\n  getValue: () => number | string | boolean | Promise<number | string | boolean>;\r\n}"
+}

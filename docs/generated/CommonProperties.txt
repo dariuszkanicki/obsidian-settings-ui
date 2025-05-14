@@ -1,0 +1,16 @@
+{
+  "name": "CommonProperties",
+  "kind": "interface",
+  "properties": {
+    "type?": "string",
+    "label?": "string",
+    "hint?": "string",
+    "tooltip?": "string[]",
+    "replacements?": "() => Replacement[]",
+    "customItemClass?": "string",
+    "showIf?": "boolean | (() => boolean)",
+    "disabled?": "boolean",
+    "withoutLabel?": "boolean"
+  },
+  "body": "  type?: string;\n  label?: string;\n  hint?: string;\n  tooltip?: string[];\n  replacements?: () => Replacement[];\n  customItemClass?: string;\n  showIf?: boolean | (() => boolean);\n  disabled?: boolean;\n  withoutLabel?: boolean;"
+}

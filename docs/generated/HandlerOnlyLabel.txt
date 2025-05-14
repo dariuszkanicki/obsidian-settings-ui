@@ -1,0 +1,10 @@
+{
+  "name": "HandlerOnlyLabel",
+  "kind": "interface",
+  "extends": "PathSettingWithHandlerBase",
+  "properties": {
+    "id?": "never",
+    "label": "string"
+  },
+  "body": "  id?: never;\n  label: string;"
+}

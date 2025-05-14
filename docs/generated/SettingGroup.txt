@@ -1,0 +1,14 @@
+{
+  "name": "SettingGroup",
+  "kind": "type",
+  "properties": {
+    "type": "'SettingGroup'",
+    "id": "string",
+    "label?": "string",
+    "replacements?": "() => Replacement[]",
+    "tooltip?": "string[]",
+    "showIf?": "boolean",
+    "items": "SettingElement<T>[]"
+  },
+  "body": "{\r\n  type: 'SettingGroup';\r\n  id: string;\r\n  label?: string;\r\n  replacements?: () => Replacement[];\r\n  tooltip?: string[];\r\n  showIf?: boolean;\r\n  items: SettingElement<T>[];\r\n}"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "DropdownItem",
+  "kind": "type",
+  "properties": {
+    "id": "string",
+    "label?": "string"
+  },
+  "body": "{\r\n  id: string;\r\n  label?: string;\r\n}"
+}

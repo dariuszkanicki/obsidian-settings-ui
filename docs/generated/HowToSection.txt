@@ -1,0 +1,15 @@
+{
+  "name": "HowToSection",
+  "kind": "type",
+  "properties": {
+    "id": "string",
+    "label?": "string",
+    "description": "string",
+    "readmeURL?": "string",
+    "classes?": "{",
+    "wrapper?": "string",
+    "title?": "string",
+    "description?": "string"
+  },
+  "body": "{\r\n  id: string;\r\n  label?: string;\r\n  description: string;\r\n  readmeURL?: string;\r\n  classes?: {\r\n    wrapper?: string;\r\n    title?: string;\r\n    description?: string;\r\n  }"
+}

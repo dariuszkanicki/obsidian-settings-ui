@@ -1,0 +1,10 @@
+{
+  "name": "Status",
+  "kind": "interface",
+  "extends": "BaseSetting",
+  "properties": {
+    "type": "'Status'",
+    "items": "StatusField[]"
+  },
+  "body": "  type: 'Status';\n  items: StatusField[];"
+}

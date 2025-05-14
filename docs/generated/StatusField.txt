@@ -1,0 +1,10 @@
+{
+  "name": "StatusField",
+  "kind": "type",
+  "properties": {
+    "text": "string",
+    "isEnabled?": "boolean",
+    "customClass?": "() => string"
+  },
+  "body": "{\r\n  text: string;\r\n  isEnabled?: boolean;\r\n  customClass?: () => string;\r\n}"
+}

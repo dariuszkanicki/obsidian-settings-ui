@@ -1,0 +1,9 @@
+{
+  "name": "BaseSetting",
+  "kind": "interface",
+  "extends": "CommonProperties",
+  "properties": {
+    "id": "string"
+  },
+  "body": "  id: string;"
+}
