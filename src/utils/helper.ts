@@ -1,5 +1,7 @@
 import type { Setting } from 'obsidian';
-import { PathSetting, LocalizedSetting, Numberfield } from '../renderer/types.js';
+import { PathSetting } from '../renderer/types.js';
+import { LocalizedSetting } from '../renderer/types-api.js';
+import { Numberfield } from '../renderer/types-api.js';
 import { ContextService } from './context-service.js';
 import { createTooltip } from './tooltip.js';
 import { getValue, getDefaultValue } from './value-utils.js';

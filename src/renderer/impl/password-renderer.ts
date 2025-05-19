@@ -1,6 +1,6 @@
 import { ButtonComponent, type Setting } from 'obsidian';
 import { getValue, setValue } from '../../utils/value-utils.js';
-import { Password } from '../types.js';
+import { Password } from '../types-api.js';
 import { AbstractPathRenderer, PathRendererResult } from './abstract-path-renderer.js';
 import { rearrangeInput } from '../../utils/helper.js';
 import { createElement, Eye, EyeOff } from 'lucide';

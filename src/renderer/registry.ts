@@ -11,7 +11,9 @@ import { RadioGroupRenderer } from './impl/radiogroup-renderer.js';
 import { StatusRenderer } from './impl/status-renderer.js';
 import { InputfieldRenderer } from './impl/textfield-renderer.js';
 import { ToggleRenderer } from './impl/toggle-renderer.js';
-import { BaseSetting, GroupSetting, PathSetting, RadioGroup } from './types.js';
+import { BaseSetting, PathSetting } from './types.js';
+import { GroupSetting } from './types-api.js';
+import { RadioGroup } from './types-api.js';
 
 type RendererConstructor =
   | {

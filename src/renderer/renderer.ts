@@ -8,17 +8,10 @@ import { AbstractPathRenderer } from './impl/abstract-path-renderer.js';
 import { GroupRenderer } from './impl/group-renderer.js';
 import { renderHowToSection } from './impl/howto-renderer.js';
 import { rendererRegistry } from './registry.js';
-import {
-  ConfigContext,
-  SettingsConfig,
-  SettingElement,
-  BaseSetting,
-  PathSetting,
-  GroupSetting,
-  RadioGroup,
-  Conditional,
-  SettingGroup,
-} from './types.js';
+import { BaseSetting, PathSetting } from './types.js';
+import { ConfigContext, SettingsConfig, GroupSetting, SettingGroup, SettingElement } from './types-api.js';
+import { RadioGroup } from './types-api.js';
+import { Conditional } from './types-api.js';
 import { RadioGroupRenderer } from './impl/radiogroup-renderer.js';
 import { getDefaultValue } from '../utils/value-utils.js';
 import { renderSupportSection } from './impl/support-renderer.js';

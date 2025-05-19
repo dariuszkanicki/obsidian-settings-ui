@@ -1,20 +1,19 @@
-import type { Setting } from "obsidian";
-import { css } from "../../utils/helper.js";
-import { getSettingFontSize } from "../../utils/storage.js";
-import { Status } from "../types.js";
-import { AbstractBaseRenderer } from "./abstract-base-renderer.js";
+import type { Setting } from 'obsidian';
+import { css } from '../../utils/helper.js';
+import { getSettingFontSize } from '../../utils/storage.js';
+import { Status } from '../types-api.js';
+import { AbstractBaseRenderer } from './abstract-base-renderer.js';
 
 export class StatusRenderer<T> extends AbstractBaseRenderer<T> {
   protected createElement(setting: Setting, element: Status) {
-    const wrapper = document.createElement("div");
-    wrapper.className = css("status-wrapper");
+    const wrapper = document.createElement('div');
+    wrapper.className = css('status-wrapper');
     setting.controlEl.appendChild(wrapper);
 
     for (const item of element.items) {
-      const pill = document.createElement("div");
-      pill.className = css("status-pill");
-      if (item.isEnabled !== undefined)
-        pill.addClass(item.isEnabled ? "enabled" : "disabled");
+      const pill = document.createElement('div');
+      pill.className = css('status-pill');
+      if (item.isEnabled !== undefined) pill.addClass(item.isEnabled ? 'enabled' : 'disabled');
       if (item.customClass) pill.addClass(item.customClass());
       pill.innerText = item.text;
       wrapper.appendChild(pill);

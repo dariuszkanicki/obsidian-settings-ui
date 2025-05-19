@@ -1,5 +1,6 @@
 import type { Setting } from 'obsidian';
-import { BaseSetting, Button } from '../types.js';
+import { BaseSetting } from '../types.js';
+import { Button } from '../types-api.js';
 import { AbstractBaseRenderer } from './abstract-base-renderer.js';
 import { translateButtonText } from '../../utils/translation.js';
 

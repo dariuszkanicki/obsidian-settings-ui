@@ -1,4 +1,4 @@
-import type { LocalizedSetting } from '../renderer/types.js';
+import type { LocalizedSetting } from '../renderer/types-api.js';
 import { ContextService } from '../utils/context-service.js';
 import { getCurrentLanguage } from '../utils/storage.js';
 

@@ -1,7 +1,7 @@
 import type { Setting } from 'obsidian';
 import { css } from '../../utils/helper.js';
 import { getDefaultValue, getValue, setValue } from '../../utils/value-utils.js';
-import { Numberfield } from '../types.js';
+import { Numberfield } from '../types-api.js';
 import { AbstractPathRenderer, PathRendererResult } from './abstract-path-renderer.js';
 import { ContextService } from '../../utils/context-service.js';
 

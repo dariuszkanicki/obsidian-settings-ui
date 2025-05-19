@@ -1,7 +1,7 @@
 import type { Setting, ToggleComponent } from 'obsidian';
 import { css } from '../../utils/helper.js';
 import { getValue, setValue } from '../../utils/value-utils.js';
-import { Toggle } from '../types.js';
+import { Toggle } from '../types-api.js';
 import { AbstractPathRenderer, PathRendererResult } from './abstract-path-renderer.js';
 import { ContextService } from '../../utils/context-service.js';
 

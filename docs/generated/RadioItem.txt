@@ -1,9 +1,0 @@
-{
-  "name": "RadioItem",
-  "kind": "interface",
-  "extends": "BaseSetting",
-  "properties": {
-    "id": "string"
-  },
-  "body": "  id: string;"
-}

@@ -1,4 +1,7 @@
-import { LocalizedSetting, DropdownItem, Dropdown, ColorDropdown, Replacement, Button } from '../renderer/types.js';
+import { LocalizedSetting, Replacement } from '../renderer/types-api.js';
+import { DropdownItem } from '../renderer/types-api.js';
+import { Dropdown, ColorDropdown } from '../renderer/types-api.js';
+import { Button } from '../renderer/types-api.js';
 import { ContextService } from './context-service.js';
 
 function _defaultKey(element: { path?: string; id?: string }): string {

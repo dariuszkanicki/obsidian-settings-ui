@@ -1,6 +1,0 @@
-{
-  "name": "PathSetting",
-  "kind": "type",
-  "extends": "PathSettingWithPath<T> | HandlerOnlyLabel | HandlerWithId",
-  "body": "PathSettingWithPath<T> | HandlerOnlyLabel | HandlerWithId"
-}

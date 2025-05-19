@@ -1,9 +1,0 @@
-{
-  "name": "SettingsConfig",
-  "kind": "type",
-  "properties": {
-    "howTo?": "HowToSection",
-    "elements": "Array<SettingElement<T> | SettingGroup<T>>"
-  },
-  "body": "{\r\n  howTo?: HowToSection;\r\n  elements: Array<SettingElement<T> | SettingGroup<T>>;\r\n}"
-}

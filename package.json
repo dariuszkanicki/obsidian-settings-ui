@@ -29,9 +29,9 @@
   "scripts": {
     "build": "node build.mjs",
     "test:inject": "pnpm build && node dist/lib/utils/inject-styles.js",
-    "test:doc": "pnpm build && node dist/lib/utils/extract-types.js",
+    "test:doc": "pnpm build && node dist/lib/utils/doc/extract-types.js",
     "test:docall": "pnpm build && node dist/lib/utils/generate-all-types-docs.js",
-    "doc": "pnpm build && node dist/lib/utils/generate-doc.js",
+    "doc": "pnpm build && node dist/lib/utils/doc/generate-doc.js",
     "typecheck": "tsc --noEmit",
     "test": "vitest",
     "lint": "eslint src --ext .ts",
@@ -40,7 +40,8 @@
     "format:fix": "prettier --write .",
     "yalc:publish": "pnpm build && yalc publish",
     "yalc:push": "pnpm yalc:publish && yalc push",
-    "watch": "chokidar src/**/* styles/**/* --ignore dist/**/* -c \"pnpm yalc:push\""
+    "watch": "chokidar src/**/* styles/**/* --ignore dist/**/* -c \"pnpm yalc:push\"",
+    "watch_": "chokidar src/**/* styles/**/* --ignore dist/**/* -c \"pnpm doc\""
   },
   "keywords": [
     "obsidian",
@@ -56,7 +57,9 @@
     "color-string": "^2.0.1",
     "colord": "^2.9.3",
     "lucide": "^0.487.0",
-    "lucide-static": "^0.487.0"
+    "lucide-static": "^0.487.0",
+    "source-map-support": "^0.5.21",
+    "ts-morph": "^25.0.1"
   },
   "peerDependencies": {
     "obsidian": "^1.8.7"

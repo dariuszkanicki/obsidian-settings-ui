@@ -2,7 +2,8 @@ import { Html, Tag } from '../../utils/html.js';
 import { isSettingGroupExpanded, setSettingGroupExpanded } from '../../utils/storage.js';
 import { tooltip4Group } from '../../utils/tooltip-helper.js';
 import { translateElementPart } from '../../utils/translation.js';
-import { HowToSection, SettingGroup } from '../types.js';
+import { SettingGroup } from '../types-api.js';
+import { HowToSection } from '../types-api.js';
 
 export class GroupRenderer {
   constructor(private container: HTMLElement) {}

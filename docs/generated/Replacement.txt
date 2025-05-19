@@ -1,9 +1,0 @@
-{
-  "name": "Replacement",
-  "kind": "type",
-  "properties": {
-    "name": "string",
-    "text": "string"
-  },
-  "body": "{\r\n  name: string;\r\n  text: string;\r\n}"
-}

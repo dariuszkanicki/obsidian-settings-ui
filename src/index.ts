@@ -1,7 +1,7 @@
 // index.ts
 import type { App, Plugin } from 'obsidian';
 import { Renderer } from './renderer/renderer.js';
-import { SettingsConfig } from './renderer/types.js';
+import { SettingsConfig } from './renderer/types-api.js';
 import { injectPrefixedStyles } from './utils/inject-styles.js';
 
 // 🔹 Entrypoints

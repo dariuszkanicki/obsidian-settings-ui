@@ -1,6 +1,6 @@
 import type { ColorComponent, Setting } from 'obsidian';
 import { getValue, setValue } from '../../utils/value-utils.js';
-import { ColorDropdown } from '../types.js';
+import { ColorDropdown } from '../types-api.js';
 import { AbstractPathRenderer, PathRendererResult } from './abstract-path-renderer.js';
 import { ContextService } from '../../utils/context-service.js';
 import { translateDropdownItemLabel } from '../../utils/translation.js';

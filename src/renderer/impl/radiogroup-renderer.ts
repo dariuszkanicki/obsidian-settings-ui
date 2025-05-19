@@ -1,6 +1,7 @@
 import type { ToggleComponent } from 'obsidian';
 import { Html, Tag } from '../../utils/html.js';
-import { Toggle, RadioGroup } from '../types.js';
+import { RadioGroup } from '../types-api.js';
+import { Toggle } from '../types-api.js';
 import { label } from './setting-helper.js';
 import { ToggleRenderer } from './toggle-renderer.js';
 import { getValue, setValue } from '../../utils/value-utils.js';

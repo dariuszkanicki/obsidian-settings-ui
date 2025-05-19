@@ -1,5 +1,8 @@
 import { Setting } from 'obsidian';
-import { BaseSetting, PathSetting, RadioGroup, RadioItem, Replacement } from '../renderer/types.js';
+import { BaseSetting, PathSetting } from '../renderer/types.js';
+import { Replacement } from '../renderer/types-api.js';
+import { RadioGroup } from '../renderer/types-api.js';
+import { RadioItem } from '../renderer/types-api.js';
 import { highlightTextAsCode, css, highlightAsCode } from './helper.js';
 import { createInteractiveTooltip } from './tooltip.js';
 import { translateElementPart } from './translation.js';

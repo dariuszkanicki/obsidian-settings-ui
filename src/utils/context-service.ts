@@ -1,4 +1,4 @@
-import { ConfigContext } from '../renderer/types.js';
+import { ConfigContext } from '../renderer/types-api.js';
 
 export class ContextService<T> {
   private static instance: ContextService<any>;

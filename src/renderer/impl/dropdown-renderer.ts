@@ -1,6 +1,6 @@
 import type { Setting } from 'obsidian';
 import { getValue, setValue } from '../../utils/value-utils.js';
-import { Dropdown } from '../types.js';
+import { Dropdown } from '../types-api.js';
 import { AbstractPathRenderer, PathRendererResult } from './abstract-path-renderer.js';
 import { ContextService } from '../../utils/context-service.js';
 import { translateDropdownItemLabel, translateDropdownItemLabelById } from '../../utils/translation.js';
