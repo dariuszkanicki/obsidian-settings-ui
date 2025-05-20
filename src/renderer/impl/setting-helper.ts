@@ -6,7 +6,7 @@ import { translateElementPart } from '../../utils/translation.js';
 
 // prettier-ignore
 export function createSetting<T>(
-  element: CommonProperties, //BaseSetting | PathSetting<T>,
+  element: {id?: string, label?: string, withoutLabel?: boolean}, //CommonProperties, //BaseSetting | PathSetting<T>,
   container: HTMLElement,
   groupMember: boolean
 ): Setting {
@@ -36,7 +36,7 @@ export function createSetting<T>(
   }
 }
 
-export function label(element: CommonProperties, htmlElement: HTMLElement) {
+export function label(element: { label?: string; id?: string }, htmlElement: HTMLElement) {
   const labelString = translateElementPart(element, 'label', element.label);
 
   if (labelString !== undefined) {

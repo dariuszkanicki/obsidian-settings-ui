@@ -160,7 +160,7 @@ for (const typeName in typeMap) {
   const markdown = generateMarkdown(def, knownTypes);
   const mdPath = path.join(OUTPUT_DIR, `${typeName}.md`);
   fs.writeFileSync(mdPath, markdown, 'utf-8');
-  console.log(`✅ ${typeName}.md written`);
+  // console.log(`✅ ${typeName}.md written`);
 }
 
 // Write index.md

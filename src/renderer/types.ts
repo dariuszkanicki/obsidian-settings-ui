@@ -10,40 +10,51 @@ export type CommonProperties = {
   disabled?: boolean;
   withoutLabel?: boolean;
 };
-export type BaseSetting = CommonProperties & {
+export type CommonPropertiesWithId = CommonProperties & {
   id: string;
+  label?: string;
 };
-export type CommonPathProperties = {
+export type CommonPropertiesWithLabel = CommonProperties & {
+  label: string;
+  id?: string;
+};
+
+export type BaseSetting = CommonPropertiesWithLabel | CommonPropertiesWithId;
+
+// export type BaseSetting = CommonProperties & {
+//   id: string;
+// };
+export type CommonPathProperties<T> = {
   placeholder?: string | number;
   preSave?: (value: any) => void | Promise<void>;
   postSave?: () => void;
 };
-export type PathSettingWithPath<T> = CommonPathProperties &
+export type PathSettingWithPath<T> = CommonPathProperties<T> &
   CommonProperties & {
     path: Path<T>;
     handler?: never; // ⛔️ disallow if path is used
-    id?: never; // ⛔️ disallow if path is used
+    // id?: never; // ⛔️ disallow if path is used
   };
 
-export type PathSettingWithHandlerBase = CommonPathProperties &
+export type PathSettingWithHandlerBase<T> = CommonPathProperties<T> &
   CommonProperties & {
     handler: SettingHandler;
     path?: never; // ⛔️ disallow if handler is used
   };
 
-export type PathSettingWithHandlerAndLabel = PathSettingWithHandlerBase & {
+export type PathSettingWithHandlerAndLabel<T> = PathSettingWithHandlerBase<T> & {
   id?: string;
   label: string;
 };
 
 // When using a handler, if you do supply an id then the label is optional.
-export type PathSettingWithHandlerAndId = PathSettingWithHandlerBase & {
+export type PathSettingWithHandlerAndId<T> = PathSettingWithHandlerBase<T> & {
   id: string;
   label?: string;
 };
 
 // 🔹additionally for settings that store values (e.g., in your plugin's settings object)
-export type PathSetting<T> = PathSettingWithPath<T> | PathSettingWithHandlerAndLabel | PathSettingWithHandlerAndId;
+export type PathSetting<T> = PathSettingWithPath<T> | PathSettingWithHandlerAndLabel<T> | PathSettingWithHandlerAndId<T>;
 
 // 🔹 Top-level or group-level setting items (generic)
 

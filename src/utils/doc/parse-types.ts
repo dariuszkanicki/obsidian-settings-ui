@@ -12,13 +12,14 @@ export interface PropertyMeta {
 }
 
 export interface InheritedRecord {
-  inheritedFrom: string; // type
+  name: string; // type
   properties: PropertyMeta[];
 }
 
 export interface TypeAliasMeta {
   name: string;
   extends?: string; // base type(s) if the alias intersects with another
+  comment?: string;
   properties: PropertyMeta[];
   traversed: boolean;
   inherited: Record<string, InheritedRecord>;
@@ -41,6 +42,11 @@ export function parseTypes(filePath: string): Record<string, TypeAliasMeta> {
   for (const typeAlias of typeAliases) {
     // 1. Type name with generic parameters
     const name = typeAlias.getName();
+    const comment = typeAlias
+      .getJsDocs()
+      .map((doc) => doc.getComment())
+      .filter(Boolean)
+      .join('\n');
     const typeParams = typeAlias.getTypeParameters().map((tp) => tp.getText());
     const fullName = typeParams.length ? `${name}<${typeParams.join(', ')}>` : name;
 
@@ -145,6 +151,7 @@ export function parseTypes(filePath: string): Record<string, TypeAliasMeta> {
     typeMap[fullName] = {
       name: fullName,
       extends: baseTypesText, //.replace('<', '\\<').replace('>', '\\>'),
+      comment: comment,
       properties: properties,
       traversed: false,
       inherited: {},

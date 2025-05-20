@@ -1,6 +1,9 @@
 import type { App, Plugin } from 'obsidian';
 import { BaseSetting, PathSetting } from './types.js';
 
+/**
+ * Button setting
+ */
 export type Button = BaseSetting & {
   type: 'Button';
   buttonText?: string;

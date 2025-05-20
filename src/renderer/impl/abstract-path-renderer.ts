@@ -2,7 +2,7 @@ import type { BaseComponent, Setting } from 'obsidian';
 import { css, defaultBar } from '../../utils/helper.js';
 import { hint } from '../../utils/hint.js';
 import { getSettingFontSize } from '../../utils/storage.js';
-import { PathSetting } from '../types.js';
+import { PathSetting, PathSettingWithHandlerAndLabel } from '../types.js';
 import { createSetting } from './setting-helper.js';
 import { tooltip } from '../../utils/tooltip-helper.js';
 
@@ -24,7 +24,9 @@ export abstract class AbstractPathRenderer<T> {
 
   render(containerEl: HTMLElement, groupMember: boolean) {
     this.container = containerEl;
-    this.setting = createSetting(this.element, containerEl, groupMember);
+    const labelElement = { id: this.element.path, label: (this.element as PathSettingWithHandlerAndLabel<T>).label ? '' : '' };
+
+    this.setting = createSetting(labelElement, containerEl, groupMember);
     const created = this.createElement(this.setting, this.element);
     created.htmlElement.classList.add(css('item'));
     this.defaultBarSpan = defaultBar(created.noDefaultValueBar, this.setting, this.element);

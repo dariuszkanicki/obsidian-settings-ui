@@ -2,6 +2,7 @@ import { LocalizedSetting, Replacement } from '../renderer/types-api.js';
 import { DropdownItem } from '../renderer/types-api.js';
 import { Dropdown, ColorDropdown } from '../renderer/types-api.js';
 import { Button } from '../renderer/types-api.js';
+import { CommonPropertiesWithId } from '../renderer/types.js';
 import { ContextService } from './context-service.js';
 
 function _defaultKey(element: { path?: string; id?: string }): string {
@@ -46,14 +47,15 @@ export function translateDropdownItemLabelById<T>(dropdown: Dropdown<T> | ColorD
 }
 
 export function translateButtonText(button: Button): string {
-  const localizedSetting = ContextService.localizedSettingMap()?.get(_defaultKey(button));
+  const element = button as CommonPropertiesWithId;
+  const localizedSetting = ContextService.localizedSettingMap()?.get(_defaultKey(element));
   if (localizedSetting && localizedSetting.buttonText) {
     return localizedSetting.buttonText;
   } else if (button.buttonText) {
     return button.buttonText;
   } else {
-    console.warn('buttonText not specified for ', button.id);
-    return button.id;
+    console.warn('buttonText not specified for ', element.id);
+    return element.id ?? '???';
   }
 }
 

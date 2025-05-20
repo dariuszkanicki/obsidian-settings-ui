@@ -31,7 +31,7 @@
     "test:inject": "pnpm build && node dist/lib/utils/inject-styles.js",
     "test:doc": "pnpm build && node dist/lib/utils/doc/extract-types.js",
     "test:docall": "pnpm build && node dist/lib/utils/generate-all-types-docs.js",
-    "doc": "pnpm build && node dist/lib/utils/doc/generate-doc.js",
+    "doc": "cls && pnpm build && node dist/lib/utils/doc/generate-doc.js",
     "typecheck": "tsc --noEmit",
     "test": "vitest",
     "lint": "eslint src --ext .ts",
@@ -41,7 +41,7 @@
     "yalc:publish": "pnpm build && yalc publish",
     "yalc:push": "pnpm yalc:publish && yalc push",
     "watch": "chokidar src/**/* styles/**/* --ignore dist/**/* -c \"pnpm yalc:push\"",
-    "watch_": "chokidar src/**/* styles/**/* --ignore dist/**/* -c \"pnpm doc\""
+    "watch_doc": "chokidar src/**/* styles/**/* --ignore dist/**/* -c \"pnpm doc\""
   },
   "keywords": [
     "obsidian",

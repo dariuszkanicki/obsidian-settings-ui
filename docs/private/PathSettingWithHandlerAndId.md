@@ -1,23 +1,22 @@
-# `PathSettingWithHandlerAndId`
-**Extends:** PathSettingWithHandlerBase
-## Properties
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| `id` | `string` | |
-| `label?` | `string` | |
-| `PathSettingWithHandlerBase` | --- | |
-| `handler` | `SettingHandler` | |
-| `path?` | `never` | |
-| `CommonPathProperties` | --- | |
-| `placeholder?` | `string \| number` | |
-| `preSave?` | `(value: any) => void \| Promise<void>` | |
-| `postSave?` | `() => void` | |
-| `CommonProperties` | --- | |
-| `type` | `string` | |
-| `label?` | `string` | |
-| `hint?` | `string` | |
-| `tooltip?` | `string[]` | |
-| `replacements?` | `() => Replacement[]` | |
-| `showIf?` | `boolean \| (() => boolean)` | |
-| `disabled?` | `boolean` | |
-| `withoutLabel?` | `boolean` | |
+# `PathSettingWithHandlerAndId<T>`
+**Extends:** PathSettingWithHandlerBase<T>
+## Properties 
+<table><tr><th>Name</th><th>Type</th><th>Description</th></tr>
+<tr><td><code>id</code></td><td><code>`string`</code></td><td><code></code></td></tr>
+<tr><td><code>label?</code></td><td><code>`string`</code></td><td><code></code></td></tr>
+<tr><td><code>PathSettingWithHandlerBase<T></code></td><td></td><td></td></tr>
+<tr><td><code>handler</code></td><td><code>`SettingHandler`</code></td><td><code></code></td></tr>
+<tr><td><code>path?</code></td><td><code>`never`</code></td><td><code></code></td></tr>
+<tr><td><code>CommonPathProperties<T></code></td><td></td><td></td></tr>
+<tr><td><code>placeholder?</code></td><td><code>`string \| number`</code></td><td><code></code></td></tr>
+<tr><td><code>preSave?</code></td><td><code>`(value: any) => void \| Promise<void>`</code></td><td><code></code></td></tr>
+<tr><td><code>postSave?</code></td><td><code>`() => void`</code></td><td><code></code></td></tr>
+<tr><td><code>CommonProperties</code></td><td></td><td></td></tr>
+<tr><td><code>type?</code></td><td><code>string</code></td><td><code></code></td></tr>
+<tr><td><code>hint?</code></td><td><code>`string`</code></td><td><code></code></td></tr>
+<tr><td><code>tooltip?</code></td><td><code>`string[]`</code></td><td><code></code></td></tr>
+<tr><td><code>replacements?</code></td><td><code>`() => Replacement[]`</code></td><td><code></code></td></tr>
+<tr><td><code>showIf?</code></td><td><code>`boolean \| (() => boolean)`</code></td><td><code></code></td></tr>
+<tr><td><code>disabled?</code></td><td><code>`boolean`</code></td><td><code></code></td></tr>
+<tr><td><code>withoutLabel?</code></td><td><code>`boolean`</code></td><td><code></code></td></tr>
+</table>

@@ -7,6 +7,7 @@ import { ToggleRenderer } from './toggle-renderer.js';
 import { getValue, setValue } from '../../utils/value-utils.js';
 import { RadioItemRenderer } from './radioitem-renderer.js';
 import { ContextService } from '../../utils/context-service.js';
+import { PathSetting, PathSettingWithHandlerAndLabel } from '../types.js';
 
 export class RadioGroupRenderer<T> {
   private itemsMap = new Map<string, { toggle: Toggle<T>; toggleComponent: ToggleComponent }>();
@@ -23,7 +24,8 @@ export class RadioGroupRenderer<T> {
       .closeTag()
       .createDIV('group-body');
 
-    label(this.element, html.getElement('group-title')!);
+    const labelElement = { id: this.element.path, label: (this.element as PathSettingWithHandlerAndLabel<T>).label ? '' : '' };
+    label(labelElement, html.getElement('group-title')!);
 
     html.getElement('group')?.addClass('radio');
     const bodyEl = html.getElement('group-body')!;

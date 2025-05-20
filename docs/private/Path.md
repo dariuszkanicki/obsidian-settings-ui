@@ -1,4 +1,4 @@
-# `Path<T, D extends number = 3>`
-## Properties
-| Name | Type | Description |
-| ---- | ---- | ----------- |
+# `Path<T>`
+## Properties 
+<table><tr><th>Name</th><th>Type</th><th>Description</th></tr>
+</table>
