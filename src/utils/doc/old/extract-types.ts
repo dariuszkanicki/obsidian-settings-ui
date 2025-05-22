@@ -130,5 +130,5 @@ if (!result[typeName]) {
   const mdPath = path.join(OUTPUT_DIR, `${typeName}.md`);
   fs.writeFileSync(mdPath, markdown, 'utf-8');
   // console.log(`✅ Markdown written to ${mdPath}`);
-  console.log(JSON.stringify(result[typeName], null, 2));
+  // console.log(JSON.stringify(result[typeName], null, 2));
 }

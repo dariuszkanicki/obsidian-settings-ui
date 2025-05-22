@@ -1,4 +1,4 @@
-import { TypeAliasMeta } from './parse-types.js';
+import { TypeMeta } from './parse-types.js';
 import { AbstractTypes } from './abstract-types.js';
 
 export class ApiTypes extends AbstractTypes {
@@ -6,22 +6,22 @@ export class ApiTypes extends AbstractTypes {
     super(inputPath, outputPath);
   }
 
-  populateInheritedFromBasis(basisMap: Record<string, TypeAliasMeta>): void {
-    const allTypes: Record<string, TypeAliasMeta> = {
+  populateInheritedFromBasis(basisMap: Record<string, TypeMeta>): void {
+    const allTypes: Record<string, TypeMeta> = {
       ...basisMap,
       ...this.getTypeMap(),
     };
     this.resetMissingBaseTypes();
     for (const name in this.getTypeMap()) {
       const meta = this.getTypeMap()[name];
-      if (name === 'Textfield<T>') {
-        console.log(JSON.stringify(meta, null, 2));
-      }
+      // if (name === 'Textfield<T>') {
+      //   console.log(JSON.stringify(meta, null, 2));
+      // }
       meta.traversed = false;
       this.resolve(meta, allTypes);
-      if (name === 'Textfield<T>') {
-        console.log(JSON.stringify(meta, null, 2));
-      }
+      // if (name === 'Textfield<T>') {
+      //   console.log(JSON.stringify(meta, null, 2));
+      // }
     }
     this.getMissingBaseTypes().forEach((baseName) => {
       console.warn(`⚠️  ApiTypes: missing base type '${baseName}'`);

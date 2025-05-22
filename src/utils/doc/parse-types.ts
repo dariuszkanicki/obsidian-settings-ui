@@ -5,10 +5,17 @@ import { Node, PropertySignature, MethodSignature, TypeLiteralNode } from 'ts-mo
 export interface PropertyMeta {
   name: string;
   optional: boolean;
-  type: string;
+  datatype: string;
   isFunction: boolean;
   properties?: PropertyMeta[]; // nested properties for object types
   comment: string;
+}
+
+export interface PropertySource {
+  type: string; // The source type this property came from
+  optional: boolean; // Whether it was optional in that source
+  comment: string; // The comment from that source
+  via?: string; // If inherited through another type (for multi-level inheritance)
 }
 
 export interface InheritedRecord {
@@ -16,31 +23,39 @@ export interface InheritedRecord {
   properties: PropertyMeta[];
 }
 
-export interface TypeAliasMeta {
+export interface FlatPropertyMeta {
+  name: string;
+  sources: PropertySource[];
+  resolvedType: string; // The final resolved type
+  resolvedOptional: boolean;
+}
+
+export interface TypeMeta {
   name: string;
   extends?: string; // base type(s) if the alias intersects with another
   comment?: string;
   properties: PropertyMeta[];
+
   traversed: boolean;
+  inheritanceType?: '&' | '|';
   inherited: Record<string, InheritedRecord>;
+
+  flatProperties: FlatPropertyMeta[];
 }
 
 export function getNonGenericName(type: string) {
   return type.replace(/<.*?>/, '');
 }
 
-export function parseTypes(filePath: string): Record<string, TypeAliasMeta> {
+export function parseInitialTypes(filePath: string): Record<string, TypeMeta> {
   const project = new Project();
   const sourceFile = project.addSourceFileAtPath(filePath);
 
-  // Retrieve all exported type aliases in the file:contentReference[oaicite:5]{index=5}
+  // Retrieve all exported types
   const typeAliases = sourceFile.getTypeAliases().filter((t) => t.isExported());
-
-  // const result: TypeAliasMeta[] = [];
-  const typeMap: Record<string, TypeAliasMeta> = {};
+  const typeMap: Record<string, TypeMeta> = {};
 
   for (const typeAlias of typeAliases) {
-    // 1. Type name with generic parameters
     const name = typeAlias.getName();
     const comment = typeAlias
       .getJsDocs()
@@ -50,13 +65,12 @@ export function parseTypes(filePath: string): Record<string, TypeAliasMeta> {
     const typeParams = typeAlias.getTypeParameters().map((tp) => tp.getText());
     const fullName = typeParams.length ? `${name}<${typeParams.join(', ')}>` : name;
 
-    // 2. Determine base (extended/intersected) types and the object literal part
     const typeNode = typeAlias.getTypeNode();
     let baseTypesText: string | undefined;
     let objectTypeNode: TypeLiteralNode | undefined;
+
     if (typeNode) {
       if (typeNode.getKind() === SyntaxKind.IntersectionType) {
-        // If the type alias is an intersection (e.g., Base & { ... })
         const baseTypeNames: string[] = [];
         const intersectionTypes = typeNode.asKind(SyntaxKind.IntersectionType)?.getTypeNodes() ?? [];
         intersectionTypes.forEach((child) => {
@@ -69,53 +83,42 @@ export function parseTypes(filePath: string): Record<string, TypeAliasMeta> {
         if (baseTypeNames.length > 0) {
           baseTypesText = baseTypeNames.join(' & ');
         }
+      } else if (typeNode.getKind() === SyntaxKind.UnionType) {
+        // Handle union types
+        baseTypesText = typeNode.getText();
       } else if (Node.isTypeLiteral(typeNode)) {
-        // The entire alias is just an object type literal (no base intersect)
         objectTypeNode = typeNode;
       } else if (Node.isTypeReference(typeNode) || Node.isExpressionWithTypeArguments(typeNode)) {
-        // Alias is simply referencing another type (no inline object)
         baseTypesText = typeNode.getText();
-        // const name = typeAlias.getName();
-        // const typeParams = typeAlias.getTypeParameters();
-        // const fullName = typeParams.length ? `${name}<${typeParams.map((p) => p.getText()).join(', ')}>` : name;
-        // console.log('###', name, typeParams, fullName);
-        // baseTypesText = fullName;
-        // No inline properties to extract in this case
       }
     }
 
-    // 3. Extract properties (including nested) from the object type literal, if present
     const properties: PropertyMeta[] = [];
     if (objectTypeNode) {
       const parseProperties = (node: TypeLiteralNode, targetList: PropertyMeta[]) => {
         node.forEachChild((child) => {
           if (Node.isPropertySignature(child) || Node.isMethodSignature(child)) {
             const propName = child.getName();
-            const optional = (child as PropertySignature | MethodSignature).hasQuestionToken?.() ?? false; // optional if '?' is present:contentReference[oaicite:6]{index=6}
+            const optional = (child as PropertySignature | MethodSignature).hasQuestionToken?.() ?? false;
             let propTypeText: string;
             let isFunc = false;
             let nestedProps: PropertyMeta[] | undefined;
 
             if (Node.isPropertySignature(child)) {
-              // Property with an explicitly defined type
               const propTypeNode = child.getTypeNode();
               if (propTypeNode) {
-                propTypeText = propTypeNode.getText(); // full type text as written:contentReference[oaicite:7]{index=7}
+                propTypeText = propTypeNode.getText();
                 if (propTypeNode.getKind() === SyntaxKind.FunctionType) {
-                  isFunc = true; // e.g., property is of type `() => something`
+                  isFunc = true;
                 } else if (Node.isTypeLiteral(propTypeNode)) {
-                  // Nested inline object type – recurse into its properties
                   nestedProps = [];
                   parseProperties(propTypeNode, nestedProps);
                 }
               } else {
-                // If no explicit type node (should not happen in type literals), fallback to inferred type text
                 propTypeText = child.getType().getText();
               }
             } else {
-              // Method signature (treated as a function property)
               isFunc = true;
-              // Construct function type text from parameters and return type
               const params = child
                 .getParameters()
                 .map((p) => p.getText())
@@ -133,7 +136,7 @@ export function parseTypes(filePath: string): Record<string, TypeAliasMeta> {
             const propMeta: PropertyMeta = {
               name: propName,
               optional: optional,
-              type: propTypeText,
+              datatype: propTypeText,
               isFunction: isFunc,
               comment: comment,
             };
@@ -142,7 +145,6 @@ export function parseTypes(filePath: string): Record<string, TypeAliasMeta> {
             }
             targetList.push(propMeta);
           }
-          // (Ignore other type elements like index signatures for this use-case)
         });
       };
       parseProperties(objectTypeNode, properties);
@@ -150,12 +152,46 @@ export function parseTypes(filePath: string): Record<string, TypeAliasMeta> {
 
     typeMap[fullName] = {
       name: fullName,
-      extends: baseTypesText, //.replace('<', '\\<').replace('>', '\\>'),
+      extends: baseTypesText,
       comment: comment,
       properties: properties,
       traversed: false,
       inherited: {},
+      flatProperties: [],
     };
   }
   return typeMap;
+}
+
+export function mergeProperties(existing: PropertyMeta[], newProps: PropertyMeta[]): PropertyMeta[] {
+  const merged = [...existing];
+  const existingNames = new Set(existing.map((p) => p.name));
+
+  for (const newProp of newProps) {
+    if (!existingNames.has(newProp.name)) {
+      merged.push(newProp);
+    } else {
+      // Merge if needed (e.g., combine documentation)
+      const existingProp = existing.find((p) => p.name === newProp.name)!;
+      // Custom merge logic here if needed
+      // Simple merge logic:
+      // console.log('### MERGING', type);
+      // console.log('existing', existingProp);
+      // console.log('new', newProp);
+      merged[merged.indexOf(existingProp)] = {
+        // Keep existing values unless new values are more specific
+        name: newProp.name,
+        optional: existingProp.optional && newProp.optional, // Only required if both are required
+        datatype: newProp.datatype !== 'any' ? newProp.datatype : existingProp.datatype, // Prefer more specific type
+        isFunction: existingProp.isFunction || newProp.isFunction,
+        properties:
+          existingProp.properties && newProp.properties
+            ? mergeProperties(existingProp.properties, newProp.properties)
+            : existingProp.properties || newProp.properties,
+        comment: newProp.comment || existingProp.comment, // Prefer new comment if exists
+      };
+    }
+  }
+
+  return merged;
 }

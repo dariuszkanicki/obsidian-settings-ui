@@ -167,4 +167,4 @@ for (const typeName in typeMap) {
 const indexMarkdown = generateIndex(typeMap);
 const indexPath = path.join(OUTPUT_DIR, 'index.md');
 fs.writeFileSync(indexPath, indexMarkdown, 'utf-8');
-console.log('📚 index.md written');
+// console.log('📚 index.md written');

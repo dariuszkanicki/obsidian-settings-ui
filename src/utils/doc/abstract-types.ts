@@ -2,16 +2,16 @@ import path from 'node:path';
 import fs from 'node:fs';
 
 import { Logger } from './logger.js';
-import { MdWriter } from './md-writer.js';
-import { getNonGenericName, parseTypes, PropertyMeta, TypeAliasMeta } from './parse-types.js';
-import { DocWriter } from './abstract-doc-writer.js';
-import { HtmlWriter } from './html-writer.js';
+import { getNonGenericName, PropertyMeta, TypeMeta } from './parse-types.js';
+import { DocWriter } from './writer/doc-writer.js';
+import { HtmlWriter } from './writer/html-writer.js';
+import { parseTypesFromFile } from './parse-typesX.js';
 
 export abstract class AbstractTypes {
   protected logger = new Logger(true);
 
   private docWriter: DocWriter = new HtmlWriter(); //new MdWriter();
-  private typeMap: Record<string, TypeAliasMeta>;
+  private typeMap: Record<string, TypeMeta>;
   private knownTypes;
   private className = this.constructor.name;
   private missingBaseTypes: Set<string> = new Set();
@@ -21,9 +21,9 @@ export abstract class AbstractTypes {
     private outputPath: string,
   ) {
     const filePath = path.resolve(inputPath);
-    this.typeMap = parseTypes(filePath);
+    this.typeMap = parseTypesFromFile(filePath);
     this.knownTypes = new Set(Object.keys(this.typeMap));
-    this._traverseInheritance(this.typeMap);
+    // this._traverseInheritance(this.typeMap);
   }
 
   getTypeMap() {
@@ -41,18 +41,23 @@ export abstract class AbstractTypes {
 
     for (const name in this.typeMap) {
       const def = this.typeMap[name];
+
+      // if (name === 'BaseSetting') {
+      //   console.log('BaseSetting', def);
+      // }
+
       const filename = getNonGenericName(name);
       let mdPath;
       let markdown;
       mdPath = path.join(this.outputPath, `${filename}.md`);
       // markdown = this.generateDocImpl(def);
-      markdown = this.docWriter.getMarkdownContent(def, this.knownTypes);
+      markdown = this.docWriter.getMarkdownContent(def, this.typeMap, this.knownTypes);
       fs.writeFileSync(mdPath, markdown, 'utf-8');
       // this.logger.log(`✅ ${filename}.md written`);
     }
   }
 
-  protected resolve = (meta: TypeAliasMeta, typeMap: Record<string, TypeAliasMeta>): void => {
+  protected resolve = (meta: TypeMeta, typeMap: Record<string, TypeMeta>): void => {
     if (meta.traversed || !meta.extends) return;
     meta.traversed = true;
     meta.inherited = {};
@@ -83,7 +88,7 @@ export abstract class AbstractTypes {
     }
   };
 
-  private _traverseInheritance(typeMap: Record<string, TypeAliasMeta>): void {
+  private _traverseInheritance(typeMap: Record<string, TypeMeta>): void {
     for (const name in typeMap) {
       const def = typeMap[name];
       if (!def.traversed) {
