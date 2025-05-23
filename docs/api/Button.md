@@ -4,10 +4,18 @@
 
 ## Properties
 
+<style>
+  .test {
+    background: yellow
+  }
+</style>
+
 <table><tr><th>Name</th><th>Type</th><th>Description</th></tr>
 <tr><td><code>type</code></td><td><code>'Button'</code></td><td><code></code></td></tr>
 <tr><td><code>buttonText?</code></td><td><code>`string`</code></td><td><code></code></td></tr>
 <tr><td><code>onClick</code></td><td><code>`() => void`</code></td><td><code></code></td></tr>
+<tr><td class="test" colspan="3">test</td></tr>
+
 <tr><td><code>id, label? | label</code></td><td><code>`string`</code></td><td><code>aha</code></td></tr>
 <tr><td><code>hint?</code></td><td><code>`string`</code></td><td><code></code></td></tr>
 <tr><td><code>tooltip?</code></td><td><code>`string[]`</code></td><td><code></code></td></tr>
