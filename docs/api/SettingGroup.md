@@ -4,7 +4,14 @@
 <tr><td><code>type</code></td><td><code>'SettingGroup'</code></td><td><code></code></td></tr>
 <tr><td><code>id</code></td><td><code>`string`</code></td><td><code></code></td></tr>
 <tr><td><code>label?</code></td><td><code>`string`</code></td><td><code></code></td></tr>
-<tr><td><code>replacements?</code></td><td><code>`() => `[`Replacement`](Replacement)`[]`</code></td><td><code></code></td></tr>
+<tr><td><code>replacements?</code></td><td><code>() => </code>[Replacement](Replacement.md)<code>[][]</code></td><td><code></code></td></tr>
+<tr><td><code>tooltip?</code></td><td><code>`string[]`</code></td><td><code></code></td></tr>
+<tr><td><code>showIf?</code></td><td><code>`boolean`</code></td><td><code></code></td></tr>
+<tr><td><code>items</code></td><td><code>`SettingElement<T>[]`</code></td><td><code></code></td></tr>
+<tr><td><code>type</code></td><td><code>'SettingGroup'</code></td><td><code></code></td></tr>
+<tr><td><code>id</code></td><td><code>`string`</code></td><td><code></code></td></tr>
+<tr><td><code>label?</code></td><td><code>`string`</code></td><td><code></code></td></tr>
+<tr><td><code>replacements?</code></td><td><code>() => </code>[Replacement](Replacement.md)<code>[][]</code></td><td><code></code></td></tr>
 <tr><td><code>tooltip?</code></td><td><code>`string[]`</code></td><td><code></code></td></tr>
 <tr><td><code>showIf?</code></td><td><code>`boolean`</code></td><td><code></code></td></tr>
 <tr><td><code>items</code></td><td><code>`SettingElement<T>[]`</code></td><td><code></code></td></tr>

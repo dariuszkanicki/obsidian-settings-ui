@@ -15,11 +15,11 @@ export type CommonPropertiesWithId = CommonProperties & {
   label?: string;
 };
 export type CommonPropertiesWithLabel = CommonProperties & {
-  label: string;
   id?: string;
+  label: string;
 };
 
-export type BaseSetting = CommonPropertiesWithLabel | CommonPropertiesWithId;
+export type BaseSetting = CommonPropertiesWithId | CommonPropertiesWithLabel;
 
 // export type BaseSetting = CommonProperties & {
 //   id: string;

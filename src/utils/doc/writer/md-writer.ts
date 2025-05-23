@@ -2,6 +2,9 @@ import { AbstractDocWriter } from './abstract-doc-writer.js';
 import { FlatPropertyMeta } from '../parse-types.js';
 
 export class MdWriter extends AbstractDocWriter {
+  protected printFlatType(lines: string[], property: FlatPropertyMeta, knownTypes: Set<string>): void {
+    throw new Error('Method not implemented.');
+  }
   protected printTableHeader(lines: string[]) {
     lines.push('| Namec | Type | Description |');
     lines.push('| ---- | ---- | ----------- |');
@@ -18,7 +21,7 @@ export class MdWriter extends AbstractDocWriter {
   protected printType(lines: string[], property: FlatPropertyMeta, knownTypes: Set<string>): void {
     const optionalMark = property.sources[0].optional ? '?' : '';
     if (property.name === 'type') {
-      lines.push(`| \`${property.name}${optionalMark}\` | \`${property.resolvedType}\` | |`);
+      lines.push(`| \`${property.name}${optionalMark}\` | \`${property.datatype}\` | |`);
     } else {
       lines.push(`| \`${property.name}${optionalMark}\` | ${this._typeColumn(property, knownTypes)} | |`);
     }
@@ -34,7 +37,7 @@ export class MdWriter extends AbstractDocWriter {
     let result;
     known.forEach((knownType) => {
       const pattern = new RegExp(`^(?<before>[\\s\\S]*?)${knownType}(?<after>[\\s\\S]*)$`);
-      const match = property.resolvedType.match(pattern);
+      const match = property.datatype.match(pattern);
       if (match?.groups) {
         const { before, after } = match.groups;
         const name = knownType.replace(/<.*?>/, '');
@@ -49,7 +52,7 @@ export class MdWriter extends AbstractDocWriter {
       }
     });
     if (!result) {
-      result = '`' + property.resolvedType + '`';
+      result = '`' + property.datatype + '`';
     }
     // }
     return result.replaceAll('|', '\\|');

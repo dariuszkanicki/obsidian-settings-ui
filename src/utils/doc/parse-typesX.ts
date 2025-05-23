@@ -196,21 +196,13 @@ function flattenProperties(typeName: string, typeMap: Record<string, TypeMeta>, 
           // Update resolution rules:
           // For intersection, optional only if ALL sources are optional
           // For union, optional if ANY source is optional
-          existing.resolvedOptional = isIntersection
-            ? existing.resolvedOptional && baseProp.resolvedOptional
-            : existing.resolvedOptional || baseProp.resolvedOptional;
+          existing.optional = isIntersection ? existing.optional && baseProp.optional : existing.optional || baseProp.optional;
 
           // Type resolution (simplified - you might want more sophisticated logic)
           if (isIntersection) {
-            existing.resolvedType =
-              existing.resolvedType === baseProp.resolvedType
-                ? existing.resolvedType
-                : `${existing.resolvedType} & ${baseProp.resolvedType}`;
+            existing.datatype = existing.datatype === baseProp.datatype ? existing.datatype : `${existing.datatype} & ${baseProp.datatype}`;
           } else {
-            existing.resolvedType =
-              existing.resolvedType === baseProp.resolvedType
-                ? existing.resolvedType
-                : `${existing.resolvedType} | ${baseProp.resolvedType}`;
+            existing.datatype = existing.datatype === baseProp.datatype ? existing.datatype : `${existing.datatype} | ${baseProp.datatype}`;
           }
         } else {
           // Add new inherited property
@@ -220,9 +212,9 @@ function flattenProperties(typeName: string, typeMap: Record<string, TypeMeta>, 
               ...s,
               via: baseType,
             })),
-            resolvedOptional: typeMeta.extends.includes('|')
+            optional: typeMeta.extends.includes('|')
               ? true // Union makes all inherited props optional
-              : baseProp.resolvedOptional,
+              : baseProp.optional,
           };
         }
       }
@@ -243,8 +235,11 @@ function _createWithDirectProps(typeMeta: TypeMeta): Record<string, FlatProperty
           comment: prop.comment,
         },
       ],
-      resolvedType: prop.datatype,
-      resolvedOptional: prop.optional,
+      datatype: prop.datatype,
+      optional: prop.optional,
+      isFunction: prop.isFunction,
+      comment: prop.comment,
+      properties: prop.properties,
     };
   }
   return flatPropsMap;

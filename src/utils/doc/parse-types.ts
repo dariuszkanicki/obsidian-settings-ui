@@ -2,15 +2,6 @@ import { Project, SyntaxKind } from 'ts-morph';
 
 import { Node, PropertySignature, MethodSignature, TypeLiteralNode } from 'ts-morph';
 
-export interface PropertyMeta {
-  name: string;
-  optional: boolean;
-  datatype: string;
-  isFunction: boolean;
-  properties?: PropertyMeta[]; // nested properties for object types
-  comment: string;
-}
-
 export interface PropertySource {
   type: string; // The source type this property came from
   optional: boolean; // Whether it was optional in that source
@@ -23,11 +14,23 @@ export interface InheritedRecord {
   properties: PropertyMeta[];
 }
 
+export interface PropertyMeta {
+  name: string;
+  optional: boolean;
+  datatype: string;
+  isFunction: boolean;
+  comment: string;
+  properties?: PropertyMeta[]; // nested properties for object types
+}
+
 export interface FlatPropertyMeta {
   name: string;
+  optional: boolean; // final value (// TODO check the concat function)
+  datatype: string; // final ype (// TODO check for inconsistency)
+  isFunction: boolean; // final type (// TODO check for inconsistency)
+  comment: string; // final type (// TODO check the concat function)
+  properties?: PropertyMeta[]; // nested properties for object types
   sources: PropertySource[];
-  resolvedType: string; // The final resolved type
-  resolvedOptional: boolean;
 }
 
 export interface TypeMeta {

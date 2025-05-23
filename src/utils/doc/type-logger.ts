@@ -36,7 +36,7 @@ function _flatProperties(meta: TypeMeta): string {
   if (!meta.properties.length) return '[]';
 
   const propStrings = meta.flatProperties.map((prop) => {
-    const optional = prop.resolvedOptional ? '?' : '';
+    const optional = prop.optional ? '?' : '';
     let result = _prop(prop.name) + optional;
     prop.sources.forEach((source) => {
       if (source.type !== meta.name) {
