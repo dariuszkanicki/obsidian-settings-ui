@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import { FlatPropertyMeta, PropertyMeta, TypeMeta } from './parse-types.js';
+import { FlatPropertyMeta, PropertyMeta, TypeMeta } from './type-resolver.js';
 
 export function tlog(typeMap: Record<string, TypeMeta>) {
   Object.values(typeMap).map((meta) => {

@@ -2,32 +2,27 @@ import { Replacement, SettingHandler } from './types-api.js';
 
 export type CommonProperties = {
   type: string;
+  /**
+   * The label displayed for the element.
+   */
   label?: string;
+  /**
+   * The hint displayed under the element.
+   */
   hint?: string;
+  /**
+   * The tooltip text displayed on hover. Supports HTML formatting.
+   */
   tooltip?: string[];
+  /**
+   * A function returning an array of { name: string, text: string } entries for dynamic placeholder substitution in label, hint, and tooltip values.
+   */
   replacements?: () => Replacement[];
-  showIf?: boolean | (() => boolean);
+  /**
+   * Controls element visibility. If true, the element is shown.
+   */
+  showIf?: boolean;
 };
-
-// export type CommonExtendedProperties = {}
-
-// export type CommonPropertiesWithId = CommonProperties & {
-//   /**
-//    * if you provide 'id' but not 'label'
-//    */
-//   id: string;
-//   label?: string;
-// };
-// export type CommonPropertiesWithLabel = CommonProperties & {
-//   id?: string;
-//   label: string;
-// };
-
-// export type BaseSetting = CommonPropertiesWithId | CommonPropertiesWithLabel;
-
-// export type BaseSetting = CommonProperties & {
-//   id: string;
-// };
 
 export type BaseSetting = {
   type?: string;
@@ -46,8 +41,14 @@ export type BaseSetting = {
 
 export type CommonPathProperties<T> = {
   placeholder?: string | number;
+  /**
+   * This function is called before the value is saved to the settings.
+   */
   preSave?: (value: any) => void | Promise<void>;
-  postSave?: () => void;
+  /**
+   * This function is called after the value is saved to the settings.
+   */
+  postSave?: () => void | Promise<void>;
 };
 export type PathSettingWithPath<T> = CommonPathProperties<T> &
   CommonProperties & {

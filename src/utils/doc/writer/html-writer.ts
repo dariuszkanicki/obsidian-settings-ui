@@ -1,6 +1,6 @@
 import { AbstractDocWriter } from './abstract-doc-writer.js';
 import { DocWriter } from './doc-writer.js';
-import { FlatPropertyMeta, PropertyMeta } from '../parse-types.js';
+import { FlatPropertyMeta, PropertyMeta } from '../type-resolver.js';
 
 export class HtmlWriter extends AbstractDocWriter {
   protected printSubsectionTitle(lines: string[], title: string): void {
@@ -101,9 +101,6 @@ export class HtmlWriter extends AbstractDocWriter {
         if (before) {
           result += before;
         }
-        // result += `[${name}](${knownType}.md)`;
-        // result += `</code>[${name}](${knownType}.md)<code>`;
-
         result += `<a href='${name}.md'>${knownType}</a>`;
         if (after) {
           result += after;
@@ -111,7 +108,7 @@ export class HtmlWriter extends AbstractDocWriter {
       }
     });
     if (!result) {
-      result = property.datatype;
+      result = property.datatype.replaceAll('<', '&lt;').replaceAll('>', '&gt;');
     }
     return result;
   }

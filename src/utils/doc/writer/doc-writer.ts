@@ -1,6 +1,6 @@
 import path from 'node:path';
 import fs from 'node:fs';
-import { getNonGenericName, TypeMeta } from '../parse-types.js';
+import { TypeMeta } from '../type-resolver.js';
 
 export interface DocWriter {
   getMarkdownContent(def: TypeMeta, typeMap: Record<string, TypeMeta>, knownTypes: Set<string>): string;
@@ -26,4 +26,7 @@ export function generateDoc(typeMap: Record<string, TypeMeta>, docWriter: DocWri
     fs.writeFileSync(mdPath, markdown, 'utf-8');
     // this.logger.log(`✅ ${filename}.md written`);
   }
+}
+export function getNonGenericName(type: string) {
+  return type.replace(/<.*?>/, '');
 }

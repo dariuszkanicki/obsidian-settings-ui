@@ -1,5 +1,5 @@
 import { AbstractDocWriter } from './abstract-doc-writer.js';
-import { FlatPropertyMeta } from '../parse-types.js';
+import { FlatPropertyMeta } from '../type-resolver.js';
 
 export class MdWriter extends AbstractDocWriter {
   protected printSubsectionTitle(lines: string[], title: string): void {

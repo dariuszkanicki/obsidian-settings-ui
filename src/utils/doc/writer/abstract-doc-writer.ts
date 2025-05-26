@@ -1,12 +1,9 @@
-import { FlatPropertyMeta, PropertyMeta, TypeMeta } from '../parse-types.js';
+import { FlatPropertyMeta, PropertyMeta, TypeMeta } from '../type-resolver.js';
 import { DocWriter } from './doc-writer.js';
 
 export abstract class AbstractDocWriter implements DocWriter {
   getMarkdownContent(typeMeta: TypeMeta, typeMap: Record<string, TypeMeta>, knownTypes: Set<string>): string {
     const lines: string[] = [`# \`${typeMeta.name.replace('<T>', '')}\``];
-
-    let description: string | undefined;
-    let configuration: string | undefined;
 
     if (typeMeta.comment) {
       lines.push(
@@ -71,11 +68,6 @@ export abstract class AbstractDocWriter implements DocWriter {
         this._printFlatProperties(typeMeta.flatProperties, lines, knownTypes);
       }
       this.printTableFooter(lines);
-    }
-
-    if (configuration) {
-      lines.push('___');
-      lines.push(configuration);
     }
 
     return lines.join('\n');

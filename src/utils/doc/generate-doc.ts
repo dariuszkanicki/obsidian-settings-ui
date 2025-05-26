@@ -1,18 +1,9 @@
-import path from 'node:path';
-import fs from 'node:fs';
-import { exit } from 'node:process';
-import { TypeDefinition } from './lib.js';
-
-import { Logger } from './logger.js';
-import { ApiTypes } from './api-types.js';
-import { GenTypes as BasisTypes } from './basis-types.js';
-import { TypeMeta } from './parse-types.js';
 import { TypeResolver } from './type-resolver.js';
 import { generateDoc } from './writer/doc-writer.js';
 import { HtmlWriter } from './writer/html-writer.js';
 
-const INPUT_API = 'src/renderer/types-api.ts';
-const OUTPUT_DIR = 'docs/generated';
+// const INPUT_API = 'src/renderer/types-api.ts';
+// const OUTPUT_DIR = 'docs/generated';
 
 function linkType(value: string, known: Set<string>): string {
   return value.replace(/\b[\w]+(?:<[^>]+>)?/g, (match) => {
@@ -43,6 +34,11 @@ const typeMap = typeResolver.resolveApiTypes('src/renderer/types-api.ts');
 // const api = new ApiTypes('src/renderer/types-api.ts', 'docs/api');
 // api.populateInheritedFromBasis(baseTypeMap);
 generateDoc(typeMap, new HtmlWriter(), 'docs/api');
+export interface TypeDefinition {
+  name: string;
+  extends?: string;
+  properties?: Record<string, string>;
+}
 
 // if (def.api) {
 // } else {
