@@ -3,16 +3,18 @@ import { highlightAsCode, css } from '../../utils/helper.js';
 import { getSettingLabelWidth, getSettingFontSize } from '../../utils/storage.js';
 import { BaseSetting, CommonProperties, PathSetting } from '../types.js';
 import { translateElementPart } from '../../utils/translation.js';
+import { Replacement } from '../types-api.js';
 
 // prettier-ignore
 export function createSetting<T>(
-  element: {id?: string, label?: string, withoutLabel?: boolean}, //CommonProperties, //BaseSetting | PathSetting<T>,
+  element: {id?: string, label?: string, replacements?: () => Replacement[] },   //CommonProperties, //BaseSetting | PathSetting<T>,
   container: HTMLElement,
-  groupMember: boolean
+  groupMember: boolean,
+  withoutLabel?: boolean
 ): Setting {
 
   const setting = new Setting(container);
-  if (!element.withoutLabel) {
+  if (!withoutLabel) {
     label(element, setting.nameEl);
   }
   _setLabelWith();

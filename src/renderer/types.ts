@@ -1,29 +1,49 @@
 import { Replacement, SettingHandler } from './types-api.js';
 
 export type CommonProperties = {
-  type?: string;
+  type: string;
   label?: string;
   hint?: string;
   tooltip?: string[];
   replacements?: () => Replacement[];
   showIf?: boolean | (() => boolean);
-  disabled?: boolean;
-  withoutLabel?: boolean;
-};
-export type CommonPropertiesWithId = CommonProperties & {
-  id: string;
-  label?: string;
-};
-export type CommonPropertiesWithLabel = CommonProperties & {
-  id?: string;
-  label: string;
 };
 
-export type BaseSetting = CommonPropertiesWithId | CommonPropertiesWithLabel;
+// export type CommonExtendedProperties = {}
+
+// export type CommonPropertiesWithId = CommonProperties & {
+//   /**
+//    * if you provide 'id' but not 'label'
+//    */
+//   id: string;
+//   label?: string;
+// };
+// export type CommonPropertiesWithLabel = CommonProperties & {
+//   id?: string;
+//   label: string;
+// };
+
+// export type BaseSetting = CommonPropertiesWithId | CommonPropertiesWithLabel;
 
 // export type BaseSetting = CommonProperties & {
 //   id: string;
 // };
+
+export type BaseSetting = {
+  type?: string;
+  /**
+   * Is mandatory if localization is used
+   */
+  id?: string;
+  showIf?: boolean;
+  /**
+   * Sometimes useful with localization, allowing to replace named placeholders<br/>
+   * in language specific text with values which are independent or representing current context.
+   * @returns
+   */
+  replacements?: () => Replacement[];
+};
+
 export type CommonPathProperties<T> = {
   placeholder?: string | number;
   preSave?: (value: any) => void | Promise<void>;

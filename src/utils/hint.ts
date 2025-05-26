@@ -12,7 +12,7 @@ export function previewAsHint(setting: Setting, htmlString: string) {
   }
   return small;
 }
-export function hint<T>(setting: Setting, element: BaseSetting | PathSetting<T>) {
+export function hint<T>(setting: Setting, element: PathSetting<T>) {
   let small: HTMLElement | undefined;
   const descString = translateElementPart(element, 'hint', element.hint);
   if (descString) {

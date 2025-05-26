@@ -7,7 +7,7 @@ import { highlightTextAsCode, css, highlightAsCode } from './helper.js';
 import { createInteractiveTooltip } from './tooltip.js';
 import { translateElementPart } from './translation.js';
 
-export function tooltip<T>(setting: Setting, element: BaseSetting | PathSetting<T>, addition: string) {
+export function tooltip<T>(setting: Setting, element: PathSetting<T>, addition: string) {
   let text = translateElementPart(element, 'tooltip', element.tooltip);
   if (text) {
     text = highlightTextAsCode(`${text}\n${addition}`);

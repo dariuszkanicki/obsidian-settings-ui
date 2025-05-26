@@ -2,6 +2,9 @@ import { AbstractDocWriter } from './abstract-doc-writer.js';
 import { FlatPropertyMeta } from '../parse-types.js';
 
 export class MdWriter extends AbstractDocWriter {
+  protected printSubsectionTitle(lines: string[], title: string): void {
+    throw new Error('Method not implemented.');
+  }
   protected printFlatType(lines: string[], property: FlatPropertyMeta, knownTypes: Set<string>): void {
     throw new Error('Method not implemented.');
   }

@@ -51,11 +51,11 @@ export class ColorDropdownRenderer<T> extends AbstractPathRenderer<T> {
     }
 
     setting.addDropdown((dropdown) => {
-      element.items.forEach((item) => dropdown.addOption(item.id, translateDropdownItemLabel(element, item)));
-
       if (element.withCustomOption) {
-        dropdown.addOption('custom', 'custom');
+        element.items.push({ id: 'custom' });
       }
+
+      element.items.forEach((item) => dropdown.addOption(item.id, translateDropdownItemLabel(element, item)));
 
       if (isCustomOptionChosen(pathName)) {
         dropdown.setValue('custom');

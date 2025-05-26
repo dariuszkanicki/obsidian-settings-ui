@@ -3,6 +3,12 @@ import { DocWriter } from './doc-writer.js';
 import { FlatPropertyMeta, PropertyMeta } from '../parse-types.js';
 
 export class HtmlWriter extends AbstractDocWriter {
+  protected printSubsectionTitle(lines: string[], title: string): void {
+    let result = '<tr>';
+    result += `<td colspan='3'><b><em>${title}</em></b></td>`;
+    result += '</tr>';
+    lines.push(result);
+  }
   protected printTableHeader(lines: string[]): void {
     lines.push('<table><tr><th>Name</th><th>Type</th><th>Description</th></tr>');
   }
@@ -50,7 +56,7 @@ export class HtmlWriter extends AbstractDocWriter {
     if (property.name === 'type') {
       this._row(lines, [property.name, property.datatype, '']);
     } else {
-      this._row(lines, [this._type(property), this._typeColumn(property, knownTypes), '']);
+      this._row(lines, [this._type(property), this._typeColumn(property, knownTypes), property.comment]);
     }
   }
   protected printFlatType(lines: string[], property: FlatPropertyMeta, knownTypes: Set<string>): void {
@@ -61,18 +67,14 @@ export class HtmlWriter extends AbstractDocWriter {
     }
   }
 
-  //   <tr>
-  //     <td colspan="3" style="background-color: #ffdfd0">Button specific properties</td>
-  //   </tr>
-  //   <tr><td><code>${property.name}${optionalMark}</code></td><td><code>${property.type}</code></td></tr>
-  //     <td><code>'Button'<code></td>
-  //     <td></td>
-  //   </tr>
-
   _row(lines: string[], content: string[]) {
     let result = '<tr>';
-    content.forEach((column) => {
-      result += `<td><code>${column}</code></td>`;
+    content.forEach((column, index) => {
+      if (index === 2) {
+        result += `<td>${column}</td>`;
+      } else {
+        result += `<td><code>${column}</code></td>`;
+      }
     });
     result += '</tr>';
     lines.push(result);
@@ -100,18 +102,17 @@ export class HtmlWriter extends AbstractDocWriter {
           result += before;
         }
         // result += `[${name}](${knownType}.md)`;
-        result += `</code>[${name}](${knownType}.md)<code>[]`;
+        // result += `</code>[${name}](${knownType}.md)<code>`;
 
-        // result += `<a href='${name}'>${knownType}</a>`;
+        result += `<a href='${name}.md'>${knownType}</a>`;
         if (after) {
           result += after;
         }
       }
     });
     if (!result) {
-      result = '`' + property.datatype + '`';
+      result = property.datatype;
     }
-    // }
-    return result.replaceAll('|', '\\|');
+    return result;
   }
 }

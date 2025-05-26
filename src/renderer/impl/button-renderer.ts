@@ -6,8 +6,7 @@ import { translateButtonText } from '../../utils/translation.js';
 
 export class ButtonRenderer<T> extends AbstractBaseRenderer<T> {
   constructor(element: BaseSetting) {
-    element.withoutLabel = true;
-    super(element);
+    super(element, true);
   }
 
   protected createElement(setting: Setting, element: Button) {

@@ -1,8 +1,9 @@
-# `SettingsConfig<T>`
-## Properties 
+# `SettingsConfig`
+## Parameters 
 <table><tr><th>Name</th><th>Type</th><th>Description</th></tr>
-<tr><td><code>howTo?</code></td><td><code></code>[HowToSection](HowToSection.md)<code>[]</code></td><td><code></code></td></tr>
-<tr><td><code>elements</code></td><td><code>Array<SettingElement<T> \| </code>[SettingGroup](SettingGroup<T>.md)<code>[]></code></td><td><code></code></td></tr>
-<tr><td><code>howTo?</code></td><td><code></code>[HowToSection](HowToSection.md)<code>[]</code></td><td><code></code></td></tr>
-<tr><td><code>elements</code></td><td><code>Array<SettingElement<T> \| </code>[SettingGroup](SettingGroup<T>.md)<code>[]></code></td><td><code></code></td></tr>
+<tr><td><code>howTo?</code></td><td><code><a href='HowToSection.md'>HowToSection</a></code></td><td></td></tr>
+<tr><td><code>elements</code></td><td><code>Array<SettingElement<T> | <a href='SettingGroup.md'>SettingGroup<T></a>></code></td><td></td></tr>
+<tr><td colspan='3'><b><em>Common for all elements</em></b></td></tr>
+<tr><td><code>howTo?</code></td><td><code><a href='HowToSection.md'>HowToSection</a></code></td><td></td></tr>
+<tr><td><code>elements</code></td><td><code>Array<SettingElement<T> | <a href='SettingGroup.md'>SettingGroup<T></a>></code></td><td></td></tr>
 </table>

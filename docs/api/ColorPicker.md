@@ -1,8 +1,13 @@
-# `Dropdown`
+# `ColorPicker`
+| Example                       |  |
+|<hr style="border: none; height: 1px; background-color: #ddd;" /><hr style="border: none; height: 1px; background-color: #ddd;" /><hr style="border: none; height: 1px; background-color: #ddd;" /><hr style="border: none; height: 1px; background-color: #ddd;" /><hr style="border: none; height: 1px; background-color: #ddd;" /><hr style="border: none; height: 1px; background-color: #ddd;" /><hr style="border: none; height: 1px; background-color: #ddd;" /><hr style="border: none; height: 1px; background-color: #ddd;" /><hr style="border: none; height: 1px; background-color: #ddd;" /><hr style="border: none; height: 1px; background-color: #ddd;" />-| <hr style="border: none; height: 1px; background-color: #ddd;" /> | 
+| ![Image](./ColorPicker.png) | display mode |
+| ![Image](./ColorPicker2.png) | editing mode |
 ## Parameters 
 <table><tr><th>Name</th><th>Type</th><th>Description</th></tr>
-<tr><td><code>type</code></td><td><code>'Dropdown'</code></td><td></td></tr>
-<tr><td><code>items</code></td><td><code><a href='DropdownItem.md'>DropdownItem</a>[] | string[]</code></td><td></td></tr>
+<tr><td><code>type</code></td><td><code>'ColorPicker'</code></td><td></td></tr>
+<tr><td><code>datatype?</code></td><td><code>'RGB' | 'string' | 'Hex'</code></td><td></td></tr>
+<tr><td><code>preview?</code></td><td><code>() => string</code></td><td></td></tr>
 <tr><td colspan='3'><b><em>Common for all elements</em></b></td></tr>
 <tr><td colspan='3'><b><em>Variante (a):</em></b></td></tr>
 <tr><td><code>path</code></td><td><code>string</code></td><td>The name (path) of the element in the settings structure</td></tr>

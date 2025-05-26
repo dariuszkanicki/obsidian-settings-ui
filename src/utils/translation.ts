@@ -2,7 +2,6 @@ import { LocalizedSetting, Replacement } from '../renderer/types-api.js';
 import { DropdownItem } from '../renderer/types-api.js';
 import { Dropdown, ColorDropdown } from '../renderer/types-api.js';
 import { Button } from '../renderer/types-api.js';
-import { CommonPropertiesWithId } from '../renderer/types.js';
 import { ContextService } from './context-service.js';
 
 function _defaultKey(element: { path?: string; id?: string }): string {
@@ -47,15 +46,15 @@ export function translateDropdownItemLabelById<T>(dropdown: Dropdown<T> | ColorD
 }
 
 export function translateButtonText(button: Button): string {
-  const element = button as CommonPropertiesWithId;
-  const localizedSetting = ContextService.localizedSettingMap()?.get(_defaultKey(element));
+  // const element = button as CommonPropertiesWithId;
+  const localizedSetting = ContextService.localizedSettingMap()?.get(_defaultKey(button));
   if (localizedSetting && localizedSetting.buttonText) {
     return localizedSetting.buttonText;
   } else if (button.buttonText) {
     return button.buttonText;
   } else {
-    console.warn('buttonText not specified for ', element.id);
-    return element.id ?? '???';
+    console.warn('buttonText not specified for ', button.id);
+    return button.id ?? '???';
   }
 }
 
@@ -64,6 +63,7 @@ export function translateElementPart<T>(
   part: string,
   fallback?: string | string[],
 ): string | undefined {
+  console.log('element', element);
   const localizedSetting = ContextService.localizedSettingMap()?.get(_defaultKey(element));
   let localizedItem = localizedSetting ? localizedSetting[part as keyof LocalizedSetting] : undefined;
 

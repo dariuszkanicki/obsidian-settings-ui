@@ -24,9 +24,15 @@ export abstract class AbstractPathRenderer<T> {
 
   render(containerEl: HTMLElement, groupMember: boolean) {
     this.container = containerEl;
-    const labelElement = { id: this.element.path, label: (this.element as PathSettingWithHandlerAndLabel<T>).label ? '' : '' };
+    const element = this.element as any;
+    // const labelElement = {
+    //   id: (element.path as any) | (element.id as any),
+    //   label: (this.element as PathSettingWithHandlerAndLabel<T>).label ? '' : '',
+    //   replacements: this.element.replacements,
+    // };
+    // console.log('labelElement', labelElement);
 
-    this.setting = createSetting(labelElement, containerEl, groupMember);
+    this.setting = createSetting(element, containerEl, groupMember);
     const created = this.createElement(this.setting, this.element);
     created.htmlElement.classList.add(css('item'));
     this.defaultBarSpan = defaultBar(created.noDefaultValueBar, this.setting, this.element);

@@ -6,7 +6,7 @@ import { plugin } from 'postcss';
 import { Textfield } from '../types-api.js';
 import { Textarea } from '../types-api.js';
 import { Numberfield } from '../types-api.js';
-import { Color } from '../types-api.js';
+import { ColorPicker } from '../types-api.js';
 import { getValue, setValue } from '../../utils/value-utils.js';
 import { colord } from 'colord';
 import { css } from '../../utils/helper.js';
@@ -17,7 +17,7 @@ export class ColorpickerRenderer<T> extends AbstractPathRenderer<T> {
   // prettier-ignore
   protected createElement(
     setting: Setting,
-    element: Color<T>
+    element: ColorPicker<T>
   ): PathRendererResult {
 
     let result!: PathRendererResult;
@@ -51,7 +51,7 @@ export class ColorpickerRenderer<T> extends AbstractPathRenderer<T> {
     return result;
   }
 
-  private _refreshPreview(setting: Setting, element: Color<T>) {
+  private _refreshPreview(setting: Setting, element: ColorPicker<T>) {
     if (element.preview) {
       const el = setting.controlEl.createSpan({ cls: css('colorpicker-preview') });
       const template = document.createElement('template');

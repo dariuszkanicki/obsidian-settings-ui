@@ -43,6 +43,6 @@ export const rendererRegistry: Record<string, RendererConstructor> = {
   Textarea: { type: 'path', ctor: InputfieldRenderer },
   Dropdown: { type: 'path', ctor: DropdownRenderer },
   Toggle: { type: 'path', ctor: ToggleRenderer },
-  Color: { type: 'path', ctor: ColorpickerRenderer },
+  ColorPicker: { type: 'path', ctor: ColorpickerRenderer },
   ColorDropdown: { type: 'path', ctor: ColorDropdownRenderer },
 };

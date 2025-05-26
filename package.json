@@ -38,7 +38,7 @@
     "lint:fix": "eslint src --ext .ts --fix",
     "format": "prettier --check .",
     "format:fix": "prettier --write .",
-    "yalc:publish": "pnpm build && yalc publish",
+    "yalc:publish": "cls && pnpm build && yalc publish",
     "yalc:push": "pnpm yalc:publish && yalc push",
     "watch": "chokidar src/**/* styles/**/* --ignore dist/**/* -c \"pnpm yalc:push\"",
     "watch_doc": "chokidar src/**/* styles/**/* --ignore dist/**/* -c \"pnpm doc\""

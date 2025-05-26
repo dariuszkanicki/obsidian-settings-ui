@@ -59,6 +59,7 @@ export function parseInitialTypes(filePath: string): Record<string, TypeMeta> {
   const typeMap: Record<string, TypeMeta> = {};
 
   for (const typeAlias of typeAliases) {
+    // typeAlias.get
     const name = typeAlias.getName();
     const comment = typeAlias
       .getJsDocs()

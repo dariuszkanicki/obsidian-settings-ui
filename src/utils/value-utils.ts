@@ -19,7 +19,7 @@ export function coerceValue<T>(element: PathSetting<T>, input: number | boolean 
     if (input === 'false' || input === false) return false;
     return false;
   }
-  if (element.type === 'Color') {
+  if (element.type === 'ColorPicker') {
     return input;
   }
   return String(input).trim();
