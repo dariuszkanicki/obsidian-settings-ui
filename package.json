@@ -17,9 +17,8 @@
       "import": "./dist/lib/index.js",
       "types": "./dist/lib/index.d.ts"
     },
-    "./inject": {
-      "import": "./dist/lib/utils/inject-styles.js",
-      "types": "./dist/lib/utils/inject-styles.d.ts"
+    "./inject-css": {
+      "node": "./dist/scripts/inject-prefixed-styles.js"
     }
   },
   "files": [
