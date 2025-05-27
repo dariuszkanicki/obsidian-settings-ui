@@ -64,7 +64,7 @@ export class Renderer<T> {
       renderHowToSection(howtoEl, this.context.pluginId, this.config.howTo);
     }
     for (const el of this.config.elements) {
-      if (this.isSettingGroup(el)) {
+      if (this.isSettingGroup(el) && el.showIf !== false) {
         const bodyEl = groupRenderer.render(el);
         for (const item of el.items) {
           if (this.isConditional(item)) {
@@ -81,7 +81,7 @@ export class Renderer<T> {
         this._renderElement(this.container, el);
       }
     }
-    renderSupportSection(this.container);
+    renderSupportSection(this.container, this.config.support);
   }
 
   private _checkConsistency(el: PathSetting<T>, elType: string, elDataType: string) {

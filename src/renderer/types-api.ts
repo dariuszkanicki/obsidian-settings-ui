@@ -173,9 +173,14 @@ export type Replacement = {
   name: string;
   text: string;
 };
+export type SupportSection = {
+  kofiId: string;
+};
+
 export type SettingsConfig<T> = {
   howTo?: HowToSection;
   elements: Array<SettingElement<T> | SettingGroup<T>>;
+  support?: SupportSection;
 };
 
 // prettier-ignore

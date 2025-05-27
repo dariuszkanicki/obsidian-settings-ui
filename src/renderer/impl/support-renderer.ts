@@ -1,8 +1,9 @@
 import { Setting } from 'obsidian';
 import { Html, Tag } from '../../utils/html.js';
 import { translateElementPart } from '../../utils/translation.js';
+import { SupportSection } from '../types-api.js';
 
-export function renderSupportSection(container: HTMLElement) {
+export function renderSupportSection(container: HTMLElement, support: SupportSection | undefined) {
   const groupTitle = translateElementPart({ id: 'supportGroup' }, 'label') ?? 'Support';
 
   const html = new Html(container);
@@ -14,13 +15,14 @@ export function renderSupportSection(container: HTMLElement) {
     .createDIV('group-body');
   const bodyEl = html.getElement('group-body')!;
 
-  new Setting(bodyEl)
-    .setName('Donate plugin development')
-    .setDesc('If you like this Plugin, consider donating to support continued development.')
-    .addButton((bt) => {
-      bt.buttonEl.outerHTML =
-        "<a href='https://ko-fi.com/F1F195IQ5' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://cdn.ko-fi.com/cdn/kofi3.png?v=3' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>";
-    });
+  if (support) {
+    new Setting(bodyEl)
+      .setName('Donate plugin development')
+      .setDesc('If you like this Plugin, consider donating to support continued development.')
+      .addButton((bt) => {
+        bt.buttonEl.outerHTML = `<a href='https://ko-fi.com/${support.kofiId}' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://cdn.ko-fi.com/cdn/kofi3.png?v=3' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>`;
+      });
+  }
   new Setting(bodyEl)
     .setName('Donate @dkani/obsidian-settings-ui development')
     .setDesc('If you like this new Settings-UI, consider donating continued development of this library.')

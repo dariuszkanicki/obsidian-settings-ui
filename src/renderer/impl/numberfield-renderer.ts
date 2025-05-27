@@ -6,6 +6,7 @@ import { AbstractPathRenderer, PathRendererResult } from './abstract-path-render
 import { ContextService } from '../../utils/context-service.js';
 
 export class NumberfieldRenderer<T> extends AbstractPathRenderer<T> {
+  private refreshNecessary = false;
   protected createElement(setting: Setting, element: Numberfield<T>): PathRendererResult {
     let result!: PathRendererResult;
 
@@ -35,8 +36,13 @@ export class NumberfieldRenderer<T> extends AbstractPathRenderer<T> {
           txt.setValue(String(val));
           await setValue(element, val as number);
           if ((oldValue !== defaultValue && val == defaultValue) || (oldValue === defaultValue && val !== defaultValue)) {
-            ContextService.refresh();
+            this.refreshNecessary = true;
           }
+        }
+      });
+      txt.inputEl.addEventListener('blur', () => {
+        if (this.refreshNecessary) {
+          ContextService.refresh();
         }
       });
       result = { baseComponent: txt, htmlElement: txt.inputEl };

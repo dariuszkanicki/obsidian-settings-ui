@@ -27,7 +27,6 @@
     "styles/source-styles.css"
   ],
   "scripts": {
-    "build": "node build.mjs",
     "test:inject": "pnpm build && node dist/lib/utils/inject-styles.js",
     "test:doc": "pnpm build && node dist/lib/utils/doc/extract-types.js",
     "test:docall": "pnpm build && node dist/lib/utils/generate-all-types-docs.js",
@@ -38,9 +37,12 @@
     "lint:fix": "eslint src --ext .ts --fix",
     "format": "prettier --check .",
     "format:fix": "prettier --write .",
-    "yalc:publish": "cls && pnpm build && yalc publish",
+    "build": "node build.mjs",
+    "yalc:publish": "pnpm build && yalc publish",
     "yalc:push": "pnpm yalc:publish && yalc push",
-    "watch": "chokidar src/**/* styles/**/* --ignore dist/**/* -c \"pnpm yalc:push\"",
+    "watch1": "chokidar src/**/* styles/**/* --ignore dist/**/* -c \"pnpm yalc:push\"",
+    "watch": "chokidar src/**/* styles/**/* --ignore dist/**/* -c \"pnpm yalc:publish:safe\"",
+    "yalc:publish:safe": "tsx src/bin/publish-safe.ts",
     "watch_doc": "chokidar src/**/* styles/**/* --ignore dist/**/* -c \"pnpm doc\""
   },
   "keywords": [
