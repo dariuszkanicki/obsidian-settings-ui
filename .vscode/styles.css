@@ -1,0 +1,17 @@
+body {
+  _background-color: white;
+  _color: black;
+}
+code {
+  _background-color: #f0f0f0;
+  background-color: rgb(31, 31, 31);
+  padding: 0px;
+  border-radius: 4px;
+}
+table > tbody > tr + tr > td {
+  border-top: none;
+}
+th,
+td {
+  padding: 0px 5px;
+}
