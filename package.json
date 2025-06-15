@@ -1,6 +1,6 @@
 {
   "name": "@dkani/obsidian-settings-ui",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Reusable UI components for Obsidian plugin settings",
   "type": "module",
   "main": "./dist/lib/index.js",
